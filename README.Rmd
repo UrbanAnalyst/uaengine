@@ -20,7 +20,7 @@ that `valhalla` queries are limited to a total of 2,000 pairwise comparisons,
 whereas `m4ra` is only limited by memory, and will generally extend to millions
 if not billions of comparisons.
 
-```{r sources-targets}
+```{r sources-targets, eval = FALSE}
 city <- "mannheim"
 mode <- "motorcar"
 nsources <- 10L
@@ -42,7 +42,7 @@ to <- v$id [index_t]
 `valhalla` then needs the source and target data converted to a list, along
 with a specified "costing", in this case as automobile.
 
-```{r valhalla-data}
+```{r valhalla-data, eval = FALSE}
 dat <- list (
     sources = sources,
     targets = targets,
@@ -65,13 +65,20 @@ valhalla <- function (dat) {
 
 That suffices to generate the benchmark comparisons:
 
-```{r benchmark}
+```{r benchmark, eval = FALSE}
 bench::mark (
     valhalla = valhalla (dat),
     m4ra = m4ra::m4ra_times_single_mode (graph, from = from, to = to),
     check = FALSE
 ) [, 1:5]
 ```
+
+    ## # A tibble: 2 × 5
+    ##   expression      min   median `itr/sec` mem_alloc
+    ##   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>
+    ## 1 valhalla      2.52s    2.52s     0.397    3.55MB
+    ## 2 m4ra       767.77ms 767.77ms     1.30    70.84MB
+
 
 And `m4ra` is around three times faster than `valhalla`. Moreover, `m4ra` is
 optimised for very large many-to-many queries, and so generally performs larger
@@ -87,7 +94,7 @@ procedure](https://github.com/UrbanAnalyst/ttcalib) to ensure realistic travel
 times are generated, and not just "optimal" travel times reflecting unhibited
 travel at maximum permissible speed limits along all ways.
 
-```{r travel-times, echo = FALSE}
+```{r travel-times, echo = FALSE, eval = FALSE}
 times_val <- valhalla (dat)
 times_val <- lapply (times_val$sources_to_targets, function (i) i$time)
 times_val <- do.call (rbind, times_val)
@@ -96,6 +103,11 @@ times_m4ra <- m4ra::m4ra_times_single_mode (graph, from = from, to = to)
 times_m4ra2val <- as.vector (times_m4ra) / as.vector (times_val)
 times_m4ra2val <- data.frame (ratio = times_m4ra2val [which (!is.na (times_m4ra2val))])
 ```
+
+```{r times_m4ra2val, echo = FALSE}
+times_m4ra2val <- data.frame (ratio = 1.38)
+```
+
 ```{r valhalla-png, eval = FALSE, echo = FALSE}
 library (ggplot2)
 ggplot (times_m4ra2val, aes (x = ratio)) +
