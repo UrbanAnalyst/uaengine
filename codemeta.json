@@ -1,0 +1,105 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "utaengine",
+  "description": "Routing and aggregation engine for 'Urban Transport Analyst'.",
+  "name": "utaengine: Routing and aggregation engine for 'Urban Transport Analyst'",
+  "codeRepository": "https://github.com/UrbanAnalyst/uta-engine",
+  "issueTracker": "https://github.com/UrbanAnalyst/uta-engine/issues",
+  "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "0.0.1.013",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.2.2 (2022-10-31)",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Mark",
+      "familyName": "Padgham",
+      "email": "mark.padgham@email.com"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Mark",
+      "familyName": "Padgham",
+      "email": "mark.padgham@email.com"
+    }
+  ],
+  "softwareRequirements": {
+    "1": {
+      "@type": "SoftwareApplication",
+      "identifier": "checkmate",
+      "name": "checkmate",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=checkmate"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "geodist",
+      "name": "geodist",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://github.com/hypertidy/geodist"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "m4ra",
+      "name": "m4ra",
+      "sameAs": "https://github.com/atfutures/m4ra"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
+      "identifier": "raster",
+      "name": "raster",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=raster"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
+      "identifier": "sf",
+      "name": "sf",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=sf"
+    },
+    "6": {
+      "@type": "SoftwareApplication",
+      "identifier": "sfheaders",
+      "name": "sfheaders",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=sfheaders"
+    },
+    "SystemRequirements": {}
+  },
+  "fileSize": "6.769KB",
+  "readme": "https://github.com/UrbanAnalyst/uta-engine/blob/main/README.md",
+  "contIntegration": "https://github.com/UrbanAnalyst/uta-engine/actions?query=workflow%3AR-CMD-check"
+}
