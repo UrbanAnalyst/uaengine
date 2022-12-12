@@ -118,7 +118,7 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
     sf::st_crs (s) <- 4326
 
     index <- unlist (sf::st_within (s, soc))
-    s$soc_var <- a [[soc_var]] [index]
+    s$soc_var <- soc [[soc_var]] [index]
     s$soc_var <- s$soc_var / mean (s$soc_var)
 
     s$uta_index <- s$soc_var * s$transport
