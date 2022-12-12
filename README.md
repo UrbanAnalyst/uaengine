@@ -79,11 +79,31 @@ bench::mark (
     ## # A tibble: 2 × 5
     ##   expression      min   median `itr/sec` mem_alloc
     ##   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>
-    ## 1 valhalla      2.04s    2.04s     0.489    3.55MB
-    ## 2 m4ra       676.23ms 676.23ms     1.48    70.85MB
+    ## 1 valhalla      2.52s    2.52s     0.397    3.55MB
+    ## 2 m4ra       767.77ms 767.77ms     1.30    70.84MB
 
 And `m4ra` is around three times faster than `valhalla`. Moreover,
 `m4ra` is optimised for very large many-to-many queries, and so
 generally performs larger queries even more efficiently. These can’t be
 benchmarked against `valhalla` because of the intrinsic restriction to
 small queries of 2,000 or less origin/destination pairs.
+
+### Accuracy of estimated motorcar travel times
+
+Automobile travel times in `m4ra` are calibrated using a [separate
+empirical procedure](https://github.com/UrbanAnalyst/ttcalib) to ensure
+realistic travel times are generated, and not just “optimal” travel
+times reflecting unhibited travel at maximum permissible speed limits
+along all ways.
+
+![](man/figures/m4ra-valhalla-time-ratio.png)
+
+The `m4ra` times are considerably slower than the “optimal” `valhalla`
+times, with `m4ra` times being on average 38% slower. Perhaps more
+importantly, the distribution is highly skewed, indicating that `m4ra`
+clearly generates a few travel times far greater than equivalent
+`valhalla` times. The `m4ra` calibration procedure attempts to capture
+realistic effects of congestion on actual travel times, and this skewed
+distribution is precisely what would be expected if `m4ra` indeeds
+captures congestion effects which are not reflected in equivalent
+`valhalla` times.

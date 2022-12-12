@@ -78,3 +78,39 @@ optimised for very large many-to-many queries, and so generally performs larger
 queries even more efficiently. These can't be benchmarked against `valhalla`
 because of the intrinsic restriction to small queries of 2,000 or less
 origin/destination pairs.
+
+
+### Accuracy of estimated motorcar travel times
+
+Automobile travel times in `m4ra` are calibrated using a [separate empirical
+procedure](https://github.com/UrbanAnalyst/ttcalib) to ensure realistic travel
+times are generated, and not just "optimal" travel times reflecting unhibited
+travel at maximum permissible speed limits along all ways.
+
+```{r travel-times, echo = FALSE}
+times_val <- valhalla (dat)
+times_val <- lapply (times_val$sources_to_targets, function (i) i$time)
+times_val <- do.call (rbind, times_val)
+times_m4ra <- m4ra::m4ra_times_single_mode (graph, from = from, to = to)
+
+times_m4ra2val <- as.vector (times_m4ra) / as.vector (times_val)
+times_m4ra2val <- data.frame (ratio = times_m4ra2val [which (!is.na (times_m4ra2val))])
+```
+```{r valhalla-png, eval = FALSE, echo = FALSE}
+library (ggplot2)
+ggplot (times_m4ra2val, aes (x = ratio)) +
+    geom_freqpoly () +
+    xlab ("ratio: m4ra / valhalla")
+ggsave ("man/figures/m4ra-valhalla-time-ratio.png")
+```
+
+![](man/figures/m4ra-valhalla-time-ratio.png)
+
+The `m4ra` times are considerably slower than the "optimal" `valhalla` times,
+with `m4ra` times being on average `r round(100 * mean(times_m4ra2val$ratio -
+1))`% slower. Perhaps more importantly, the distribution is highly skewed,
+indicating that `m4ra` clearly generates a few travel times far greater than
+equivalent `valhalla` times. The `m4ra` calibration procedure attempts to
+capture realistic effects of congestion on actual travel times, and this skewed
+distribution is precisely what would be expected if `m4ra` indeeds captures
+congestion effects which are not reflected in equivalent `valhalla` times.

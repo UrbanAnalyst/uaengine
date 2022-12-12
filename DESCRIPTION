@@ -1,6 +1,6 @@
 Package: utaengine
 Title: Routing and aggregation engine for 'Urban Transport Analyst'
-Version: 0.0.1.019
+Version: 0.0.1.020
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
