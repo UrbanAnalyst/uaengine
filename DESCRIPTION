@@ -1,0 +1,23 @@
+Package: utaengine
+Title: Routing and aggregation engine for 'Urban Transport Analyst'
+Version: 0.0.1.010
+Authors@R: 
+    person(given = "Mark",
+           family = "Padgham",
+           role = c("aut", "cre"),
+           email = "mark.padgham@email.com")
+Description: Routing and aggregation engine for 'Urban Transport Analyst'.
+License: GPL-3
+URL: https://github.com/UrbanAnalyst/uta-engine
+BugReports: https://github.com/UrbanAnalyst/uta-engine/issues
+Imports:
+    checkmate,
+    geodist,
+    raster
+Remotes:
+    hypertidy/geodist
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.2
+Config/testthat/edition: 3
