@@ -79,8 +79,8 @@ travel_time_statistics <- function (dat, quiet) {
         if (nrow (df) < (ncol (dat$ratio) / 2)) {
             return (c (NA, NA))
         }
-        mod0 <- lm (ratio ~ d, data = df)
-        mod1 <- lm (ratio ~ d, data = df [df$d <= 10.0, ])
+        mod0 <- stats::lm (ratio ~ d, data = df)
+        mod1 <- stats::lm (ratio ~ d, data = df [df$d <= 10.0, ])
         c (
             summary (mod0)$coefficients [1:2],
             summary (mod1)$coefficients [1:2]
@@ -104,8 +104,8 @@ travel_time_statistics <- function (dat, quiet) {
 
 add_popdens_to_stats <- function (s, geotif) {
 
-    s <- pop2point (s, geotiff, normalise = FALSE)
-    mod <- lm (integral_d10 ~ layer, data = s)
+    s <- pop2point (s, geotif, normalise = FALSE)
+    mod <- stats::lm (integral_d10 ~ layer, data = s)
     s$int_pop_adj <- mean (s$integral_d10) + mod$residuals
 
     return (s)
@@ -117,7 +117,7 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
     names (s) [1] <- "transport"
     sf::st_crs (s) <- 4326
 
-    index <- unlist (st_within (s, soc))
+    index <- unlist (sf::st_within (s, soc))
     s$soc_var <- a [[soc_var]] [index]
     s$soc_var <- s$soc_var / mean (s$soc_var)
 
