@@ -108,7 +108,7 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
     names (stats) <- c ("intercept_all", "slope_all", "intercept_d10", "slope_d10")
     stats$x <- dat$v_from$x
     stats$y <- dat$v_from$y
-    stats <- stats [which (!is.na (stats$intercept_all)), ]
+    # stats <- stats [which (!is.na (stats$intercept_all)), ]
 
     for (d in dlims) {
         par_name <- paste0 ("integral_d", sprintf ("%02d", d))
