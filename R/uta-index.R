@@ -62,6 +62,8 @@ uta_index <- function (city,
     s <- travel_time_statistics (dat, quiet)
     s <- add_popdens_to_stats (s, popdens_geotif)
     s <- add_socio_var_to_stats (s, soc, soc_var)
+
+    return (s)
 }
 
 #' Convert travel time matrices to summary statistics at each 'from' point
