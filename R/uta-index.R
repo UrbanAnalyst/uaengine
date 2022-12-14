@@ -92,7 +92,7 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
 
     stats <- lapply (seq_len (nrow (dat$dist)), function (i) {
         df <- data.frame (d = dat$dist [i, ], ratio = dat$ratio [i, ])
-        df <- df [which (!is.na (df$ratio) & !is.nan (df$ratio)), ]
+        df <- df [which (!is.na (df$ratio) & !is.nan (df$ratio) & is.finite (df$ratio)), ]
         if (nrow (df) < (ncol (dat$ratio) / 2)) {
             return (c (NA, NA))
         }
