@@ -1,4 +1,6 @@
 [![R build status](https://github.com/UrbanAnalyst/uta-engine/workflows/R-CMD-check/badge.svg)](https://github.com/UrbanAnalyst/uta-engine/actions?query=workflow%3AR-CMD-check)
+[![codecov](https://codecov.io/gh/UrbanAnalyst/uta-engine/branch/main/graph/badge.svg)](https://app.codecov.io/gh/UrbanAnalyst/uta-engine)
+[![Project Status: Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 
 # UTA Engine
 
