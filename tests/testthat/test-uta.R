@@ -41,6 +41,19 @@ files <- m4ra::m4ra_prepare_data (
     final_mode = "foot"
 )
 
+test_that ("uta errors", {
+
+    expect_error (
+        uta_index (city = NULL, gtfs = gtfs_path, from = NULL),
+        "Assertion on 'from' failed: Must be of type 'character'"
+    )
+    from <- paste0 (1:10)
+    expect_error (
+        uta_index (city = NULL, gtfs = gtfs_path, from = from),
+        "'soc' must be provided"
+    )
+})
+
 test_that ("uta calculations", {
 
     # make polygons for socio-economic variable:
