@@ -4,8 +4,9 @@
 #' @param city Name of city, used to name and define local path to
 #' pre-calculated street networks and transport times with \pkg{m4ra} package.
 #' @param gtfs Path to `.Rds` version of GTFS feed for specified city.
-#' @param popdens_geotif Path to local 'geotiff' file with population density
-#' estimates.
+#' @param popdens_geotif Optional path to local 'geotiff' file with population
+#' density estimates. If provided, all transport indices are adjusted to account
+#' for effects of local population density.
 #' @param from Character vector of Open Street Map IDs of vertices from which to
 #' calculate travel times.
 #' @param initial_mode Initial mode of transport from each 'from' point to
@@ -30,7 +31,7 @@
 
 uta_index <- function (city,
                        gtfs,
-                       popdens_geotif,
+                       popdens_geotif = NULL,
                        from = NULL,
                        initial_mode = "foot",
                        final_mode = "foot",
@@ -42,7 +43,9 @@ uta_index <- function (city,
     city <- tolower (gsub ("\\s+", "-", city))
 
     checkmate::assert_file_exists (gtfs)
-    checkmate::assert_file_exists (popdens_geotif)
+    if (!is.null (popdens_geotif)) {
+        checkmate::assert_file_exists (popdens_geotif)
+    }
     checkmate::assert_character (from, min.len = 1L)
     if (is.null (soc)) {
         stop ("'soc' must be provided", call. = FALSE)
@@ -69,7 +72,9 @@ uta_index <- function (city,
     }
 
     s <- travel_time_statistics (dat, dlims = dlims, quiet)
-    s <- add_popdens_to_stats (s, popdens_geotif)
+    if (!is.null (popdens_geotif)) {
+        s <- add_popdens_to_stats (s, popdens_geotif)
+    }
     s <- add_socio_var_to_stats (s, soc, soc_var)
     s <- add_uta_index (s, dlims)
 
@@ -137,6 +142,7 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
     dlims <- gsub ("^integral\\_", "", dlims)
 
     vars <- c (paste0 ("integral_", dlims), paste0 ("int_", dlims, "_pop_adj"))
+    vars <- vars [which (vars %in% names (s))]
 
     s <- cbind (s [vars], sfheaders::sf_point (s [, c ("x", "y")]))
     s <- sf::st_sf (s)
@@ -154,6 +160,9 @@ add_uta_index <- function (s, dlims) {
     for (d in dlims) {
         d_fmt <- sprintf ("%02d", d)
         tr_index <- paste0 ("int_d", d_fmt, "_pop_adj")
+        if (!tr_index %in% names (s)) { # no population density data
+            tr_index <- paste0 ("integral_d", d_fmt)
+        }
         par_name <- paste0 ("uta_index_d", d_fmt)
         s [[par_name]] <- s$soc_var * s [[tr_index]]
     }

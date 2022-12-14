@@ -7,7 +7,7 @@
 uta_index(
   city,
   gtfs,
-  popdens_geotif,
+  popdens_geotif = NULL,
   from = NULL,
   initial_mode = "foot",
   final_mode = "foot",
@@ -23,8 +23,9 @@ pre-calculated street networks and transport times with \pkg{m4ra} package.}
 
 \item{gtfs}{Path to \code{.Rds} version of GTFS feed for specified city.}
 
-\item{popdens_geotif}{Path to local 'geotiff' file with population density
-estimates.}
+\item{popdens_geotif}{Optional path to local 'geotiff' file with population
+density estimates. If provided, all transport indices are adjusted to account
+for effects of local population density.}
 
 \item{from}{Character vector of Open Street Map IDs of vertices from which to
 calculate travel times.}
