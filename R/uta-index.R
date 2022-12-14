@@ -59,16 +59,19 @@ uta_index <- function (city,
         cli::cli_alert_success (cli::col_green ("Caclulated multi-modal times in ", st))
     }
 
-    s <- travel_time_statistics (dat, quiet)
+    dlims <- c (5, 10)
+
+    s <- travel_time_statistics (dat, dlims = c (5, 10), quiet)
     s <- add_popdens_to_stats (s, popdens_geotif)
     s <- add_socio_var_to_stats (s, soc, soc_var)
+    s <- add_uta_index (s, dlims)
 
     return (s)
 }
 
 #' Convert travel time matrices to summary statistics at each 'from' point
 #' @noRd
-travel_time_statistics <- function (dat, quiet) {
+travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
 
     if (!quiet) {
         cli::cli_alert_info (cli::col_blue ("Calculating summary statistics at each origin point"))
@@ -94,7 +97,11 @@ travel_time_statistics <- function (dat, quiet) {
     stats$x <- dat$v_from$x
     stats$y <- dat$v_from$y
     stats <- stats [which (!is.na (stats$intercept_all)), ]
-    stats$integral_d10 <- stats$intercept_d10 + stats$slope_d10 * 10
+
+    for (d in dlims) {
+        par_name <- paste0 ("integral_d", sprintf ("%02d", d))
+        stats [[par_name]] <- stats$intercept_d10 + stats$slope_d10 * d
+    }
 
     if (!quiet) {
         st <- hms::hms (round ((proc.time () - st0) [3]))
@@ -107,23 +114,42 @@ travel_time_statistics <- function (dat, quiet) {
 add_popdens_to_stats <- function (s, geotif) {
 
     s <- pop2point (s, geotif, normalise = FALSE)
-    mod <- stats::lm (integral_d10 ~ layer, data = s)
-    s$int_pop_adj <- mean (s$integral_d10) + mod$residuals
+    dlims <- grep ("^integral\\_d", names (s), value = TRUE)
+    for (d in dlims) {
+        mod <- stats::lm (as.formula (paste0 (d, " ~ layer")), data = s)
+        par_name <- paste0 ("int", gsub ("^integral", "", d), "_pop_adj")
+        s [[par_name]] <- mean (s [[d]]) + mod$residuals
+    }
 
     return (s)
 }
 
 add_socio_var_to_stats <- function (s, soc, soc_var) {
 
-    s <- cbind (s$int_pop_adj, sfheaders::sf_point (s [, c ("x", "y")]))
-    names (s) [1] <- "transport"
+    dlims <- grep ("^integral\\_d", names (s), value = TRUE)
+    dlims <- gsub ("^integral\\_", "", dlims)
+
+    vars <- c (paste0 ("integral_", dlims), paste0 ("int_", dlims, "_pop_adj"))
+
+    s <- cbind (s [vars], sfheaders::sf_point (s [, c ("x", "y")]))
+    s <- sf::st_sf (s)
     sf::st_crs (s) <- 4326
 
     index <- unlist (sf::st_within (s, soc))
     s$soc_var <- soc [[soc_var]] [index]
     s$soc_var <- s$soc_var / mean (s$soc_var)
 
-    s$uta_index <- s$soc_var * s$transport
+    return (s)
+}
+
+add_uta_index <- function (s, dlims) {
+
+    for (d in dlims) {
+        d_fmt <- sprintf ("%02d", d)
+        tr_index <- paste0 ("int_d", d_fmt, "_pop_adj")
+        par_name <- paste0 ("uta_index_d", d_fmt)
+        s [[par_name]] <- s$soc_var * s [[tr_index]]
+    }
 
     return (s)
 }
