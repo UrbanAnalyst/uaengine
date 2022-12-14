@@ -128,7 +128,7 @@ add_popdens_to_stats <- function (s, geotif) {
     s <- pop2point (s, geotif, normalise = FALSE)
     dlims <- grep ("^integral\\_d", names (s), value = TRUE)
     for (d in dlims) {
-        mod <- stats::lm (as.formula (paste0 (d, " ~ layer")), data = s)
+        mod <- stats::lm (stats::as.formula (paste0 (d, " ~ layer")), data = s)
         par_name <- paste0 ("int", gsub ("^integral", "", d), "_pop_adj")
         s [[par_name]] <- mean (s [[d]]) + mod$residuals
     }
@@ -158,6 +158,7 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
 add_uta_index <- function (s, dlims) {
 
     for (d in dlims) {
+
         d_fmt <- sprintf ("%02d", d)
         tr_index <- paste0 ("int_d", d_fmt, "_pop_adj")
         if (!tr_index %in% names (s)) { # no population density data
