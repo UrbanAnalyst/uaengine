@@ -11,6 +11,8 @@ repos:
         - ropensci-review-tools/spaceout
     # codemeta must be above use-tidy-description when both are used
     -   id: codemeta-description-updated
+        additional_dependencies:
+          - rlang
     -   id: use-tidy-description
         additional_dependencies:
           - desc

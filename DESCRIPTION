@@ -1,6 +1,6 @@
 Package: utaengine
 Title: Routing and aggregation engine for 'Urban Transport Analyst'
-Version: 0.0.1.027
+Version: 0.0.1.028
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -22,6 +22,10 @@ Imports:
     raster,
     sf,
     sfheaders
+Suggests:
+    dplyr,
+    gtfsrouter,
+    testthat (>= 3.0.0)
 Remotes:
     atfutures/m4ra,
     hypertidy/geodist
