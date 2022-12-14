@@ -16,7 +16,15 @@
 #' @param soc Socio-demographic data with an \pkg{sf}-format column of polygons
 #' for each observed value of target variable.
 #' @param soc_var Name of target variable in `soc` data set.
+#' @param dlims Vector of distance limits in kilometres over which average
+#' values of transport index should be calculated. One value of "uta_index" is
+#' then derived for each value of `dlims`.
 #' @param quiet If `FALSE`, display progress information on screen.
+#'
+#' @return An \pkg{sf} `data.frame`, with geometries of points defined by
+#' `from`, and values for transport indices at specified distances, both raw
+#' values and values adjusted for local population densities, along with
+#' corresponding values of the UTA index at each value of 'dlim'.
 #'
 #' @export
 
@@ -28,6 +36,7 @@ uta_index <- function (city,
                        final_mode = "foot",
                        soc = NULL,
                        soc_var = NULL,
+                       dlims = c (5, 10),
                        quiet = FALSE) {
 
     city <- tolower (gsub ("\\s+", "-", city))
@@ -59,9 +68,7 @@ uta_index <- function (city,
         cli::cli_alert_success (cli::col_green ("Caclulated multi-modal times in ", st))
     }
 
-    dlims <- c (5, 10)
-
-    s <- travel_time_statistics (dat, dlims = c (5, 10), quiet)
+    s <- travel_time_statistics (dat, dlims = dlims, quiet)
     s <- add_popdens_to_stats (s, popdens_geotif)
     s <- add_socio_var_to_stats (s, soc, soc_var)
     s <- add_uta_index (s, dlims)

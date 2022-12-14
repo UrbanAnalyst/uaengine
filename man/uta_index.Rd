@@ -13,6 +13,7 @@ uta_index(
   final_mode = "foot",
   soc = NULL,
   soc_var = NULL,
+  dlims = c(5, 10),
   quiet = FALSE
 )
 }
@@ -40,7 +41,17 @@ for each observed value of target variable.}
 
 \item{soc_var}{Name of target variable in \code{soc} data set.}
 
+\item{dlims}{Vector of distance limits in kilometres over which average
+values of transport index should be calculated. One value of "uta_index" is
+then derived for each value of \code{dlims}.}
+
 \item{quiet}{If \code{FALSE}, display progress information on screen.}
+}
+\value{
+An \pkg{sf} \code{data.frame}, with geometries of points defined by
+\code{from}, and values for transport indices at specified distances, both raw
+values and values adjusted for local population densities, along with
+corresponding values of the UTA index at each value of 'dlim'.
 }
 \description{
 Calculate "UTA_index" for a specified set of origin locations.
