@@ -29,7 +29,7 @@ if (!file.exists (net_path)) {
 }
 
 Sys.setenv ("M4RA_CACHE_DIR" = tempdir ())
-Sys.setenv ("M4RA_NUM_CORES" = 2L)
+Sys.setenv ("M4RA_NUM_CORES" = 1L)
 
 files <- m4ra::m4ra_weight_networks (net, city = "hampi")
 files <- m4ra::m4ra_prepare_data (
