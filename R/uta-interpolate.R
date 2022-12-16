@@ -32,7 +32,7 @@ uta_interpolate <- function (city,
         stop ("'uta_dat' must be provided.", call. = FALSE)
     }
 
-    graph <- m4ra::m4ra_load_cached_network (city, mode, contracted = TRUE)
+    graph <- m4ra::m4ra_load_cached_network (city, initial_mode, contracted = TRUE)
     v <- m4ra::m4ra_vertices (graph, city)
 
     index <- dodgr::match_points_to_verts (v, sf::st_coordinates (uta_dat))
@@ -43,9 +43,8 @@ uta_interpolate <- function (city,
     }
 
     to <- v$id [index]
-    from <- v [-index, ]
 
-    res <- m4ra::m4ra_dists_n_pts (graph, from$id, to, npts = npts)
+    res <- m4ra::m4ra_dists_n_pts (graph, from, to, npts = npts)
 
     dist_wts <- exp (-res$dist_mat / 1000)
     dist_wts <- dist_wts / rowSums (dist_wts, na.rm = TRUE)
@@ -54,7 +53,7 @@ uta_interpolate <- function (city,
         uta_mat <- array (v [[u]] [res$index], dim = dim (res$dist_mat))
         uta_vals <- rowSums (uta_mat * dist_wts, na.rm = TRUE)
 
-        v [[u]] [match (from$id, v$id)] <- uta_vals
+        v [[u]] [match (from, v$id)] <- uta_vals
     }
 
     return (v)
