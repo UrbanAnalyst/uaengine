@@ -3,8 +3,6 @@
 #'
 #' @param city Name of city, used to name and define local path to
 #' pre-calculated street networks and transport times with \pkg{m4ra} package.
-#' @param from Character vector of Open Street Map IDs of vertices from which
-#' values in `uta_dat` were calculated.
 #' @param initial_mode Initial mode of transport from each 'from' point to
 #' public transport system (or to destination points, where single-model
 #' transport is faster).
@@ -17,7 +15,6 @@
 #' @export
 
 uta_interpolate <- function (city,
-                             from = NULL,
                              initial_mode = "foot",
                              uta_dat = NULL,
                              npts = 3L) {
@@ -25,7 +22,6 @@ uta_interpolate <- function (city,
     requireNamespace ("dodgr")
 
     city <- tolower (gsub ("\\s+", "-", city))
-    checkmate::assert_character (from, min.len = 1L)
     checkmate::assert_character (initial_mode, min.len = 1L, max.len = 1L)
 
     if (is.null (uta_dat)) {
@@ -43,6 +39,7 @@ uta_interpolate <- function (city,
     }
 
     to <- v$id [index]
+    from <- v$id [-index]
 
     res <- m4ra::m4ra_dists_n_pts (graph, from, to, npts = npts)
 
