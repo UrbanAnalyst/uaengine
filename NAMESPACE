@@ -3,3 +3,6 @@
 export(pop2point)
 export(uta_index)
 export(uta_vertices)
+importFrom(Rcpp,evalCpp)
+importFrom(RcppParallel,RcppParallelLibs)
+useDynLib(utaengine, .registration = TRUE)
