@@ -9,6 +9,9 @@ repos:
         additional_dependencies:
         - styler
         - ropensci-review-tools/spaceout
+        exclude: >
+          .*RcppExports
+
     # codemeta must be above use-tidy-description when both are used
     -   id: codemeta-description-updated
         additional_dependencies:
