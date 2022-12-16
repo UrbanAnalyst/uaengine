@@ -2,4 +2,5 @@
 
 export(pop2point)
 export(uta_index)
+export(uta_interpolate)
 export(uta_vertices)
