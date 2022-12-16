@@ -1,6 +1,6 @@
 Package: utaengine
 Title: Routing and aggregation engine for 'Urban Transport Analyst'
-Version: 0.0.1.037
+Version: 0.0.1.038
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -13,17 +13,16 @@ BugReports: https://github.com/UrbanAnalyst/uta-engine/issues
 Imports:
     checkmate,
     cli,
-    fs,
     geodist,
-    gtfsrouter,
     hms,
     m4ra,
-    rappdirs,
     raster,
     sf,
     sfheaders
 Suggests:
+    dodgr,
     dplyr,
+    fs,
     gtfsrouter,
     testthat (>= 3.0.0)
 Remotes:
