@@ -7,7 +7,7 @@
   "codeRepository": "https://github.com/UrbanAnalyst/uta-engine",
   "issueTracker": "https://github.com/UrbanAnalyst/uta-engine/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.1.048",
+  "version": "0.1.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -33,6 +33,18 @@
   "softwareSuggestions": [
     {
       "@type": "SoftwareApplication",
+      "identifier": "dodgr",
+      "name": "dodgr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dodgr"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "dplyr",
       "name": "dplyr",
       "provider": {
@@ -42,6 +54,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=dplyr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "fs",
+      "name": "fs",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=fs"
     },
     {
       "@type": "SoftwareApplication",
@@ -96,18 +120,6 @@
     },
     "3": {
       "@type": "SoftwareApplication",
-      "identifier": "fs",
-      "name": "fs",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=fs"
-    },
-    "4": {
-      "@type": "SoftwareApplication",
       "identifier": "geodist",
       "name": "geodist",
       "provider": {
@@ -118,19 +130,7 @@
       },
       "sameAs": "https://github.com/hypertidy/geodist"
     },
-    "5": {
-      "@type": "SoftwareApplication",
-      "identifier": "gtfsrouter",
-      "name": "gtfsrouter",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=gtfsrouter"
-    },
-    "6": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "hms",
       "name": "hms",
@@ -142,25 +142,13 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=hms"
     },
-    "7": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "m4ra",
       "name": "m4ra",
       "sameAs": "https://github.com/atfutures/m4ra"
     },
-    "8": {
-      "@type": "SoftwareApplication",
-      "identifier": "rappdirs",
-      "name": "rappdirs",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=rappdirs"
-    },
-    "9": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "raster",
       "name": "raster",
@@ -172,7 +160,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=raster"
     },
-    "10": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
@@ -184,7 +172,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sf"
     },
-    "11": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "sfheaders",
       "name": "sfheaders",
@@ -196,9 +184,10 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sfheaders"
     },
-    "SystemRequirements": {}
+    "SystemRequirements": null
   },
-  "fileSize": "219.253KB",
+  "fileSize": "224.636KB",
   "readme": "https://github.com/UrbanAnalyst/uta-engine/blob/main/README.md",
-  "contIntegration": "https://github.com/UrbanAnalyst/uta-engine/actions?query=workflow%3AR-CMD-check"
+  "contIntegration": ["https://github.com/UrbanAnalyst/uta-engine/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/UrbanAnalyst/uta-engine"],
+  "developmentStatus": "https://www.repostatus.org/#concept"
 }
