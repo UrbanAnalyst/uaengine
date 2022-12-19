@@ -4,7 +4,7 @@
 \alias{uta_interpolate}
 \title{Interpolate "UTA_index" between vertices on network}
 \usage{
-uta_interpolate(city, initial_mode = "foot", uta_dat = NULL, npts = 3L)
+uta_interpolate(city, initial_mode = "foot", uta_dat = NULL, soc, npts = 3L)
 }
 \arguments{
 \item{city}{Name of city, used to name and define local path to
@@ -15,6 +15,10 @@ public transport system (or to destination points, where single-model
 transport is faster).}
 
 \item{uta_dat}{Result of \link{uta_index} function.}
+
+\item{soc}{Socio-demographic data with an \pkg{sf}-format column of polygons
+for each observed value of target variable, as passed to \link{uta_index}
+function.}
 
 \item{npts}{Number of nearest neighbours to use to interpolate values at each
 point.}

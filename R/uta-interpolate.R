@@ -7,6 +7,9 @@
 #' public transport system (or to destination points, where single-model
 #' transport is faster).
 #' @param uta_dat Result of \link{uta_index} function.
+#' @param soc Socio-demographic data with an \pkg{sf}-format column of polygons
+#' for each observed value of target variable, as passed to \link{uta_index}
+#' function.
 #' @param npts Number of nearest neighbours to use to interpolate values at each
 #' point.
 #'
@@ -17,6 +20,7 @@
 uta_interpolate <- function (city,
                              initial_mode = "foot",
                              uta_dat = NULL,
+                             soc,
                              npts = 3L) {
 
     requireNamespace ("dodgr")
@@ -31,15 +35,23 @@ uta_interpolate <- function (city,
     graph <- m4ra::m4ra_load_cached_network (city, initial_mode, contracted = TRUE)
     v <- m4ra::m4ra_vertices (graph, city)
 
-    index <- dodgr::match_points_to_verts (v, sf::st_coordinates (uta_dat))
+    # reduce vertices to only those within polygon of 'uta_dat'
+    v_sf <- sfheaders::sf_point (v [, c ("x", "y")])
+    v_sf <- sf::st_sf (v_sf, crs = 4326)
+    index <- sf::st_within (v_sf, sf::st_union (soc))
+    index <- which (vapply (index, length, integer (1L)) > 0L)
+    v_in <- v [index, ]
+
+    index <- dodgr::match_points_to_verts (v_in, sf::st_coordinates (uta_dat))
     uta_vars <- grep ("(\\_pop\\_adj$|^uta\\_index\\_)", names (uta_dat), value = TRUE)
     for (u in uta_vars) {
-        v [[u]] <- NA
-        v [[u]] [index] <- uta_dat [[u]]
+        v [[u]] <- v_in [[u]] <- NA
+        v_in [[u]] [index] <- uta_dat [[u]]
+        v [[u]] [match (v_in$id, v$id)] <- v_in [[u]]
     }
 
-    to <- v$id [index]
-    from <- v$id [-index]
+    to <- v_in$id [index]
+    from <- v_in$id [-index]
 
     # The `m4ra_dists_n_pts` routine has a glitch on my local Linux system,
     # apparently caused by Intel TBB, which causes some paralleled iterations to
@@ -66,6 +78,9 @@ uta_interpolate <- function (city,
         }
     }
 
+    # res$index_mat indexes into the full vertex table of the network, not the
+    # reduced one in 'v_in'.
+
     dist_wts <- exp (-res$dist_mat / 1000)
     dist_wts <- dist_wts / rowSums (dist_wts, na.rm = TRUE)
 
@@ -78,5 +93,8 @@ uta_interpolate <- function (city,
         v [[u]] [match (from, v$id)] <- uta_vals
     }
 
-    return (v)
+    index <- lapply (uta_vars, function (u) which (!is.na (v [[u]])))
+    index <- sort (unique (unlist (index)))
+
+    return (v [index, ])
 }
