@@ -107,5 +107,16 @@ uta_interpolate <- function (city,
     index <- lapply (uta_vars, function (u) which (!is.na (v [[u]])))
     index <- sort (unique (unlist (index)))
 
-    return (v [index, ])
+    v <- v [index, ]
+
+    graph <- graph [which (graph$.vx0 %in% v$id & graph$.vx1 %in% v$id), ]
+
+    # Then project values at points back on to the graph edges:
+    for (u in uta_vars) {
+        val0 <- v [[u]] [match (graph$.vx0, v$id)]
+        val1 <- v [[u]] [match (graph$.vx1, v$id)]
+        graph [[u]] <- (val0 + val1) / 2
+    }
+
+    return (graph)
 }
