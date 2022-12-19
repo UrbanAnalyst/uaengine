@@ -41,7 +41,30 @@ uta_interpolate <- function (city,
     to <- v$id [index]
     from <- v$id [-index]
 
+    # The `m4ra_dists_n_pts` routine has a glitch on my local Linux system,
+    # apparently caused by Intel TBB, which causes some paralleled iterations to
+    # return nothing, yet they return when re-requested as part of repeated,
+    # smaller chunks. The following code repeats calls to the main function
+    # until all `from` points return full result rows.
     res <- m4ra::m4ra_dists_n_pts (graph, from, to, npts = npts)
+    nna <- apply (res$index_mat, 1, function (i) length (which (is.na (i))))
+    index <- which (nna > 0)
+
+    loop_count <- 0
+    while (length (index) > 0) {
+
+        res2 <- m4ra::m4ra_dists_n_pts (graph, from = from [index], to, npts = npts)
+        res$index_mat [index, ] <- res2$index_mat
+        res$dist_mat [index, ] <- res2$dist_mat
+
+        nna <- apply (res$index_mat, 1, function (i) length (which (is.na (i))))
+        index <- which (nna > 0)
+
+        loop_count <- loop_count + 1
+        if (loop_count > 100) {
+            break
+        }
+    }
 
     dist_wts <- exp (-res$dist_mat / 1000)
     dist_wts <- dist_wts / rowSums (dist_wts, na.rm = TRUE)
