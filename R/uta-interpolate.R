@@ -63,7 +63,7 @@ uta_interpolate <- function (city,
     index <- which (nna > 0)
 
     loop_count <- 0
-    while (length (index) > 0) {
+    while (length (index) > 0 && loop_count < 100) {
 
         res2 <- m4ra::m4ra_dists_n_pts (graph, from = from [index], to, npts = npts)
         res$index_mat [index, ] <- res2$index_mat
@@ -73,9 +73,6 @@ uta_interpolate <- function (city,
         index <- which (nna > 0)
 
         loop_count <- loop_count + 1
-        if (loop_count > 100) {
-            break
-        }
     }
 
     # res$index_mat indexes into the full vertex table of the network, not the
