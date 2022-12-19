@@ -32,7 +32,11 @@ uta_interpolate <- function (city,
         stop ("'uta_dat' must be provided.", call. = FALSE)
     }
 
-    graph <- m4ra::m4ra_load_cached_network (city, initial_mode, contracted = TRUE)
+    graph <- m4ra::m4ra_load_cached_network (
+        city,
+        initial_mode,
+        contracted = TRUE
+    )
     v <- m4ra::m4ra_vertices (graph, city)
 
     # reduce vertices to only those within polygon of 'uta_dat'
@@ -43,7 +47,12 @@ uta_interpolate <- function (city,
     v_in <- v [index, ]
 
     index <- dodgr::match_points_to_verts (v_in, sf::st_coordinates (uta_dat))
-    uta_vars <- grep ("(\\_pop\\_adj$|^uta\\_index\\_)", names (uta_dat), value = TRUE)
+    uta_vars <- grep (
+        "(\\_pop\\_adj$|^uta\\_index\\_)",
+        names (uta_dat),
+        value = TRUE
+    )
+
     for (u in uta_vars) {
         v [[u]] <- v_in [[u]] <- NA
         v_in [[u]] [index] <- uta_dat [[u]]
@@ -65,7 +74,12 @@ uta_interpolate <- function (city,
     loop_count <- 0
     while (length (index) > 0 && loop_count < 100) {
 
-        res2 <- m4ra::m4ra_dists_n_pts (graph, from = from [index], to, npts = npts)
+        res2 <- m4ra::m4ra_dists_n_pts (
+            graph,
+            from = from [index],
+            to,
+            npts = npts
+        )
         res$index_mat [index, ] <- res2$index_mat
         res$dist_mat [index, ] <- res2$dist_mat
 
