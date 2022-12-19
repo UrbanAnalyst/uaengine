@@ -49,6 +49,8 @@ uta_interpolate <- function (city,
     for (u in uta_vars) {
         uta_mat <- array (v [[u]] [res$index], dim = dim (res$dist_mat))
         uta_vals <- rowSums (uta_mat * dist_wts, na.rm = TRUE)
+        # rowSums yields 0 if all values are NA, so:
+        uta_vals [uta_vals == 0] <- NA
 
         v [[u]] [match (from, v$id)] <- uta_vals
     }
