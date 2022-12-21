@@ -2,7 +2,8 @@
 % Please edit documentation in R/uta-interpolate.R
 \name{uta_interpolate}
 \alias{uta_interpolate}
-\title{Interpolate "UTA_index" between vertices on network}
+\title{Interpolate "UTA_index" between vertices on network, project those on to the
+original network edges, and return the full network graph.}
 \usage{
 uta_interpolate(city, initial_mode = "foot", uta_dat = NULL, soc, npts = 3L)
 }
@@ -24,9 +25,10 @@ function.}
 point.}
 }
 \value{
-A \code{data.frame} of all vertices in network, along with variables
-defined in \code{uta_dat} as interpolated on to all vertices in the network.
+The full network graph with additional variables quantifying for each
+edges the values defined in \code{uta_dat} as projected on to those edges.
 }
 \description{
-Interpolate "UTA_index" between vertices on network
+Interpolate "UTA_index" between vertices on network, project those on to the
+original network edges, and return the full network graph.
 }

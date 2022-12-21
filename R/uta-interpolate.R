@@ -1,5 +1,6 @@
 
-#' Interpolate "UTA_index" between vertices on network
+#' Interpolate "UTA_index" between vertices on network, project those on to the
+#' original network edges, and return the full network graph.
 #'
 #' @param city Name of city, used to name and define local path to
 #' pre-calculated street networks and transport times with \pkg{m4ra} package.
@@ -13,8 +14,8 @@
 #' @param npts Number of nearest neighbours to use to interpolate values at each
 #' point.
 #'
-#' @return A `data.frame` of all vertices in network, along with variables
-#' defined in `uta_dat` as interpolated on to all vertices in the network.
+#' @return The full network graph with additional variables quantifying for each
+#' edges the values defined in `uta_dat` as projected on to those edges.
 #' @export
 
 uta_interpolate <- function (city,
