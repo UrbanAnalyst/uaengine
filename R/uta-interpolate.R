@@ -118,5 +118,52 @@ uta_interpolate <- function (city,
         graph [[u]] <- (val0 + val1) / 2
     }
 
-    return (graph)
+    graph_full <- uta_uncontract_graph (graph, city, initial_mode)
+
+    return (graph_full)
+}
+
+#' Modified from `dodgr:::uncontract_graph`
+#'
+#' @noRd
+uta_uncontract_graph <- function (graph, city, initial_mode) {
+
+    hash <- attr (graph, "hash")
+    flist <- fs::dir_ls (fs::path (m4ra_cache_dir (), city), regexp = initial_mode)
+    flist <- grep (substring (hash, 1, 6), flist, value = TRUE)
+
+    edge_map <- fst::read_fst (grep ("edgemap", flist, value = TRUE))
+    edge_map <- edge_map [which (edge_map$edge_new %in% graph$edge_), ]
+
+    graph_full <- m4ra::m4ra_load_cached_network (
+        city,
+        initial_mode,
+        contracted = FALSE
+    )
+    indx_to_full <- match (edge_map$edge_old, graph_full$edge_)
+    indx_to_contr <- match (edge_map$edge_new, graph$edge_)
+
+    # edge_map only has the contracted edges; flows from the original
+    # non-contracted edges also need to be inserted
+    edges <- graph$edge_ [which (!graph$edge_ %in% edge_map$edge_new)]
+    indx_to_full <- c (indx_to_full, match (edges, graph_full$edge_))
+    indx_to_contr <- c (indx_to_contr, match (edges, graph$edge_))
+
+    index <- which (!names (graph) %in% names (graph_full))
+    if (length (index) > 0) { # always the case here
+        nms <- names (graph) [index]
+        graph_full [nms] <- NA
+        for (n in nms) {
+            graph_full [[n]] [indx_to_full] <- graph [[n]] [indx_to_contr]
+        }
+
+        # `graph` has generally been reduced from cached version, to only those
+        # vertices and hence edges within the polygons defined by `soc`. Any
+        # edges beyond these limits then have NA values for the 'nms' variables.
+        nna_index <- lapply (nms, function (n) which (!is.na (graph_full [[n]])))
+        nna_index <- sort (unique (unlist (nna_index)))
+        graph_full <- graph_full [nna_index, ]
+    }
+
+    return (graph_full)
 }
