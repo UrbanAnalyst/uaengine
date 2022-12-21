@@ -8,6 +8,8 @@
 #' \link{uta_index} and {uta_interpolate} functions.
 #' @param ndigits Number of digits for rounding UTA data in 'geojson'
 #' representation.
+#' @param filename Name and/or full path to local file where 'geojson' data are
+#' to be stored.
 #' @export
 
 uta_to_geojson <- function (uta_dat, ndigits = 2L, filename = NULL) {

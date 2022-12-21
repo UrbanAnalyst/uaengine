@@ -12,6 +12,9 @@ uta_to_geojson(uta_dat, ndigits = 2L, filename = NULL)
 
 \item{ndigits}{Number of digits for rounding UTA data in 'geojson'
 representation.}
+
+\item{filename}{Name and/or full path to local file where 'geojson' data are
+to be stored.}
 }
 \description{
 Writing large graphs to 'geojson' output can take some time - typically on
