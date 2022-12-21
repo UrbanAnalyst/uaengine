@@ -82,4 +82,17 @@ test_that ("uta calculations", {
 
     expect_s3_class (res, c ("sf", "data.frame"))
     expect_equal (nrow (res), npts)
+
+    # Then 'uta_interpolate':
+    requireNamespace ("rappdirs") # otherwise 'Loading' message is issued
+    expect_silent (
+        graph <- uta_interpolate (city = "hampi", initial_mode = "foot", uta_dat = res, soc = a)
+    )
+
+    expect_silent (
+        graph_full <- m4ra::m4ra_load_cached_network (city = "hampi", mode = "foot", contracted = FALSE)
+    )
+    expect_true (nrow (graph_full) > nrow (graph)) # interpolation removes rows outside 'a'
+    expect_true (ncol (graph_full) < ncol (graph)) # interpolation add UTA data columns
+    expect_true (any (grepl ("^uta\\_index\\_d", names (graph))))
 })
