@@ -14,5 +14,6 @@ uta_to_geojson(uta_dat, ndigits = 2L, filename = NULL)
 representation.}
 }
 \description{
-Write UTA index data to local 'geojson' file
+Writing large graphs to 'geojson' output can take some time - typically on
+the order of minutes per 100,000 graph edges.
 }

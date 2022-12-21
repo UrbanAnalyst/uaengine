@@ -1,6 +1,9 @@
 
 #' Write UTA index data to local 'geojson' file
 #'
+#' Writing large graphs to 'geojson' output can take some time - typically on
+#' the order of minutes per 100,000 graph edges.
+#'
 #' @param uta_dat Full network graph including UTA data returned from
 #' \link{uta_index} and {uta_interpolate} functions.
 #' @param ndigits Number of digits for rounding UTA data in 'geojson'
