@@ -28,7 +28,7 @@ if (!file.exists (net_path)) {
     saveRDS (net, net_path)
 }
 
-Sys.setenv ("M4RA_CACHE_DIR" = tempdir ())
+Sys.setenv ("M4RA_CACHE_DIR" = fs::path_temp ())
 Sys.setenv ("M4RA_NUM_CORES" = 1L)
 
 files <- m4ra::m4ra_weight_networks (net, city = "hampi")
