@@ -25,6 +25,8 @@ uta_interpolate <- function (city,
                              npts = 3L) {
 
     requireNamespace ("dodgr")
+    requireNamespace ("fst")
+    requireNamespace ("rappdirs") # for imported m4ra:::m4ra_cache_dir fn
 
     city <- tolower (gsub ("\\s+", "-", city))
     checkmate::assert_character (initial_mode, min.len = 1L, max.len = 1L)
