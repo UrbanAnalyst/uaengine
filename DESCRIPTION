@@ -1,6 +1,6 @@
 Package: utaengine
 Title: Routing and aggregation engine for 'Urban Transport Analyst'
-Version: 0.1.0.011
+Version: 0.1.0.012
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -26,8 +26,10 @@ Suggests:
     fs,
     fst,
     gtfsrouter,
+    knitr,
     mapdeck,
     rappdirs,
+    rmarkdown,
     testthat (>= 3.0.0)
 Remotes:
     atfutures/m4ra,
@@ -37,3 +39,4 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Config/testthat/edition: 3
+VignetteBuilder: knitr

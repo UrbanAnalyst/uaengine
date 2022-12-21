@@ -1,6 +1,7 @@
 .PHONY: all build check document test
 
 RFILE = README
+VFILE = benchmarks
 
 all: document build check
 
@@ -15,6 +16,8 @@ clean:
 doc: clean
 	Rscript -e 'devtools::document()'
 	Rscript -e 'rmarkdown::render("$(RFILE).Rmd",rmarkdown::md_document(variant="gfm"))'
+	Rscript -e "pkgdown::init_site()"
+	Rscript -e "pkgdown::build_article('$(VFILE)',quiet=FALSE)"
 
 knith:
 	Rscript -e 'rmarkdown::render("$(RFILE).Rmd",output_file="$(RFILE).html")'
