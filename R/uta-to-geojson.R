@@ -41,6 +41,18 @@ uta_to_geojson <- function (uta_dat, ndigits = 2L, filename = NULL) {
     names (xy) <- gsub ("\\_pop\\_adj", "", names (xy))
     names (xy) <- gsub ("^int\\_", "transport_", names (xy))
 
+    # Reduce down to maximal distance values only, if multiple distances used in
+    # 'uta_dat'
+    reduce_to_max <- function (xy, what = "transport") {
+        index <- grep (paste0 ("^", what, "\\_"), names (xy))
+        if (length (index) > 1) {
+            xy <- xy [, -index [-length (index)]]
+        }
+        names (xy) [grep (paste0 ("^", what, "\\_"), names (xy))] <- what
+        return (xy)
+    }
+    xy <- reduce_to_max (xy, "transport")
+    xy <- reduce_to_max (xy, "uta_index")
 
     geojsonio::geojson_write (xy, file = filename)
 }
