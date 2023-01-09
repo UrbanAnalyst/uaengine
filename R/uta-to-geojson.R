@@ -100,7 +100,7 @@ map_highway_types <- function (xy, uta_dat) {
 
     zoom_levels <- data.frame (
         hw = c ("local", "tertiary", "secondary", "primary"),
-        zoom = c (16L, 14L, 13L, 11L)
+        zoom = c (15L, 14L, 13L, 11L)
     )
     xy$zoom_level <- zoom_levels$zoom [match (hw_type, zoom_levels$hw)]
 
