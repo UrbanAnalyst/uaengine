@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "layers": {
+    "uta-mannheim": {
+      "source": "mapbox://tileset-source/smexus/uta-mannheim-src",
+      "minzoom": 11,
+      "maxzoom": 16,
+      "features": {
+	      "attributes": {
+		      "set": {
+			      "hw_type": [
+				      "match",
+				      [ "get", "type" ],
+				      "local", 16,
+				      "tertiary", 14,
+				      "secondary", 13,
+				      "primary", 11,
+				      16
+			      ]
+		      }
+	      },
+	      "filter": [ "<=", [ "get", "hw_type" ], [ "zoom" ] ]
+      }
+    }
+  }
+}
