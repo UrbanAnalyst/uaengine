@@ -54,5 +54,49 @@ uta_to_geojson <- function (uta_dat, ndigits = 2L, filename = NULL) {
     xy <- reduce_to_max (xy, "transport")
     xy <- reduce_to_max (xy, "uta_index")
 
+    xy <- map_highway_types (xy, uta_dat)
+
     geojsonio::geojson_write (xy, file = filename)
+}
+
+map_highway_types <- function (xy, uta_dat) {
+
+    hw_types <- list (
+        local = c (
+            "bridleway",
+            "cycleway",
+            "footway",
+            "living_street",
+            "path",
+            "pedestrian",
+            "steps",
+            "track"
+        ),
+        tertiary = c (
+            "residential",
+            "tertiary",
+            "tertiary_link",
+            "unclassified"
+        ),
+        secondary = c (
+            "secondary",
+            "secondary_link"
+        ),
+        primary = c (
+            "primary",
+            "primary_link",
+            "service",
+            "trunk",
+            "trunk_link"
+        )
+    )
+    hw_types <- lapply (seq_along (hw_types), function (i) {
+        data.frame (type = hw_types [[i]], hw_type = rep (names (hw_types) [i], length (hw_types [[i]])))
+    })
+    hw_types <- do.call (rbind, hw_types)
+
+    xy <- xy [which (uta_dat$highway %in% hw_types$type), ]
+    xy$hw_type <- hw_types$hw_type [match (uta_dat$highway, hw_types$type)]
+
+    return (xy)
 }
