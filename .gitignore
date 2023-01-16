@@ -4,6 +4,7 @@
 inst/doc
 inst/WORDLIST
 aaa\.Rmd*
+data-raw/*.md
 # History files
 .Rhistory
 .Rapp.history
