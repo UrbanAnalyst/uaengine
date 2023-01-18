@@ -18,9 +18,9 @@ files for each key after conversion to \pkg{silicate} format.}
 }
 \value{
 A single \pkg{silicate} 'SC' object containing combined data from all
-individual '.osm' files.
+individual '.osm' files. This file is also saved as a '.Rds' object in the
+'path' directory.
 }
 \description{
-Convert a series of '.osm' files to \pkg{silicate} format, and combine all
-into a single object.
+This function saves a new '.Rds' file in the 'path' directory.
 }

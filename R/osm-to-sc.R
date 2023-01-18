@@ -2,14 +2,17 @@
 #' Convert a series of '.osm' files to \pkg{silicate} format, and combine all
 #' into a single object.
 #'
+#' This function saves a new '.Rds' file in the 'path' directory.
+#'
 #' @param path Path to the directory containing various '.osm' files produced by
 #' \link{uta_extract_osm}.
 #' @param city Name of city (used to name resultant files).
 #' @param remove_osm_files If `TRUE` (default), remove the individual '.osm'
 #' files for each key after conversion to \pkg{silicate} format.
 #' @return A single \pkg{silicate} 'SC' object containing combined data from all
-#' individual '.osm' files.
-#' 
+#' individual '.osm' files. This file is also saved as a '.Rds' object in the
+#' 'path' directory.
+#'
 #' @export
 
 uta_osm_to_sc <- function (path, city, remove_osm_files = TRUE) {
@@ -19,16 +22,38 @@ uta_osm_to_sc <- function (path, city, remove_osm_files = TRUE) {
     checkmate::assert_character (city, min.len = 1L, max.len = 1L)
     city <- tolower (city)
 
+    f_sc <- fs::path (path, paste0 (city, "-sc.Rds"))
+    if (fs::file_exists (f_sc)) {
+        cli::cli_alert_info (cli::col_blue (
+            "File '",
+            f_sc,
+            "' already exists and will not be overwritten."
+        ))
+        return ()
+    }
+
     q <- osmdata::opq (get_pbf_bbox (path, city))
 
     flist <- fs::dir_ls (path, regexp = paste0 (city, ".*\\.osm$"))
+    if (length (flist) == 0L) {
+        cli::cli_alert_warning (cli::col_red (
+            "No '.osm' files found; did you run 'uta_extract_osm'?"
+        ))
+        return ()
+    }
 
     dat <- osmdata::osmdata_sc (q, doc = flist [1])
+    cli::cli_text (
+        "[1 / ", length (flist), "]: ",
+        gsub (paste0 ("^", city, "\\-"), "", flist [1])
+    )
 
-    count <- 1L
+    count <- 2L
     for (f in flist [-1]) {
-        cli::cli_text ("[", count, " / ", length (flist), "]: ",
-                 gsub (paste0 ("^", city, "\\-"), "", f))
+        cli::cli_text (
+            "[", count, " / ", length (flist), "]: ",
+            gsub (paste0 ("^", city, "\\-"), "", f)
+        )
         count <- count + 1L
         i <- osmdata::osmdata_sc (q, doc = f)
 
@@ -53,6 +78,13 @@ uta_osm_to_sc <- function (path, city, remove_osm_files = TRUE) {
     if (remove_osm_files) {
         fs::file_delete (flist)
     }
+
+    saveRDS (dat, f_sc)
+    cli::cli_alert_success (cli::col_green (
+        "All OSM data collated and written to '",
+        f_sc,
+        "'"
+    ))
 
     return (dat)
 }
