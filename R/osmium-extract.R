@@ -39,6 +39,8 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
     } else {
         path_to_pbf <- convert_bz2_to_pbf (city, path_to_bz2)
     }
+
+    extract_key_val_pairs (path_to_pbf)
 }
 
 #' Trim '.bz2' to 'bbox' and return converted 'pbf' output.
@@ -47,6 +49,7 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
 #' @param path The 'path_to_bz2' param from 'uta_extract_osm'
 #' @param bbox Directly from 'uta_extract_osm'
 #' @param bbox_expand Directly from 'uta_extract_osm'
+#' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
 trim_bz2_to_bbox <- function (city, path, bbox, bbox_expand) {
 
@@ -68,6 +71,7 @@ trim_bz2_to_bbox <- function (city, path, bbox, bbox_expand) {
 #'
 #' @param bbox Directly from 'uta_extract_osm'
 #' @param bbox_expand Directly from 'uta_extract_osm'
+#' @return bbox as 2-by-2 matrix.
 #' @noRd
 get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
 
@@ -106,6 +110,7 @@ get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
 #'
 #' @param city Directly from 'uta_extract_osm'
 #' @param path The 'path_to_bz2' param from 'uta_extract_osm'
+#' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
 convert_bz2_to_pbf <- function (city, path) {
 
@@ -137,4 +142,41 @@ get_osmium_convert_args <- function (city, path) {
     f0 <- fs::path_file (path)
 
     list (bz_dir = bz_dir, f = f, f0 = f0, f_exists = f_exists)
+}
+
+#' Extract smaller '.pbf' files for a series of OSM keys.
+#'
+#' @param path Path to single '.pbf' file returned from either
+#' 'convert_bz2_to_pbf' or 'trim_bz2_to_bbox'.
+#' @return Nothing.
+#' @noRd
+extract_key_val_pairs <- function (path) {
+
+    path_dir <- fs::path_dir (path)
+    f <- fs::path_file (path)
+
+    cli::cli_h3 (cli::col_green ("Extracting OSM tags:"))
+
+    tags <- c (
+        "highway", "restriction", "access", "bicycle", "foot",
+        "motorcar", "motor_vehicle", "vehicle", "toll"
+    )
+
+    for (tg in tags) {
+
+        ft <- paste0 (gsub ("\\.osm\\.pbf$", "", f), "-", tg, ".osm.pbf")
+        ft_full <- fs::path (path_dir, ft)
+        if (fs::file_exists (ft_full)) {
+            cli::cli_alert_info (cli::col_blue (
+                "File '",
+                ft_full,
+                "' already exists."
+            ))
+            next
+        }
+
+        cli::cli_h1 (tg)
+        cmd <- paste ("osmium tags-filter", f, paste0 ("w/", tg), "-o", ft)
+        withr::with_dir (path_dir, system (cmd))
+    }
 }
