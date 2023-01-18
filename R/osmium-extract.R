@@ -22,6 +22,7 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
     requireNamespace ("withr")
 
     checkmate::assert_character (city, min.len = 1L, max.len = 1L)
+    city <- tolower (city)
     checkmate::assert_file_exists (path_to_bz2)
     if (fs::path_ext (path_to_bz2) != "bz2") {
         stop ("path_to_bz2 must be to a '.bz2' file")
