@@ -2,7 +2,7 @@
 #' Extract network data with osmium, convert to \pkg{sc} format, and collate all
 #' results into a single \pkg{osmdata} object.
 #'
-#' @param City Name of city (used to name resultant files).
+#' @param city Name of city (used to name resultant files).
 #' @param path_to_bz2 Path to a local `.bz2` file with OpenStreetMap data for
 #' nominated city.
 #' @param bbox Optional bounding box within which data are to be extracted. If

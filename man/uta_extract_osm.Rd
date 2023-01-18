@@ -8,6 +8,8 @@ results into a single \pkg{osmdata} object.}
 uta_extract_osm(city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
 }
 \arguments{
+\item{city}{Name of city (used to name resultant files).}
+
 \item{path_to_bz2}{Path to a local \code{.bz2} file with OpenStreetMap data for
 nominated city.}
 
@@ -21,8 +23,6 @@ from which a bounding box can be extracted.}
 
 \item{bbox_expand}{A proportional amount by which to extend the limits of the
 bounding box defined by the \code{bbox} argument, defaulting to 5\%.}
-
-\item{City}{Name of city (used to name resultant files).}
 }
 \description{
 Extract network data with osmium, convert to \pkg{sc} format, and collate all
