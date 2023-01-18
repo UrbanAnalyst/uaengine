@@ -35,12 +35,40 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
     )
 
     if (!is.null (bbox)) {
-        path_to_pbf <- trim_bz2_to_bbox (city, path_to_bz2, bbox)
+        path_to_pbf <- trim_bz2_to_bbox (city, path_to_bz2, bbox, bbox_expand)
     } else {
         path_to_pbf <- convert_bz2_to_pbf (city, path_to_bz2)
     }
 }
 
+#' Trim '.bz2' to 'bbox' and return converted 'pbf' output.
+#'
+#' @param city Directly from 'uta_extract_osm'
+#' @param path The 'path_to_bz2' param from 'uta_extract_osm'
+#' @param bbox Directly from 'uta_extract_osm'
+#' @param bbox_expand Directly from 'uta_extract_osm'
+#' @noRd
+trim_bz2_to_bbox <- function (city, path, bbox, bbox_expand) {
+
+    bbox <- get_uta_bbox (bbox, bbox_expand = bbox_expand)
+    pars <- get_osmium_convert_args (city, path)
+    if (pars$f_exists) {
+        return (fs::path (pars$bz_dir, pars$f))
+    }
+
+    cli::cli_h3 (cli::col_green ("Reducing '.bz2' to specified 'bbox':"))
+
+    cmd <- paste ("osmium extract -b", paste0 (bbox, collapse = ","), pars$f0, "-o", pars$f)
+    withr::with_dir (pars$bz_dir, system (cmd))
+
+    return (fs::path (pars$bz_dir, pars$f))
+}
+
+#' Convert various form of 'bbox' parameter to an actual 2-by-2 matrix.
+#'
+#' @param bbox Directly from 'uta_extract_osm'
+#' @param bbox_expand Directly from 'uta_extract_osm'
+#' @noRd
 get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
 
     if (inherits (bbox, "sf")) {
@@ -71,22 +99,14 @@ get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
     return (res)
 }
 
-trim_bz2_to_bbox <- function (city, path, bbox) {
-
-    bbox <- get_uta_bbox (bbox)
-    pars <- get_osmium_convert_args (city, path)
-    if (pars$f_exists) {
-        return (fs::path (pars$bz_dir, pars$f))
-    }
-
-    cli::cli_h3 (cli::col_green ("Reducing '.bz2' to specified 'bbox':"))
-
-    cmd <- paste ("osmium extract -b", paste0 (bbox, collapse = ","), pars$f0, "-o", pars$f)
-    withr::with_dir (pars$bz_dir, system (cmd))
-
-    return (fs::path (pars$bz_dir, pars$f))
-}
-
+#' Convert '.bz2' directly to 'pbf' without trimming.
+#'
+#' This function is called when no `bbox` parameter is passed to main
+#' 'uta_extract_osm()` function.
+#'
+#' @param city Directly from 'uta_extract_osm'
+#' @param path The 'path_to_bz2' param from 'uta_extract_osm'
+#' @noRd
 convert_bz2_to_pbf <- function (city, path) {
 
     pars <- get_osmium_convert_args (city, path)
@@ -98,6 +118,9 @@ convert_bz2_to_pbf <- function (city, path) {
     return (fs::path (pars$bz_dir, pars$f))
 }
 
+#' Helper function to return arguments used for 'osmium' calls, mostly by
+#' removing paths.
+#' @noRd
 get_osmium_convert_args <- function (city, path) {
 
     bz_dir <- fs::path_dir (path)
