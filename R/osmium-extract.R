@@ -18,9 +18,12 @@
 
 uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05) {
 
+    requireNamespace ("fs")
+    requireNamespace ("withr")
+
     checkmate::assert_character (city, min.len = 1L, max.len = 1L)
     checkmate::assert_file_exists (path_to_bz2)
-    if (fs::path_ext (path) != "bz2") {
+    if (fs::path_ext (path_to_bz2) != "bz2") {
         stop ("path_to_bz2 must be to a '.bz2' file")
     }
     checkmate::assert_numeric (
@@ -31,7 +34,9 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
         max.len = 1L
     )
 
-    bbox <- get_uta_bbox (bbox)
+    if (!is.null (bbox)) {
+        trim_bz2_to_bbox (city, path_to_bz2, bbox)
+    }
 }
 
 get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
@@ -62,4 +67,16 @@ get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
     }
 
     return (res)
+}
+
+trim_bz2_to_bbox <- function (city, path, bbox) {
+
+    cli::cli_h3 (cli::col_green ("Reducing '.bz2' to specified 'bbox':"))
+
+    bbox <- get_uta_bbox (bbox)
+    bz_dir <- fs::path_dir (path)
+    f <- paste0 (city, ".osm.pbf")
+    f0 <- fs::path_file (path)
+    cmd <- paste ("osmium extract -b", paste0 (bbox, collapse = ","), f0, "-o", f)
+    withr::with_dir (bz_dir, system (cmd))
 }
