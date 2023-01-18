@@ -90,8 +90,10 @@ trim_bz2_to_bbox <- function (city, path, bbox) {
 convert_bz2_to_pbf <- function (city, path) {
 
     pars <- get_osmium_convert_args (city, path)
-    cmd <- paste ("osmium cat ", pars$f0, "-o", pars$f)
-    withr::with_dir (pars$bz_dir, system (cmd))
+    if (!pars$f_exists) {
+        cmd <- paste ("osmium cat ", pars$f0, "-o", pars$f)
+        withr::with_dir (pars$bz_dir, system (cmd))
+    }
 
     return (fs::path (pars$bz_dir, pars$f))
 }
