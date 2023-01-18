@@ -18,6 +18,7 @@
 uta_osm_to_sc <- function (path, city, remove_osm_files = TRUE) {
 
     requireNamespace ("fs")
+    requireNamespace ("fs")
 
     checkmate::assert_character (city, min.len = 1L, max.len = 1L)
     city <- tolower (city)
