@@ -42,7 +42,7 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
     }
 
     extract_osm_keys (path_to_pbf)
-    uta_m4ra_parking_extraction (fs::path_dir (path_to_pbf))
+    uta_m4ra_parking_extraction (path_to_pbf)
 }
 
 #' Trim '.bz2' to 'bbox' and return converted 'pbf' output.

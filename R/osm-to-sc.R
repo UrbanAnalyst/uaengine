@@ -36,6 +36,7 @@ uta_osm_to_sc <- function (path, city, remove_osm_files = TRUE) {
     q <- osmdata::opq (get_pbf_bbox (path, city))
 
     flist <- fs::dir_ls (path, regexp = paste0 (city, ".*\\.osm$"))
+    flist <- flist [which (!grepl ("\\-parking\\.", flist))]
     if (length (flist) == 0L) {
         cli::cli_alert_warning (cli::col_red (
             "No '.osm' files found; did you run 'uta_extract_osm'?"
