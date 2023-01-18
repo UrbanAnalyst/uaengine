@@ -35,9 +35,9 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
     )
 
     if (!is.null (bbox)) {
-        trim_bz2_to_bbox (city, path_to_bz2, bbox)
+        path_to_pbf <- trim_bz2_to_bbox (city, path_to_bz2, bbox)
     } else {
-        convert_bz2_to_pbf (city, path_to_bz2)
+        path_to_pbf <- convert_bz2_to_pbf (city, path_to_bz2)
     }
 }
 
@@ -75,14 +75,16 @@ trim_bz2_to_bbox <- function (city, path, bbox) {
 
     bbox <- get_uta_bbox (bbox)
     pars <- get_osmium_convert_args (city, path)
-    if (!nzchar (pars$bz_dir)) {
-        return ()
+    if (pars$f_exists) {
+        return (fs::path (pars$bz_dir, pars$f))
     }
 
     cli::cli_h3 (cli::col_green ("Reducing '.bz2' to specified 'bbox':"))
 
     cmd <- paste ("osmium extract -b", paste0 (bbox, collapse = ","), pars$f0, "-o", pars$f)
     withr::with_dir (pars$bz_dir, system (cmd))
+
+    return (fs::path (pars$bz_dir, pars$f))
 }
 
 convert_bz2_to_pbf <- function (city, path) {
@@ -90,21 +92,24 @@ convert_bz2_to_pbf <- function (city, path) {
     pars <- get_osmium_convert_args (city, path)
     cmd <- paste ("osmium cat ", pars$f0, "-o", pars$f)
     withr::with_dir (pars$bz_dir, system (cmd))
+
+    return (fs::path (pars$bz_dir, pars$f))
 }
 
 get_osmium_convert_args <- function (city, path) {
 
     bz_dir <- fs::path_dir (path)
     f <- paste0 (city, ".osm.pbf")
+    f_exists <- FALSE
     if (fs::file_exists (fs::path (bz_dir, f))) {
         cli::cli_alert_info (cli::col_blue (
             "File '",
             fs::path (bz_dir, f),
             " already exists and will not be over-written."
         ))
-        bz_dir <- f <- ""
+        f_exists <- TRUE
     }
     f0 <- fs::path_file (path)
 
-    list (bz_dir = bz_dir, f = f, f0 = f0)
+    list (bz_dir = bz_dir, f = f, f0 = f0, f_exists = f_exists)
 }
