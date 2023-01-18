@@ -63,7 +63,7 @@ uta_index <- function (city,
         from = from,
         initial_mode = initial_mode,
         final_mode = final_mode,
-        quiet = TRUE
+        quiet = quiet
     )
 
     if (!quiet) {
