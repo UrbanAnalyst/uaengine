@@ -40,7 +40,7 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
         path_to_pbf <- convert_bz2_to_pbf (city, path_to_bz2)
     }
 
-    extract_key_val_pairs (path_to_pbf)
+    extract_osm_keys (path_to_pbf)
 }
 
 #' Trim '.bz2' to 'bbox' and return converted 'pbf' output.
@@ -144,13 +144,13 @@ get_osmium_convert_args <- function (city, path) {
     list (bz_dir = bz_dir, f = f, f0 = f0, f_exists = f_exists)
 }
 
-#' Extract smaller '.pbf' files for a series of OSM keys.
+#' Extract smaller files for a series of OSM keys and convert to '.osm' format
 #'
 #' @param path Path to single '.pbf' file returned from either
 #' 'convert_bz2_to_pbf' or 'trim_bz2_to_bbox'.
 #' @return Nothing.
 #' @noRd
-extract_key_val_pairs <- function (path) {
+extract_osm_keys <- function (path) {
 
     path_dir <- fs::path_dir (path)
     f <- fs::path_file (path)
@@ -164,7 +164,7 @@ extract_key_val_pairs <- function (path) {
 
     for (tg in tags) {
 
-        ft <- paste0 (gsub ("\\.osm\\.pbf$", "", f), "-", tg, ".osm.pbf")
+        ft <- paste0 (gsub ("\\.osm\\.pbf$", "", f), "-", tg, ".osm")
         ft_full <- fs::path (path_dir, ft)
         if (fs::file_exists (ft_full)) {
             cli::cli_alert_info (cli::col_blue (
