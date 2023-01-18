@@ -42,6 +42,7 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
     }
 
     extract_osm_keys (path_to_pbf)
+    uta_m4ra_parking_extraction (fs::path_dir (path_to_pbf))
 }
 
 #' Trim '.bz2' to 'bbox' and return converted 'pbf' output.
@@ -180,4 +181,53 @@ extract_osm_keys <- function (path) {
         cmd <- paste ("osmium tags-filter", f, paste0 ("w/", tg), "-o", ft)
         withr::with_dir (path_dir, system (cmd))
     }
+}
+
+#' Modified version of \pkg{m4ra} functions to extract OSM data used for parking
+#' analyses.
+#'
+#' This version uses 'osmium' instead of \pkg{osmdata} used there.
+#'
+#' @param path The `path_to_pbf` parameter generated in \link{uta_extract_osm}.
+#' @return Path of a '.osm' file containing information needed for \pkg{m4ra}
+#' parking analyses.
+#' @noRd
+uta_m4ra_parking_extraction <- function (path) {
+
+    tags <- c (
+        "nwr/parking",
+        "nwr/amentiy=parking",
+        "nwr/building=garage",
+        "nwr/building=garages",
+        "nwr/parking:lane:left",
+        "nwr/parking:lane:right",
+        "nwr/parking:lane:both",
+        "nwr/amentiy=parking",
+        "nwr/building=garage",
+        "nwr/building=garages",
+        "nwr/parking:lane:left",
+        "nwr/parking:lane:right",
+        "nwr/parking:lane:both"
+    )
+
+    path_dir <- fs::path_dir (path)
+    f <- fs::path_file (path)
+
+    cli::cli_h3 (cli::col_green ("Extracting OSM tags for 'm4ra' routines:"))
+
+    ft <- paste0 (gsub ("\\.osm\\.pbf$", "", f), "-parking.osm")
+    ft_full <- fs::path (path_dir, ft)
+    if (fs::file_exists (ft_full)) {
+        cli::cli_alert_info (cli::col_blue (
+            "File '",
+            ft_full,
+            "' already exists."
+        ))
+    } else {
+        cli::cli_h1 ("parking:")
+        cmd <- paste ("osmium tags-filter", f, paste0 (tags, collapse = " "), "-o", ft)
+        withr::with_dir (path_dir, system (cmd))
+    }
+
+    return (ft_full)
 }
