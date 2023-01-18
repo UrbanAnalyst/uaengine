@@ -76,6 +76,14 @@ trim_bz2_to_bbox <- function (city, path, bbox) {
     bbox <- get_uta_bbox (bbox)
     bz_dir <- fs::path_dir (path)
     f <- paste0 (city, ".osm.pbf")
+    if (fs::file_exists (fs::path (bz_dir, f))) {
+        cli::cli_alert_info (cli::col_blue (
+            "File '",
+            fs::path (bz_dir, f),
+            " already exists and will not be over-written."
+        ))
+        return ()
+    }
     f0 <- fs::path_file (path)
     cmd <- paste ("osmium extract -b", paste0 (bbox, collapse = ","), f0, "-o", f)
     withr::with_dir (bz_dir, system (cmd))
