@@ -14,9 +14,13 @@
 #' from which a bounding box can be extracted.
 #' @param bbox_expand A proportional amount by which to extend the limits of the
 #' bounding box defined by the `bbox` argument, defaulting to 5%.
+#' @param osm_id In lieu of a bounding box, the ID of an Open Street Map object
+#' (generally a relation) can be used to provide the boundary to trim the `.bz2`
+#' file.
 #' @export
 
-uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05) {
+uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05,
+                             osm_id = NULL) {
 
     requireNamespace ("fs")
     requireNamespace ("withr")
@@ -35,7 +39,9 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
         max.len = 1L
     )
 
-    if (!is.null (bbox)) {
+    if (!is.null (osm_id)) {
+        path_to_pbf <- trim_bz2_to_osm_id (city, path_to_bz2, osm_id)
+    } else if (!is.null (bbox)) {
         path_to_pbf <- trim_bz2_to_bbox (city, path_to_bz2, bbox, bbox_expand)
     } else {
         path_to_pbf <- convert_bz2_to_pbf (city, path_to_bz2)
@@ -44,6 +50,33 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
     extract_osm_keys (path_to_pbf)
     uta_m4ra_parking_extraction (path_to_pbf)
 }
+
+#' Trim '.bz2' to an 'osm_id' and return converted 'pbf' output.
+#'
+#' @param city Directly from 'uta_extract_osm'
+#' @param path The 'path_to_bz2' param from 'uta_extract_osm'
+#' @param osm_id Directly from 'uta_extract_osm'
+#' @return Full path and file name of newly created '.pbf' file.
+#' @noRd
+trim_bz2_to_osm_id <- function (city, path, osm_id) {
+
+    pars <- get_osmium_convert_args (city, path)
+    if (pars$f_exists) {
+        return (fs::path (pars$bz_dir, pars$f))
+    }
+
+    cli::cli_h3 (cli::col_green ("Reducing '.bz2' to specified 'bbox':"))
+
+    # Get .osm file for specified 'osm_id':
+    ftmp <- fs::path (fs::path_temp (), "boundary.osm")
+    cmd <- paste ("osmium getid -r -t ", path, paste0 ("r", osm_id), "-o", ftmp)
+    system (cmd)
+    cmd <- paste ("osmium extract -p", ftmp, pars$f0, "-o", pars$f)
+    withr::with_dir (pars$bz_dir, system (cmd))
+
+    return (fs::path (pars$bz_dir, pars$f))
+}
+
 
 #' Trim '.bz2' to 'bbox' and return converted 'pbf' output.
 #'

@@ -5,7 +5,13 @@
 \title{Extract network data with osmium, convert to \pkg{sc} format, and collate all
 results into a single \pkg{osmdata} object.}
 \usage{
-uta_extract_osm(city, path_to_bz2, bbox = NULL, bbox_expand = 0.05)
+uta_extract_osm(
+  city,
+  path_to_bz2,
+  bbox = NULL,
+  bbox_expand = 0.05,
+  osm_id = NULL
+)
 }
 \arguments{
 \item{city}{Name of city (used to name resultant files).}
@@ -23,6 +29,10 @@ from which a bounding box can be extracted.}
 
 \item{bbox_expand}{A proportional amount by which to extend the limits of the
 bounding box defined by the \code{bbox} argument, defaulting to 5\%.}
+
+\item{osm_id}{In lieu of a bounding box, the ID of an Open Street Map object
+(generally a relation) can be used to provide the boundary to trim the \code{.bz2}
+file.}
 }
 \description{
 Extract network data with osmium, convert to \pkg{sc} format, and collate all
