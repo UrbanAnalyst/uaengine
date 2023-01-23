@@ -1,4 +1,3 @@
-
 #' Calculate "UTA_index" for a specified set of origin locations.
 #'
 #' @param city Name of city, used to name and define local path to
@@ -150,7 +149,7 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
 
     index <- unlist (sf::st_within (s, soc))
     s$soc_var <- soc [[soc_var]] [index]
-    s$soc_var <- s$soc_var / mean (s$soc_var)
+    s$soc_var <- s$soc_var / mean (s$soc_var, na.rm = TRUE)
 
     return (s)
 }
