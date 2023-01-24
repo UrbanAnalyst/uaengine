@@ -71,6 +71,7 @@ uta_index <- function (city,
     }
 
     s <- travel_time_statistics (dat, dlims = dlims, quiet)
+    rm (dat)
     if (!is.null (popdens_geotif)) {
         s <- add_popdens_to_stats (s, popdens_geotif)
     }
