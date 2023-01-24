@@ -129,7 +129,10 @@ add_popdens_to_stats <- function (s, geotif) {
     for (d in dlims) {
         mod <- stats::lm (stats::as.formula (paste0 (d, " ~ layer")), data = s)
         par_name <- paste0 ("int", gsub ("^integral", "", d), "_pop_adj")
-        s [[par_name]] <- mean (s [[d]]) + mod$residuals
+        # 'mod' will exclude any NA values of 'par_name', so need to index back
+        # into 's':
+        index <- match (mod$model [[d]], s [[d]])
+        s [[par_name]] [index] <- mean (s [[d]], na.rm = TRUE) + mod$residuals
     }
 
     return (s)
