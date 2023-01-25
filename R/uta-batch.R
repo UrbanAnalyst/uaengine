@@ -87,6 +87,11 @@ uta_index_batch <- function (city,
     for (i in seq_along (vsp)) {
 
         f <- get_batch_filename (results_path, city, index [[i]])
+
+        from <- vsp [[i]]$id
+        pt0 <- proc.time ()
+
+        batch_progress_message (i, vsp, pt0, t_start)
     }
 }
 
@@ -123,6 +128,15 @@ get_vertex_indices <- function (v, batch_size, coverage, city, results_path) {
     fnames <- paste0 (city, "-", sprintf ("%06i", ivals), ".Rds")
     fnames <- fs::path_abs (fs::path (results_path, fnames))
     index2 <- which (!fs::file_exists (fnames))
+
+    cli::cli_alert_info (cli::col_cyan (paste0 (
+        "Skipping [",
+        length (fnames) - length (index2),
+        "] previously calculated files, with [",
+        length (index2),
+        "] still to go."
+    )))
+
     vsp <- vsp [index2]
     index <- index [index2]
 
@@ -148,4 +162,24 @@ get_batch_filename <- function (results_path, city, index) {
     f <- fs::path_abs (fs::path (results_path, f))
 
     return (f)
+}
+
+batch_progress_message <- function (i, vsp, pt0, t_start) {
+
+    cli::cli_h1 (cli::col_yellow (paste0 (
+        i, " / ", length (vsp), " = ",
+        round (100 * i / length (vsp), digits = 2), "%"
+    )))
+
+    pt1 <- proc.time () - pt0
+    dur1 <- hms::hms (as.integer ((proc.time () - pt0) [3]))
+    dur_tot <- hms::hms (as.integer ((proc.time () - t_start) [3]))
+    tremaining <- (length (vsp) - i) * dur_tot / i
+    tremaining <- hms::hms (as.integer (tremaining))
+
+    cli::cli_alert_info (cli::col_green (paste0 (
+        "Calculation time: ", dur1,
+        "; total = ", dur_tot,
+        "; remaining = ", tremaining
+    )))
 }
