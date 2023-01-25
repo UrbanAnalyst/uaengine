@@ -1,4 +1,3 @@
-
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
     identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
@@ -45,11 +44,15 @@ test_that ("uta errors", {
 
     expect_error (
         uta_index (city = NULL, gtfs = gtfs_path, from = NULL),
+        "Assertion on 'city' failed: Must be of type 'character'"
+    )
+    expect_error (
+        uta_index (city = "hampi", gtfs = gtfs_path, from = NULL),
         "Assertion on 'from' failed: Must be of type 'character'"
     )
     from <- paste0 (1:10)
     expect_error (
-        uta_index (city = NULL, gtfs = gtfs_path, from = from),
+        uta_index (city = "hampi", gtfs = gtfs_path, from = from),
         "'soc' must be provided"
     )
 })
