@@ -119,7 +119,7 @@ uta_plot_legend <- function (soc, col_var, ncols = 100L, nvals = 5L) {
     brks <- pretty (c (lwr [1], upr))
 
     # Need to be rounded to avoid mapdeck printing trailing zeros:
-    brk_diff <- median (diff (brks))
+    brk_diff <- stats::median (diff (brks))
     ndigits <- 0L
     tol <- 1e-3
     while (abs (brk_diff - round (brk_diff, digits = ndigits)) > tol) {
@@ -127,7 +127,8 @@ uta_plot_legend <- function (soc, col_var, ncols = 100L, nvals = 5L) {
     }
     brks <- round (brks, digits = ndigits)
 
-    colvals <- colourvalues::colour_values (seq_len (length (brks)), palette = "inferno")
+    x <- seq_len (length (brks))
+    colvals <- rev (colourvalues::colour_values (x, palette = "inferno"))
     l1 <- mapdeck::legend_element (
         variables = brks,
         colours = colvals,
