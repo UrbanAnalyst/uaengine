@@ -49,7 +49,11 @@ then derived for each value of \code{dlims}.}
 
 \item{batch_size}{Number of vertices to calculate in each batch before saving
 to local file. Increases in this parameter can greatly increase the sizes of
-intermediate results, leading to memory problems.}
+intermediate results, leading to memory problems. Note that batch runs will
+only be able to stopped and restarted if this parameter is kept constant.
+Changes to this parameter will cause re-started runs to revert to the
+beginning, and will generate results which overlap with any previous results
+still retained in \code{results_path}.}
 
 \item{coverage}{Proportion of all points for which values are to be
 calculated. As described above, coverage can generally safely be set to
