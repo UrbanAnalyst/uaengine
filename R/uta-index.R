@@ -46,10 +46,18 @@ uta_index <- function (city,
         checkmate::assert_file_exists (popdens_geotif)
     }
     checkmate::assert_character (from, min.len = 1L)
+
+    checkmate::assert_character (initial_mode, min.len = 1L, max.len = 1L)
+    checkmate::assert_character (final_mode, min.len = 1L, max.len = 1L)
+    dodgr_modes <- unique (dodgr::weighting_profiles$weighting_profiles$name)
+    initial_mode <- match.arg (initial_mode, dodgr_modes)
+    final_mode <- match.arg (final_mode, dodgr_modes)
+
     if (is.null (soc)) {
         stop ("'soc' must be provided", call. = FALSE)
     }
     checkmate::assert_character (soc_var, min.len = 1L, max.len = 1L)
+    checkmate::assert_integer (dlims, lower = 0L, min.len = 1L)
 
     if (!quiet) {
         cli::cli_alert_info (cli::col_blue ("Caclulating multi-modal times"))

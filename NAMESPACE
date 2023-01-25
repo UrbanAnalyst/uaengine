@@ -3,6 +3,7 @@
 export(pop2point)
 export(uta_extract_osm)
 export(uta_index)
+export(uta_index_batch)
 export(uta_interpolate)
 export(uta_osm_to_sc)
 export(uta_plot)
