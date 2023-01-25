@@ -106,6 +106,8 @@ uta_index_batch <- function (city,
 
         batch_progress_message (i, vsp, pt0, t_start)
     }
+
+    return (batch_collate_results (results_path, city))
 }
 
 #' Return all vertices of network weighted for nominated `mode`, and ordered in
@@ -195,4 +197,15 @@ batch_progress_message <- function (i, vsp, pt0, t_start) {
         "; total = ", dur_tot,
         "; remaining = ", tremaining
     )))
+}
+
+batch_collate_results <- function (results_path, city) {
+
+    results_path <- fs::path_abs (results_path)
+
+    flist <- fs::dir_ls (results_path, regexp = city, fixed = TRUE)
+
+    res <- do.call (rbind, unname (lapply (flist, readRDS)))
+
+    return (res)
 }
