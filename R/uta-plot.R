@@ -57,13 +57,15 @@ uta_plot_network <- function (graph, var = "uta_index_d10") {
 #' based on data for this value.
 #' @param what The value which is to be plotted.
 #' @param zoom Initial zoom level to use in resultant map.
+#' @param alpha Transparency of polygons (0 = completely; 1 = not transparent).
 #' @return Nothing; function called for its side-effect of opening an
 #' interactive visualisation in local default browser.
 #' @export
 
 uta_plot_polygons <- function (city, results_path, soc, d = 10,
                                what = c ("transport", "uta", "social"),
-                               zoom = 10) {
+                               zoom = 10,
+                               alpha = 0.5) {
 
     requireNamespace ("mapdeck")
     requireNamespace ("colourvalues")
@@ -86,28 +88,39 @@ uta_plot_polygons <- function (city, results_path, soc, d = 10,
     }
     soc <- soc [which (!is.na (soc$social_index)), ]
 
+    # UTA index is too heavily influenced by the greater scale (= SD) of the
+    # social index. These lines re-scale so that transport has equal influence
+    # on result as the social index.
+    if (what == "uta") {
+        transport_sd <- sd (soc$transport, na.rm = TRUE)
+        transport_mn <- mean (soc$transport, na.rm = TRUE)
+        social_index <- transport_mn + (soc$social_index - mean (soc$social_index, na.rm = TRUE)) * transport_sd
+        soc$uta_index <- soc$transport * social_index
+    }
+
     col_var <- ifelse (what == "transport", what, paste0 (what, "_index"))
 
     xy0 <- sf::st_coordinates (sf::st_centroid (sf::st_union (soc)))
-    tmp <- uta_plot_legend (soc, col_var)
+    tmp <- uta_plot_legend (soc, col_var, alpha = alpha)
 
     m <- mapdeck::mapdeck (location = xy0, zoom = zoom)
     m <- mapdeck::add_polygon (
         m,
         tmp$soc,
         fill_colour = "colour",
-        fill_opacity = 0.7,
+        fill_opacity = 0.4,
         legend = tmp$legend,
         update_view = FALSE
     )
     print (m)
 }
 
-uta_plot_legend <- function (soc, col_var, ncols = 100L, nvals = 5L) {
+uta_plot_legend <- function (soc, col_var, alpha = 0.5, ncols = 100L, nvals = 5L) {
 
     soc <- soc [which (!is.na (soc [[col_var]])), ]
 
-    pal <- colourvalues::colour_values (seq_len (ncols), palette = "inferno")
+    alpha <- ceiling (255 * alpha)
+    pal <- colourvalues::colour_values (seq_len (ncols), palette = "inferno", alpha = alpha)
     pal <- rev (pal)
     ix <- cut (soc [[col_var]], breaks = ncols)
     index <- match (ix, levels (ix))
@@ -128,7 +141,7 @@ uta_plot_legend <- function (soc, col_var, ncols = 100L, nvals = 5L) {
     brks <- round (brks, digits = ndigits)
 
     x <- seq_len (length (brks))
-    colvals <- rev (colourvalues::colour_values (x, palette = "inferno"))
+    colvals <- rev (colourvalues::colour_values (x, palette = "inferno", alpha = alpha))
     l1 <- mapdeck::legend_element (
         variables = brks,
         colours = colvals,

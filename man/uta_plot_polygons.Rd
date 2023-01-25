@@ -11,7 +11,8 @@ uta_plot_polygons(
   soc,
   d = 10,
   what = c("transport", "uta", "social"),
-  zoom = 10
+  zoom = 10,
+  alpha = 0.5
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ based on data for this value.}
 \item{what}{The value which is to be plotted.}
 
 \item{zoom}{Initial zoom level to use in resultant map.}
+
+\item{alpha}{Transparency of polygons (0 = completely; 1 = not transparent).}
 }
 \value{
 Nothing; function called for its side-effect of opening an
