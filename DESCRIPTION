@@ -1,6 +1,6 @@
 Package: utaengine
 Title: Routing and aggregation engine for 'Urban Transport Analyst'
-Version: 0.1.0.050
+Version: 0.1.0.051
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -31,6 +31,7 @@ Suggests:
     mapdeck,
     osmdata,
     rappdirs,
+    RcppParallel,
     rmarkdown,
     testthat (>= 3.0.0),
     withr
