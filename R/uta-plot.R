@@ -1,5 +1,5 @@
-
-#' Generate an interactive plot of results from 'uta_interpolate'
+#' Generate an interactive plot of results from 'uta_interpolate' projected on
+#' to street network.
 #'
 #' @param graph A street network with values of UTA index calculated from
 #' \link{uta_index} and interpolated back onto network with
@@ -9,7 +9,7 @@
 #' interactive visualisation in local default browser.
 #' @export
 
-uta_plot <- function (graph, var = "uta_index_d10") {
+uta_plot_network <- function (graph, var = "uta_index_d10") {
 
     if (!var %in% names (graph)) {
         stop ("graph contains no variable named '", var, "'", call. = FALSE)
