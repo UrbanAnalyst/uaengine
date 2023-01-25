@@ -6,7 +6,7 @@
 \usage{
 uta_index(
   city,
-  gtfs,
+  gtfs_path,
   popdens_geotif = NULL,
   from = NULL,
   initial_mode = "foot",
@@ -21,7 +21,7 @@ uta_index(
 \item{city}{Name of city, used to name and define local path to
 pre-calculated street networks and transport times with \pkg{m4ra} package.}
 
-\item{gtfs}{Path to \code{.Rds} version of GTFS feed for specified city.}
+\item{gtfs_path}{Path to \code{.Rds} version of GTFS feed for specified city.}
 
 \item{popdens_geotif}{Optional path to local 'geotiff' file with population
 density estimates. If provided, all transport indices are adjusted to account

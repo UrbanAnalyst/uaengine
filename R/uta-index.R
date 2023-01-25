@@ -2,7 +2,7 @@
 #'
 #' @param city Name of city, used to name and define local path to
 #' pre-calculated street networks and transport times with \pkg{m4ra} package.
-#' @param gtfs Path to `.Rds` version of GTFS feed for specified city.
+#' @param gtfs_path Path to `.Rds` version of GTFS feed for specified city.
 #' @param popdens_geotif Optional path to local 'geotiff' file with population
 #' density estimates. If provided, all transport indices are adjusted to account
 #' for effects of local population density.
@@ -29,7 +29,7 @@
 #' @export
 
 uta_index <- function (city,
-                       gtfs,
+                       gtfs_path,
                        popdens_geotif = NULL,
                        from = NULL,
                        initial_mode = "foot",
@@ -41,7 +41,7 @@ uta_index <- function (city,
 
     city <- tolower (gsub ("\\s+", "-", city))
 
-    checkmate::assert_file_exists (gtfs)
+    checkmate::assert_file_exists (gtfs_path)
     if (!is.null (popdens_geotif)) {
         checkmate::assert_file_exists (popdens_geotif)
     }
@@ -65,7 +65,7 @@ uta_index <- function (city,
     }
 
     dat <- m4ra::m4ra_times_mm_car (
-        gtfs = gtfs,
+        gtfs = gtfs_path,
         city_name = city,
         from = from,
         initial_mode = initial_mode,
