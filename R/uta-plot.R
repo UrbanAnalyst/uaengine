@@ -61,11 +61,12 @@ uta_plot_network <- function (graph, var = "uta_index_d10") {
 #' interactive visualisation in local default browser.
 #' @export
 
-uta_plot_polygons <- function (city, results_path, soc, soc_var, d = 10,
+uta_plot_polygons <- function (city, results_path, soc, d = 10,
                                what = c ("transport", "uta", "social"),
                                zoom = 10) {
 
     requireNamespace ("mapdeck")
+    requireNamespace ("colourvalues")
 
     what <- match.arg (what, c ("transport", "uta", "social"))
 
@@ -76,7 +77,7 @@ uta_plot_polygons <- function (city, results_path, soc, soc_var, d = 10,
 
     soc$transport <- soc$uta_index <- NA
 
-    pt_index <- unlist (sf::st_within (res, s))
+    pt_index <- unlist (sf::st_within (res, soc))
 
     for (i in unique (pt_index)) {
         index <- which (pt_index == i)
@@ -87,16 +88,54 @@ uta_plot_polygons <- function (city, results_path, soc, soc_var, d = 10,
 
     col_var <- ifelse (what == "transport", what, paste0 (what, "_index"))
 
-    xy0 <- sf::st_coordinates (sf::st_centroid (sf::st_union (s)))
+    xy0 <- sf::st_coordinates (sf::st_centroid (sf::st_union (soc)))
+    tmp <- uta_plot_legend (soc, col_var)
 
     m <- mapdeck::mapdeck (location = xy0, zoom = zoom)
     m <- mapdeck::add_polygon (
         m,
-        soc,
-        fill_colour = col_var,
+        tmp$soc,
+        fill_colour = "colour",
         fill_opacity = 0.7,
-        legend = TRUE,
+        legend = tmp$legend,
         update_view = FALSE
     )
     print (m)
+}
+
+uta_plot_legend <- function (soc, col_var, ncols = 100L, nvals = 5L) {
+
+    soc <- soc [which (!is.na (soc [[col_var]])), ]
+
+    pal <- colourvalues::colour_values (seq_len (ncols), palette = "inferno")
+    pal <- rev (pal)
+    ix <- cut (soc [[col_var]], breaks = ncols)
+    index <- match (ix, levels (ix))
+    soc$colour <- pal [index]
+
+    brks <- levels (unique (cut (soc [[col_var]], breaks = nvals)))
+    lwr <- as.numeric (sub ("\\((.+),.*", "\\1", brks))
+    upr <- as.numeric (sub ("[^,]*,([^]]*)\\]", "\\1", brks))
+    brks <- pretty (c (lwr [1], upr))
+
+    # Need to be rounded to avoid mapdeck printing trailing zeros:
+    brk_diff <- median (diff (brks))
+    ndigits <- 0L
+    tol <- 1e-3
+    while (abs (brk_diff - round (brk_diff, digits = ndigits)) > tol) {
+        ndigits <- ndigits + 1L
+    }
+    brks <- round (brks, digits = ndigits)
+
+    colvals <- colourvalues::colour_values (seq_len (length (brks)), palette = "inferno")
+    l1 <- mapdeck::legend_element (
+        variables = brks,
+        colours = colvals,
+        colour_type = "fill",
+        variable_type = "gradient",
+        title = col_var
+    )
+    js <- mapdeck::mapdeck_legend (l1)
+
+    return (list (soc = soc, legend = js))
 }

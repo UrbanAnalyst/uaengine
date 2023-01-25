@@ -9,7 +9,6 @@ uta_plot_polygons(
   city,
   results_path,
   soc,
-  soc_var,
   d = 10,
   what = c("transport", "uta", "social"),
   zoom = 10
@@ -23,8 +22,6 @@ pre-calculated street networks and transport times with \pkg{m4ra} package.}
 
 \item{soc}{Socio-demographic data with an \pkg{sf}-format column of polygons
 for each observed value of target variable.}
-
-\item{soc_var}{Name of target variable in \code{soc} data set.}
 
 \item{d}{One value of 'dlim' parameters used in \link{uta_index} or
 \link{uta_index_batch} call to generate UTA data. Resultant plot will be
