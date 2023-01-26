@@ -100,21 +100,40 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
     }
 
     stats <- lapply (seq_len (nrow (dat$dist)), function (i) {
-        df <- data.frame (d = dat$dist [i, ], ratio = dat$ratio [i, ])
+        df <- data.frame (
+            d = dat$dist [i, ],
+            ratio = dat$ratio [i, ],
+            mm_times = dat$mm_times [i, ]
+        )
         df <- df [which (!is.na (df$ratio) & !is.nan (df$ratio) & is.finite (df$ratio)), ]
         if (nrow (df) < (ncol (dat$ratio) / 2)) {
             return (c (NA, NA))
         }
         mod0 <- stats::lm (ratio ~ d, data = df)
         mod1 <- stats::lm (ratio ~ d, data = df [df$d <= 10.0, ])
-        c (
+        res <- c (
             summary (mod0)$coefficients [1:2],
             summary (mod1)$coefficients [1:2]
         )
+
+        # Then mm_times vs dist
+        mod2 <- stats::lm (mm_times ~ d, data = df)
+        mod3 <- stats::lm (mm_times ~ d, data = df [df$d <= 10.0, ])
+        res <- c (
+            res,
+            stats::predict (mod2, newdata = data.frame (d = dlims)),
+            stats::predict (mod3, newdata = data.frame (d = dlims))
+        )
+
+        return (res)
     })
 
     stats <- data.frame (do.call (rbind, stats))
-    names (stats) <- c ("intercept_all", "slope_all", "intercept_d10", "slope_d10")
+    dlim_p <- sprintf ("%02d", dlims)
+    pred_nms <- c (paste0 ("times_d", dlim_p), paste0 ("times_limit_d", dlim_p))
+    names (stats) <- c (
+        "intercept_all", "slope_all", "intercept_d10", "slope_d10", pred_nms
+    )
     stats$x <- dat$v_from$x
     stats$y <- dat$v_from$y
     # stats <- stats [which (!is.na (stats$intercept_all)), ]
@@ -153,7 +172,11 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
     dlims <- grep ("^integral\\_d", names (s), value = TRUE)
     dlims <- gsub ("^integral\\_", "", dlims)
 
-    vars <- c (paste0 ("integral_", dlims), paste0 ("int_", dlims, "_pop_adj"))
+    vars <- c (
+        paste0 ("integral_", dlims),
+        paste0 ("int_", dlims, "_pop_adj"),
+        paste0 ("times_limit_", dlims)
+    )
     vars <- vars [which (vars %in% names (s))]
 
     s <- cbind (s [vars], sfheaders::sf_point (s [, c ("x", "y")]))
@@ -171,13 +194,19 @@ add_uta_index <- function (s, dlims) {
 
     for (d in dlims) {
 
+        # Index from ratios relative to car times:
         d_fmt <- sprintf ("%02d", d)
         tr_index <- paste0 ("int_d", d_fmt, "_pop_adj")
         if (!tr_index %in% names (s)) { # no population density data
             tr_index <- paste0 ("integral_d", d_fmt)
         }
-        par_name <- paste0 ("uta_index_d", d_fmt)
+        par_name <- paste0 ("uta_index_rel_d", d_fmt)
         s [[par_name]] <- s$soc_var * s [[tr_index]]
+
+        # Index from absolute multi-modal journey times:
+        tt_index <- paste0 ("times_limit_d", d_fmt)
+        par_name <- paste0 ("uta_index_abs_d", d_fmt)
+        s [[par_name]] <- s$soc_var * s [[tt_index]]
     }
 
     return (s)
