@@ -76,7 +76,8 @@ uta_index <- function (city,
 
     if (!quiet) {
         st <- hms::hms (round ((proc.time () - st0) [3]))
-        cli::cli_alert_success (cli::col_green ("Caclulated multi-modal times in ", st))
+        msg <- "Caclulated multi-modal times in "
+        cli::cli_alert_success (cli::col_green (msg, st))
     }
 
     s <- travel_time_statistics (dat, dlims = dlims, quiet)
@@ -95,7 +96,8 @@ uta_index <- function (city,
 travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
 
     if (!quiet) {
-        cli::cli_alert_info (cli::col_blue ("Calculating summary statistics at each origin point"))
+        msg <- "Calculating summary statistics at each origin point"
+        cli::cli_alert_info (cli::col_blue (msg))
         st0 <- proc.time ()
     }
 
@@ -105,7 +107,9 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
             ratio = dat$ratio [i, ],
             mm_times = dat$mm_times [i, ]
         )
-        df <- df [which (!is.na (df$ratio) & !is.nan (df$ratio) & is.finite (df$ratio)), ]
+        df <- df [which (
+            !is.na (df$ratio) & !is.nan (df$ratio) & is.finite (df$ratio)
+        ), ]
         if (nrow (df) < (ncol (dat$ratio) / 2)) {
             return (c (NA, NA))
         }
@@ -145,7 +149,8 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
 
     if (!quiet) {
         st <- hms::hms (round ((proc.time () - st0) [3]))
-        cli::cli_alert_success (cli::col_green ("Caclulated summary statistics at each origin point in ", st))
+        msg <- "Caclulated summary statistics at each origin point in "
+        cli::cli_alert_success (cli::col_green (msg, st))
     }
 
     return (stats)
