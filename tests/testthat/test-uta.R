@@ -97,7 +97,8 @@ test_that ("uta calculations", {
     )
     expect_true (nrow (graph_full) > nrow (graph)) # interpolation removes rows outside 'a'
     expect_true (ncol (graph_full) < ncol (graph)) # interpolation add UTA data columns
-    expect_true (any (grepl ("^uta\\_index\\_d", names (graph))))
+    expect_true (any (grepl ("^uta\\_index\\_rel\\_d", names (graph))))
+    expect_true (any (grepl ("^uta\\_index\\_abs\\_d", names (graph))))
 
     # uta_to_geojson:
     f <- fs::path (fs::path_temp (), "xy.json")
