@@ -89,14 +89,25 @@ test_that ("uta calculations", {
     # Then 'uta_interpolate':
     requireNamespace ("rappdirs") # otherwise 'Loading' message is issued
     expect_silent (
-        graph <- uta_interpolate (city = "hampi", initial_mode = "foot", uta_dat = res, soc = a)
+        graph <- uta_interpolate (
+            city = "hampi",
+            initial_mode = "foot",
+            uta_dat = res,
+            soc = a
+        )
     )
 
     expect_silent (
-        graph_full <- m4ra::m4ra_load_cached_network (city = "hampi", mode = "foot", contracted = FALSE)
+        graph_full <- m4ra::m4ra_load_cached_network (
+            city = "hampi",
+            mode = "foot",
+            contracted = FALSE
+        )
     )
-    expect_true (nrow (graph_full) > nrow (graph)) # interpolation removes rows outside 'a'
-    expect_true (ncol (graph_full) < ncol (graph)) # interpolation add UTA data columns
+    # interpolation removes rows outside 'a', so:
+    expect_true (nrow (graph_full) > nrow (graph))
+    # interpolation adds UTA data columns, so:
+    expect_true (ncol (graph_full) < ncol (graph))
     expect_true (any (grepl ("^uta\\_index\\_rel\\_d", names (graph))))
     expect_true (any (grepl ("^uta\\_index\\_abs\\_d", names (graph))))
 
