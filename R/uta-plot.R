@@ -23,7 +23,10 @@ uta_plot_network <- function (graph, var = "uta_index_d10") {
     ncols <- 256L # Has to be fixed for 'rgb' call
     vals <- sort (unique (round (graph [[var]])))
     ix <- cut (vals, breaks = ncols)
-    cols <- grDevices::rgb (colourvalues::get_palette ("matlab_like2"), maxColorValue = 255)
+    cols <- grDevices::rgb (
+        colourvalues::get_palette ("matlab_like2"),
+        maxColorValue = 255
+    )
     colvals <- cols [match (ix, levels (ix))]
 
     leg <- mapdeck::legend_element (
@@ -92,9 +95,11 @@ uta_plot_polygons <- function (city, results_path, soc, d = 10,
     # social index. These lines re-scale so that transport has equal influence
     # on result as the social index.
     if (what == "uta") {
-        transport_sd <- sd (soc$transport, na.rm = TRUE)
+        transport_sd <- stats::sd (soc$transport, na.rm = TRUE)
         transport_mn <- mean (soc$transport, na.rm = TRUE)
-        social_index <- transport_mn + (soc$social_index - mean (soc$social_index, na.rm = TRUE)) * transport_sd
+        social_index <- transport_mn +
+            (soc$social_index - mean (soc$social_index, na.rm = TRUE)) *
+                transport_sd
         soc$uta_index <- soc$transport * social_index
     }
 
@@ -115,12 +120,17 @@ uta_plot_polygons <- function (city, results_path, soc, d = 10,
     print (m)
 }
 
-uta_plot_legend <- function (soc, col_var, alpha = 0.5, ncols = 100L, nvals = 5L) {
+uta_plot_legend <- function (soc, col_var,
+                             alpha = 0.5, ncols = 100L, nvals = 5L) {
 
     soc <- soc [which (!is.na (soc [[col_var]])), ]
 
     alpha <- ceiling (255 * alpha)
-    pal <- colourvalues::colour_values (seq_len (ncols), palette = "inferno", alpha = alpha)
+    pal <- colourvalues::colour_values (
+        seq_len (ncols),
+        palette = "inferno",
+        alpha = alpha
+    )
     pal <- rev (pal)
     ix <- cut (soc [[col_var]], breaks = ncols)
     index <- match (ix, levels (ix))
@@ -141,7 +151,11 @@ uta_plot_legend <- function (soc, col_var, alpha = 0.5, ncols = 100L, nvals = 5L
     brks <- round (brks, digits = ndigits)
 
     x <- seq_len (length (brks))
-    colvals <- rev (colourvalues::colour_values (x, palette = "inferno", alpha = alpha))
+    colvals <- rev (colourvalues::colour_values (
+        x,
+        palette = "inferno",
+        alpha = alpha
+    ))
     l1 <- mapdeck::legend_element (
         variables = brks,
         colours = colvals,
