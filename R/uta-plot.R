@@ -88,10 +88,15 @@ uta_plot_polygons <- function (city,
 
     res <- batch_collate_results (results_path, city)
 
-    var_transport <- sprintf ("int_d%2d_pop_adj", d)
+    is_abs <- grepl ("\\_abs$", what)
+    var_transport <- ifelse (
+        is_abs,
+        sprintf ("times_limit_d%02d", d),
+        sprintf ("int_d%2d_pop_adj", d)
+    )
     var_uta <- sprintf (paste0 (gsub ("uta_", "uta_index_", what), "_d%02d"), d)
 
-    soc$transport <- soc$uta_index <- NA
+    soc$uta_index <- soc$transport <- NA
 
     pt_index <- unlist (sf::st_within (res, soc))
 
@@ -102,6 +107,12 @@ uta_plot_polygons <- function (city,
     }
     soc <- soc [which (!is.na (soc$social_index)), ]
 
+    if (is_abs) {
+        # convert scales from seconds to minutes:
+        soc$transport <- soc$transport / 60
+        soc$uta_index <- soc$uta_index / 60
+    }
+
     # UTA index is too heavily influenced by the greater scale (= SD) of the
     # social index. These lines re-scale so that transport has equal influence
     # on result as the social index.
@@ -111,7 +122,7 @@ uta_plot_polygons <- function (city,
         social_index <- transport_mn +
             (soc$social_index - mean (soc$social_index, na.rm = TRUE)) *
                 transport_sd
-        soc$uta_index <- soc$transport * social_index
+        soc$uta_index <- sqrt (soc$transport * social_index)
     }
 
     # Replace "uta_rel" or "uta_abs" with "uta_index":
