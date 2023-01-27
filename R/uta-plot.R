@@ -73,7 +73,8 @@ uta_plot_network <- function (graph, var = "uta_index_d10") {
 uta_plot_polygons <- function (city,
                                results_path, soc, d = 10,
                                what = c (
-                                   "transport",
+                                   "transport_rel",
+                                   "transport_abs",
                                    "social",
                                    "uta_rel",
                                    "uta_abs"
@@ -84,7 +85,7 @@ uta_plot_polygons <- function (city,
     requireNamespace ("mapdeck")
     requireNamespace ("colourvalues")
 
-    what <- match.arg (what, c ("transport", "social", "uta_rel", "uta_abs"))
+    what <- match.arg (what)
 
     res <- batch_collate_results (results_path, city)
 
@@ -127,8 +128,8 @@ uta_plot_polygons <- function (city,
 
     # Replace "uta_rel" or "uta_abs" with "uta_index":
     col_var <- ifelse (
-        what == "transport",
-        what,
+        grepl ("^transport", what),
+        "transport",
         paste0 (gsub ("\\_.*$", "", what), "_index")
     )
 
@@ -137,7 +138,7 @@ uta_plot_polygons <- function (city,
         soc,
         col_var,
         alpha = alpha,
-        rel = grepl ("\\_rel", what)
+        rel = !is_abs
     )
 
     m <- mapdeck::mapdeck (location = xy0, zoom = zoom)
@@ -191,7 +192,7 @@ uta_plot_legend <- function (soc, col_var,
     ))
 
     leg_title <- col_var
-    if (grepl ("^uta", leg_title)) {
+    if (grepl ("^(uta|transport)", leg_title)) {
         leg_title <- paste0 (
             leg_title,
             ifelse (rel, " relative", " absolute")

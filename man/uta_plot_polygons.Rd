@@ -10,7 +10,7 @@ uta_plot_polygons(
   results_path,
   soc,
   d = 10,
-  what = c("transport", "social", "uta_rel", "uta_abs"),
+  what = c("transport_rel", "transport_abs", "social", "uta_rel", "uta_abs"),
   zoom = 10,
   alpha = 0.5
 )
