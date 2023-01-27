@@ -4,11 +4,17 @@
 #' data.table.
 #'
 #' @inheritParams uta_index_batch
+#' @param bin_var The same of the variable in "soc" used to distinguish binary
+#' groups. This must be a logical variable (values as `TRUE` or `FALSE` only).
+#' @param d One value of 'dlim' parameters used in \link{uta_index} or
+#' \link{uta_index_batch} call to generate UTA data. Resultant plot will be
+#' based on data for this value.
 #' @export
 
 uta_binary_compare <- function (city, results_path, soc, bin_var, d = 10) {
 
     checkmate::assert_character (bin_var, len = 1L)
+    checkmate::assert_logical (soc [[bin_var]])
 
     comp_vars <- c ("transport", "social", "uta_rel", "uta_abs")
 
@@ -50,7 +56,7 @@ uta_binary_compare <- function (city, results_path, soc, bin_var, d = 10) {
     )
 
     for (v in comp_vars) {
-        tt <- t.test (
+        tt <- stats::t.test (
             soc [[v]] [which (soc [[bin_var]])],
             soc [[v]] [which (!soc [[bin_var]])]
         )

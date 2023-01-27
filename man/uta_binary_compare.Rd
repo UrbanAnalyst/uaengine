@@ -14,6 +14,13 @@ pre-calculated street networks and transport times with \pkg{m4ra} package.}
 
 \item{soc}{Socio-demographic data with an \pkg{sf}-format column of polygons
 for each observed value of target variable.}
+
+\item{bin_var}{The same of the variable in "soc" used to distinguish binary
+groups. This must be a logical variable (values as \code{TRUE} or \code{FALSE} only).}
+
+\item{d}{One value of 'dlim' parameters used in \link{uta_index} or
+\link{uta_index_batch} call to generate UTA data. Resultant plot will be
+based on data for this value.}
 }
 \description{
 Spatial groups must be distinguished by a named variable in the "soc"
