@@ -58,27 +58,38 @@ uta_plot_network <- function (graph, var = "uta_index_d10") {
 #' @param d One value of 'dlim' parameters used in \link{uta_index} or
 #' \link{uta_index_batch} call to generate UTA data. Resultant plot will be
 #' based on data for this value.
-#' @param what The value which is to be plotted.
+#' @param what The value which is to be plotted, one of "transport", "social",
+#' "uta_rel" or "uta_abs". The relative UTA index ("uta_rel") combines
+#' socio-demographic variable, "soc", with the transport index relative to
+#' equivalent automobile travel times. The absolute UTA index ("uta_abs")
+#' combines uses as a transport index the absolute multi-modal travel times for
+#' all modes excluding private automobile.
 #' @param zoom Initial zoom level to use in resultant map.
 #' @param alpha Transparency of polygons (0 = completely; 1 = not transparent).
 #' @return Nothing; function called for its side-effect of opening an
 #' interactive visualisation in local default browser.
 #' @export
 
-uta_plot_polygons <- function (city, results_path, soc, d = 10,
-                               what = c ("transport", "uta", "social"),
+uta_plot_polygons <- function (city,
+                               results_path, soc, d = 10,
+                               what = c (
+                                   "transport",
+                                   "social",
+                                   "uta_rel",
+                                   "uta_abs"
+                               ),
                                zoom = 10,
                                alpha = 0.5) {
 
     requireNamespace ("mapdeck")
     requireNamespace ("colourvalues")
 
-    what <- match.arg (what, c ("transport", "uta", "social"))
+    what <- match.arg (what, c ("transport", "social", "uta_rel", "uta_abs"))
 
     res <- batch_collate_results (results_path, city)
 
     var_transport <- sprintf ("int_d%2d_pop_adj", d)
-    var_uta <- sprintf ("uta_index_d%2d", d)
+    var_uta <- sprintf (paste0 (gsub ("uta_", "uta_index_", what), "_d%02d"), d)
 
     soc$transport <- soc$uta_index <- NA
 
@@ -94,7 +105,7 @@ uta_plot_polygons <- function (city, results_path, soc, d = 10,
     # UTA index is too heavily influenced by the greater scale (= SD) of the
     # social index. These lines re-scale so that transport has equal influence
     # on result as the social index.
-    if (what == "uta") {
+    if (grepl ("^uta", what)) {
         transport_sd <- stats::sd (soc$transport, na.rm = TRUE)
         transport_mn <- mean (soc$transport, na.rm = TRUE)
         social_index <- transport_mn +
@@ -103,10 +114,20 @@ uta_plot_polygons <- function (city, results_path, soc, d = 10,
         soc$uta_index <- soc$transport * social_index
     }
 
-    col_var <- ifelse (what == "transport", what, paste0 (what, "_index"))
+    # Replace "uta_rel" or "uta_abs" with "uta_index":
+    col_var <- ifelse (
+        what == "transport",
+        what,
+        paste0 (gsub ("\\_.*$", "", what), "_index")
+    )
 
     xy0 <- sf::st_coordinates (sf::st_centroid (sf::st_union (soc)))
-    tmp <- uta_plot_legend (soc, col_var, alpha = alpha)
+    tmp <- uta_plot_legend (
+        soc,
+        col_var,
+        alpha = alpha,
+        rel = grepl ("\\_rel", what)
+    )
 
     m <- mapdeck::mapdeck (location = xy0, zoom = zoom)
     m <- mapdeck::add_polygon (
@@ -121,7 +142,8 @@ uta_plot_polygons <- function (city, results_path, soc, d = 10,
 }
 
 uta_plot_legend <- function (soc, col_var,
-                             alpha = 0.5, ncols = 100L, nvals = 5L) {
+                             alpha = 0.5, ncols = 100L, nvals = 5L,
+                             rel = TRUE) {
 
     soc <- soc [which (!is.na (soc [[col_var]])), ]
 
@@ -156,12 +178,21 @@ uta_plot_legend <- function (soc, col_var,
         palette = "inferno",
         alpha = alpha
     ))
+
+    leg_title <- col_var
+    if (grepl ("^uta", leg_title)) {
+        leg_title <- paste0 (
+            leg_title,
+            ifelse (rel, " relative", " absolute")
+        )
+    }
+
     l1 <- mapdeck::legend_element (
         variables = brks,
         colours = colvals,
         colour_type = "fill",
         variable_type = "gradient",
-        title = col_var
+        title = leg_title
     )
     js <- mapdeck::mapdeck_legend (l1)
 

@@ -10,7 +10,7 @@ uta_plot_polygons(
   results_path,
   soc,
   d = 10,
-  what = c("transport", "uta", "social"),
+  what = c("transport", "social", "uta_rel", "uta_abs"),
   zoom = 10,
   alpha = 0.5
 )
@@ -28,7 +28,12 @@ for each observed value of target variable.}
 \link{uta_index_batch} call to generate UTA data. Resultant plot will be
 based on data for this value.}
 
-\item{what}{The value which is to be plotted.}
+\item{what}{The value which is to be plotted, one of "transport", "social",
+"uta_rel" or "uta_abs". The relative UTA index ("uta_rel") combines
+socio-demographic variable, "soc", with the transport index relative to
+equivalent automobile travel times. The absolute UTA index ("uta_abs")
+combines uses as a transport index the absolute multi-modal travel times for
+all modes excluding private automobile.}
 
 \item{zoom}{Initial zoom level to use in resultant map.}
 
