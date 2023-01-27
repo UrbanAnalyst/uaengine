@@ -2,6 +2,7 @@
 
 export(pop2point)
 export(uta_binary_compare)
+export(uta_export)
 export(uta_extract_osm)
 export(uta_index)
 export(uta_index_batch)
