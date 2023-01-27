@@ -160,17 +160,18 @@ uta_plot_legend <- function (soc, col_var,
     soc <- soc [which (!is.na (soc [[col_var]])), ]
 
     alpha <- ceiling (255 * alpha)
-    pal <- colourvalues::colour_values (
+    pal <- rev (colourvalues::colour_values (
         seq_len (ncols),
         palette = "inferno",
         alpha = alpha
-    )
-    pal <- rev (pal)
-    ix <- cut (soc [[col_var]], breaks = ncols)
+    ))
+    ix <- fit_palette_to_var (soc [[col_var]], ncols)
+    # ix <- cut (x, breaks = ncols)
     index <- match (ix, levels (ix))
     soc$colour <- pal [index]
 
     brks <- levels (unique (cut (soc [[col_var]], breaks = nvals)))
+    # regex patterns from ?cut
     lwr <- as.numeric (sub ("\\((.+),.*", "\\1", brks))
     upr <- as.numeric (sub ("[^,]*,([^]]*)\\]", "\\1", brks))
     brks <- pretty (c (lwr [1], upr))
@@ -209,4 +210,58 @@ uta_plot_legend <- function (soc, col_var,
     js <- mapdeck::mapdeck_legend (l1)
 
     return (list (soc = soc, legend = js))
+}
+
+#' Concatenate the distribution of `x` to prevent palettes being dominated by
+#' extreme values.
+#'
+#' This works by tabulating `x` into `ncols` bins. Upper and lower tails with
+#' only one entry are then progressively decreased/increased to fit within the
+#' next bin, until all bins have at least 2 values. Additional code also
+#' squashes distributional tails which produce zero values in the tables.
+#'
+#' @return A tabularized version of `x` which should much more regularly span a
+#' desired palette.
+#' @noRd
+fit_palette_to_var <- function (x, ncols = 100L) {
+
+    ix <- cut (x, breaks = ncols)
+
+    # Adjust values until each group has multiple members:
+    tb <- table (ix)
+    tb_i <- as.integer (tb)
+    # Are there zeros in lower or upper halves of table?
+    lower_zeros <- any (tb_i [seq_along (tb_i) < which.max (tb_i)] == 0L)
+    upper_zeros <- any (tb_i [seq_along (tb_i) > which.max (tb_i)] == 0L)
+
+    count <- 0
+    while (tb_i [1] <= 1 || tb_i [length (tb_i)] <= 1 ||
+        lower_zeros || upper_zeros) {
+
+        if (which (tb_i > 1) [1] > 1 || lower_zeros) {
+            # increase lower values to next interval
+            lwr <- as.numeric (sub ("\\((.+),.*", "\\1", names (tb) [2]))
+            x [x < lwr] <- lwr
+        }
+
+        # same for upper part of distribution
+        if (tb_i [length (tb_i)] <= 1 || upper_zeros) {
+            upr <- as.numeric (sub ("[^,]*,([^]]*)\\]", "\\1", names (tb) [length (tb) - 1]))
+            x [x > upr] <- upr
+        }
+
+        ix <- cut (x, breaks = ncols)
+        tb <- table (ix)
+        tb_i <- as.integer (tb)
+
+        lower_zeros <- any (tb_i [seq_along (tb_i) < which.max (tb_i)] == 0L)
+        upper_zeros <- any (tb_i [seq_along (tb_i) > which.max (tb_i)] == 0L)
+
+        count <- count + 1
+        if (count > 100) {
+            break
+        }
+    }
+
+    return (cut (x, breaks = ncols))
 }
