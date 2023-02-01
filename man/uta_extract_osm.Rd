@@ -19,7 +19,9 @@ file. \code{bbox} can be either a matrix obtained from the \pkg{osmdata} functio
 \code{getbb} (or equivalent), or an object from which a bounding box can be
 extracted. Objects currently recognised are matrices or arrays, which should
 have two columns (x and y / longitude and latitude), or an \pkg{sf} object
-from which a bounding box can be extracted.}
+from which a bounding box can be extracted. Alternatively, \code{bbox} can be a
+local path to a 'geojson' file containing a single polygonal outline to be
+used to trim the OSM data.}
 
 \item{bbox_expand}{A proportional amount by which to extend the limits of the
 bounding box defined by the \code{bbox} argument, defaulting to 5\%.}

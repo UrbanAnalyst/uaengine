@@ -10,7 +10,9 @@
 #' `getbb` (or equivalent), or an object from which a bounding box can be
 #' extracted. Objects currently recognised are matrices or arrays, which should
 #' have two columns (x and y / longitude and latitude), or an \pkg{sf} object
-#' from which a bounding box can be extracted.
+#' from which a bounding box can be extracted. Alternatively, `bbox` can be a
+#' local path to a 'geojson' file containing a single polygonal outline to be
+#' used to trim the OSM data.
 #' @param bbox_expand A proportional amount by which to extend the limits of the
 #' bounding box defined by the `bbox` argument, defaulting to 5%.
 #' @param osm_id In lieu of a bounding box, the ID of an Open Street Map object
