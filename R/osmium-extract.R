@@ -45,7 +45,7 @@ uta_extract_osm <- function (city, path, bbox = NULL, bbox_expand = 0.05,
     } else if (!is.null (bbox)) {
         path_to_pbf <- trim_osm_to_bbox (city, path, bbox, bbox_expand)
     } else {
-        path_to_pbf <- convert_osm_to_pbf (city, path)
+        path_to_pbf <- convert_bz2_to_pbf (city, path)
     }
 
     extract_osm_keys (path_to_pbf)
