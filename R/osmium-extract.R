@@ -95,7 +95,16 @@ trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
 
     cli::cli_h3 (cli::col_green ("Reducing file to specified 'bbox':"))
 
-    cmd <- paste ("osmium extract -b", paste0 (bbox, collapse = ","), pars$f0, "-o", pars$f)
+    pb_arg <- ifelse (methods::is (bbox, "character"), "-p", "-b")
+
+    cmd <- paste (
+        "osmium extract",
+        pb_arg,
+        paste0 (bbox, collapse = ","),
+        pars$f0,
+        "-o",
+        pars$f
+    )
     withr::with_dir (pars$osm_dir, system (cmd))
 
     return (fs::path (pars$osm_dir, pars$f))
@@ -108,6 +117,12 @@ trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
 #' @return bbox as 2-by-2 matrix.
 #' @noRd
 get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
+
+    if (methods::is (bbox, "character")) {
+        checkmate::assert_character (bbox, len = 1L)
+        checkmate::assert_file_exists (bbox)
+        return (bbox)
+    }
 
     if (inherits (bbox, "sf")) {
         bbox <- sf::st_transform (bbox, 4326)
