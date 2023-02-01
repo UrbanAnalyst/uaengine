@@ -213,12 +213,15 @@ batch_collate_results <- function (results_path, city) {
 #' Export results to the form required for the front-end app
 #'
 #' @inheritParams uta_index_batch
+#' @param soc An \pkg{sf} `data.frame` object with polygons defining areas in
+#' which socio-demographic variables were collated, and a column called
+#' "social_index" containing the socio-demographic variable of interest.
 #' @return The input table, `soc`, with additional columns of UTA index values
 #' attached. This table can then be saved and used directly in the UTA
 #' front-end.
 #' @export
 
-uta_export <- function (city, soc, soc_var, results_path) {
+uta_export <- function (city, soc, results_path) {
 
     res <- batch_collate_results (results_path, city)
 

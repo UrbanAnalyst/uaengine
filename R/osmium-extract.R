@@ -1,12 +1,11 @@
-
 #' Extract network data with osmium, convert to \pkg{sc} format, and collate all
 #' results into a single \pkg{osmdata} object.
 #'
 #' @param city Name of city (used to name resultant files).
-#' @param path_to_bz2 Path to a local `.bz2` file with OpenStreetMap data for
+#' @param path Path to a local '.pbf' or '.bz2' file with OpenStreetMap data for
 #' nominated city.
 #' @param bbox Optional bounding box within which data are to be extracted. If
-#' not given, result includes the entire network within the nominated '.bz2'
+#' not given, result includes the entire network within the nominated OSM
 #' file. `bbox` can be either a matrix obtained from the \pkg{osmdata} function,
 #' `getbb` (or equivalent), or an object from which a bounding box can be
 #' extracted. Objects currently recognised are matrices or arrays, which should
@@ -15,11 +14,11 @@
 #' @param bbox_expand A proportional amount by which to extend the limits of the
 #' bounding box defined by the `bbox` argument, defaulting to 5%.
 #' @param osm_id In lieu of a bounding box, the ID of an Open Street Map object
-#' (generally a relation) can be used to provide the boundary to trim the `.bz2`
+#' (generally a relation) can be used to provide the boundary to trim the OSM
 #' file.
 #' @export
 
-uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05,
+uta_extract_osm <- function (city, path, bbox = NULL, bbox_expand = 0.05,
                              osm_id = NULL) {
 
     requireNamespace ("fs")
@@ -27,9 +26,9 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05,
 
     checkmate::assert_character (city, min.len = 1L, max.len = 1L)
     city <- tolower (city)
-    checkmate::assert_file_exists (path_to_bz2)
-    if (fs::path_ext (path_to_bz2) != "bz2") {
-        stop ("path_to_bz2 must be to a '.bz2' file")
+    checkmate::assert_file_exists (path)
+    if (!fs::path_ext (path) %in% c ("pbf", "bz2")) {
+        stop ("'path' must be to a '.pbf' or '.bz2' file")
     }
     checkmate::assert_numeric (
         bbox_expand,
@@ -40,66 +39,66 @@ uta_extract_osm <- function (city, path_to_bz2, bbox = NULL, bbox_expand = 0.05,
     )
 
     if (!is.null (osm_id)) {
-        path_to_pbf <- trim_bz2_to_osm_id (city, path_to_bz2, osm_id)
+        path_to_pbf <- trim_to_osm_id (city, path, osm_id)
     } else if (!is.null (bbox)) {
-        path_to_pbf <- trim_bz2_to_bbox (city, path_to_bz2, bbox, bbox_expand)
+        path_to_pbf <- trim_osm_to_bbox (city, path, bbox, bbox_expand)
     } else {
-        path_to_pbf <- convert_bz2_to_pbf (city, path_to_bz2)
+        path_to_pbf <- convert_osm_to_pbf (city, path)
     }
 
     extract_osm_keys (path_to_pbf)
     uta_m4ra_parking_extraction (path_to_pbf)
 }
 
-#' Trim '.bz2' to an 'osm_id' and return converted 'pbf' output.
+#' Trim OSM file to an 'osm_id' and return converted 'pbf' output.
 #'
 #' @param city Directly from 'uta_extract_osm'
-#' @param path The 'path_to_bz2' param from 'uta_extract_osm'
+#' @param path The 'path' param from 'uta_extract_osm'
 #' @param osm_id Directly from 'uta_extract_osm'
 #' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
-trim_bz2_to_osm_id <- function (city, path, osm_id) {
+trim_to_osm_id <- function (city, path, osm_id) {
 
     pars <- get_osmium_convert_args (city, path)
     if (pars$f_exists) {
-        return (fs::path (pars$bz_dir, pars$f))
+        return (fs::path (pars$osm_dir, pars$f))
     }
 
-    cli::cli_h3 (cli::col_green ("Reducing '.bz2' to specified 'bbox':"))
+    cli::cli_h3 (cli::col_green ("Reducing file to specified 'bbox':"))
 
     # Get .osm file for specified 'osm_id':
     ftmp <- fs::path (fs::path_temp (), "boundary.osm")
     cmd <- paste ("osmium getid -r -t ", path, paste0 ("r", osm_id), "-o", ftmp)
     system (cmd)
     cmd <- paste ("osmium extract -p", ftmp, pars$f0, "-o", pars$f)
-    withr::with_dir (pars$bz_dir, system (cmd))
+    withr::with_dir (pars$osm_dir, system (cmd))
 
-    return (fs::path (pars$bz_dir, pars$f))
+    return (fs::path (pars$osm_dir, pars$f))
 }
 
 
-#' Trim '.bz2' to 'bbox' and return converted 'pbf' output.
+#' Trim OSM file to 'bbox' and return converted 'pbf' output.
 #'
 #' @param city Directly from 'uta_extract_osm'
-#' @param path The 'path_to_bz2' param from 'uta_extract_osm'
+#' @param path The 'path' param from 'uta_extract_osm'
 #' @param bbox Directly from 'uta_extract_osm'
 #' @param bbox_expand Directly from 'uta_extract_osm'
 #' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
-trim_bz2_to_bbox <- function (city, path, bbox, bbox_expand) {
+trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
 
     bbox <- get_uta_bbox (bbox, bbox_expand = bbox_expand)
     pars <- get_osmium_convert_args (city, path)
     if (pars$f_exists) {
-        return (fs::path (pars$bz_dir, pars$f))
+        return (fs::path (pars$osm_dir, pars$f))
     }
 
-    cli::cli_h3 (cli::col_green ("Reducing '.bz2' to specified 'bbox':"))
+    cli::cli_h3 (cli::col_green ("Reducing file to specified 'bbox':"))
 
     cmd <- paste ("osmium extract -b", paste0 (bbox, collapse = ","), pars$f0, "-o", pars$f)
-    withr::with_dir (pars$bz_dir, system (cmd))
+    withr::with_dir (pars$osm_dir, system (cmd))
 
-    return (fs::path (pars$bz_dir, pars$f))
+    return (fs::path (pars$osm_dir, pars$f))
 }
 
 #' Convert various form of 'bbox' parameter to an actual 2-by-2 matrix.
@@ -144,7 +143,7 @@ get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
 #' 'uta_extract_osm()` function.
 #'
 #' @param city Directly from 'uta_extract_osm'
-#' @param path The 'path_to_bz2' param from 'uta_extract_osm'
+#' @param path The 'path' param from 'uta_extract_osm'
 #' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
 convert_bz2_to_pbf <- function (city, path) {
@@ -152,10 +151,10 @@ convert_bz2_to_pbf <- function (city, path) {
     pars <- get_osmium_convert_args (city, path)
     if (!pars$f_exists) {
         cmd <- paste ("osmium cat ", pars$f0, "-o", pars$f)
-        withr::with_dir (pars$bz_dir, system (cmd))
+        withr::with_dir (pars$osm_dir, system (cmd))
     }
 
-    return (fs::path (pars$bz_dir, pars$f))
+    return (fs::path (pars$osm_dir, pars$f))
 }
 
 #' Helper function to return arguments used for 'osmium' calls, mostly by
@@ -163,26 +162,26 @@ convert_bz2_to_pbf <- function (city, path) {
 #' @noRd
 get_osmium_convert_args <- function (city, path) {
 
-    bz_dir <- fs::path_dir (path)
+    osm_dir <- fs::path_dir (path)
     f <- paste0 (city, ".osm.pbf")
     f_exists <- FALSE
-    if (fs::file_exists (fs::path (bz_dir, f))) {
+    if (fs::file_exists (fs::path (osm_dir, f))) {
         cli::cli_alert_info (cli::col_blue (
             "File '",
-            fs::path (bz_dir, f),
+            fs::path (osm_dir, f),
             " already exists and will not be over-written."
         ))
         f_exists <- TRUE
     }
     f0 <- fs::path_file (path)
 
-    list (bz_dir = bz_dir, f = f, f0 = f0, f_exists = f_exists)
+    list (osm_dir = osm_dir, f = f, f0 = f0, f_exists = f_exists)
 }
 
 #' Extract smaller files for a series of OSM keys and convert to '.osm' format
 #'
 #' @param path Path to single '.pbf' file returned from either
-#' 'convert_bz2_to_pbf' or 'trim_bz2_to_bbox'.
+#' 'convert_bz2_to_pbf' or 'trim_osm_to_bbox'.
 #' @return Nothing.
 #' @noRd
 extract_osm_keys <- function (path) {

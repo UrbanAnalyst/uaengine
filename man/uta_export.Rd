@@ -4,16 +4,15 @@
 \alias{uta_export}
 \title{Export results to the form required for the front-end app}
 \usage{
-uta_export(city, soc, soc_var, results_path)
+uta_export(city, soc, results_path)
 }
 \arguments{
 \item{city}{Name of city, used to name and define local path to
 pre-calculated street networks and transport times with \pkg{m4ra} package.}
 
-\item{soc}{Socio-demographic data with an \pkg{sf}-format column of polygons
-for each observed value of target variable.}
-
-\item{soc_var}{Name of target variable in \code{soc} data set.}
+\item{soc}{An \pkg{sf} \code{data.frame} object with polygons defining areas in
+which socio-demographic variables were collated, and a column called
+"social_index" containing the socio-demographic variable of interest.}
 
 \item{results_path}{Local path to directory where results are to be written.}
 }
