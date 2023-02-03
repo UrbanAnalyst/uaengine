@@ -1,4 +1,3 @@
-
 #' Interpolate "UTA_index" between vertices on network, project those on to the
 #' original network edges, and return the full network graph.
 #'

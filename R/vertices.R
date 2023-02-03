@@ -1,4 +1,3 @@
-
 #' Extract vertices within perimiter of external data set
 #'
 #' @param x External data set, presumed to represent some socio-demographic

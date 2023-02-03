@@ -1,4 +1,3 @@
-
 #' Convert a series of '.osm' files to \pkg{silicate} format, and combine all
 #' into a single object.
 #'

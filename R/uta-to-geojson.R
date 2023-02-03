@@ -1,4 +1,3 @@
-
 #' Write UTA index data to local 'geojson' file
 #'
 #' Writing large graphs to 'geojson' output can take some time - typically on
