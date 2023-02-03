@@ -142,6 +142,8 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
     stats$y <- dat$v_from$y
     # stats <- stats [which (!is.na (stats$intercept_all)), ]
 
+    stats <- cbind ("osm_id" = rownames (dat$dist), stats)
+
     for (d in dlims) {
         par_name <- paste0 ("integral_d", sprintf ("%02d", d))
         stats [[par_name]] <- stats$intercept_d10 + stats$slope_d10 * d
@@ -178,6 +180,7 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
     dlims <- gsub ("^integral\\_", "", dlims)
 
     vars <- c (
+        "osm_id",
         paste0 ("integral_", dlims),
         paste0 ("int_", dlims, "_pop_adj"),
         paste0 ("times_limit_", dlims)
