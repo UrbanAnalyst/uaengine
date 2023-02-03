@@ -26,6 +26,11 @@ In comparison, the `uta-engine`:
   extends to millions of comparisons);
 - Allows true multi-modal travel times to be calculated, with specified,
   and potentially different, initial and final modes of transport.
+- Automatically returns ratios of multi-modal to private automobile
+  travel times.
 - Includes estimates of travel times with private automobile that are
   empirically calibrated to extensive data, and are generally more
   accurate than equivalent times from `valhalla` or `r5`.
+- Unlike all other routing engines, UTA includes locality-specific
+  estimates of additional times required to park automobiles at starts
+  and ends of journeys.
