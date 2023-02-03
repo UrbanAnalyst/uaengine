@@ -110,8 +110,15 @@ uta_index_batch <- function (city,
     return (batch_collate_results (results_path, city))
 }
 
-#' Return all vertices of network weighted for nominated `mode`, and ordered in
-#' a repeatable way to allow consistent sub-sampling.
+#' Return all vertices of network weighted for nominated `mode`, ordered to
+#' regularly sample all polygons in `soc`.
+#'
+#' @param soc Social-demograph data as an \pkg{sf} `data.frame` object with
+#' polygons in which variables are measured.
+#' @param mode Mode of transport for which origin vertices are to be sampled.
+#' @param seed Should not be changed! Leaving at fixed value ensures that
+#' vertices will always be returned in same order, allowing batch runs to be
+#' re-started at exact points where they are stopped.
 #' @noRd
 get_batch_vertices <- function (soc, city, mode, seed = 1L) {
 
