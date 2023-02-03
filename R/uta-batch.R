@@ -124,11 +124,14 @@ get_batch_vertices <- function (soc, city, mode, seed = 1L) {
 
     v <- uta_vertices (soc, city, mode)
 
-    # Randomise vertex order so samples are sufficiently random:
-    set.seed (seed)
-    v <- v [sample (nrow (v), size = nrow (v)), ]
+    # order vertices to reguarly sample all polygons in 'soc':
+    vxy <- sfheaders::sf_point (v [, c ("x", "y")])
+    sf::st_crs (vxy) <- 4326
+    index0 <- unlist (sf::st_within (vxy, soc))
 
-    return (v)
+    index <- index0 [cpp_index_sort (index0) + 1]
+
+    return (v [index, ])
 }
 
 #' Split vertices into list items of 'batch_size' each, along with corresponding

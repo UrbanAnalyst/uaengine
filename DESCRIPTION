@@ -1,6 +1,6 @@
 Package: utaengine
 Title: Routing and aggregation engine for 'Urban Transport Analyst'
-Version: 0.1.0.083
+Version: 0.1.0.084
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -36,10 +36,11 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
     withr
+LinkingTo: cpp11
 Remotes:
     atfutures/m4ra,
     hypertidy/geodist
-SystemRequirements: osmium-tool
+SystemRequirements: osmium-tool, C++11
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
