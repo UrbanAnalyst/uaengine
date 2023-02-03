@@ -168,6 +168,7 @@ add_popdens_to_stats <- function (s, popdens_geotif) {
         # 'mod' will exclude any NA values of 'par_name', so need to index back
         # into 's':
         index <- match (mod$model [[d]], s [[d]])
+        s [[par_name]] <- NA
         s [[par_name]] [index] <- mean (s [[d]], na.rm = TRUE) + mod$residuals
     }
 
