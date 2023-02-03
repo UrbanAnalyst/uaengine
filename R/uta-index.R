@@ -158,9 +158,9 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
     return (stats)
 }
 
-add_popdens_to_stats <- function (s, geotif) {
+add_popdens_to_stats <- function (s, popdens_geotif) {
 
-    s <- pop2point (s, geotif, normalise = FALSE)
+    s <- pop2point (s, popdens_geotif, normalise = FALSE)
     dlims <- grep ("^integral\\_d", names (s), value = TRUE)
     for (d in dlims) {
         mod <- stats::lm (stats::as.formula (paste0 (d, " ~ layer")), data = s)
