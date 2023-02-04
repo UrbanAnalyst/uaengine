@@ -129,7 +129,9 @@ get_batch_vertices <- function (soc, city, mode, seed = 1L) {
     sf::st_crs (vxy) <- 4326
     index0 <- unlist (sf::st_within (vxy, soc))
 
-    index <- index0 [cpp_index_sort (index0) + 1]
+    # 'cpp_index_sort' returns the direct index back into original, rearranged
+    # to evenly sample each polygon in succession.
+    index <- cpp_index_sort (index0) + 1
 
     return (v [index, ])
 }

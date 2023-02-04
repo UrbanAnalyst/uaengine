@@ -33,6 +33,9 @@ writable::integers cpp_index_sort(integers index0)
         index_array [i] = std::vector <int> (0L);
     }
 
+    // Then fill the 'n_bins' items of 'index_array', each of which has the
+    // indices into the original values of `index0`.
+
     for (R_xlen_t i = 0; i < n; i++)
     {
         check_user_interrupt ();
@@ -43,9 +46,9 @@ writable::integers cpp_index_sort(integers index0)
         index_array [index0 [i] - 1] = vec_i;
     }
 
-    // index_array then has `n_bins` items, each of which has the indices into
-    // the original values of `index0`.
-
+    // Use that to successfully fill the final index by successively looping
+    // over the values of 'index_array'. The final index then hold index values
+    // back into the original index.
     int pos = 0;
     while (pos < n)
     {
