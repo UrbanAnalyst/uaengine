@@ -281,7 +281,5 @@ uta_export <- function (city, soc, results_path) {
         soc [[nm]] <- sign (x) * sqrt (abs (x))
     }
 
-    soc <- soc [which (!is.na (soc [[uta_vars_rel [1]]])), ]
-
     return (soc)
 }
