@@ -277,7 +277,8 @@ uta_export <- function (city, soc, results_path) {
             (soc$social_index - mean (soc$social_index, na.rm = TRUE)) *
                 transport_sd
         nm <- gsub ("^trans", "uta_index", i)
-        soc [[nm]] <- sqrt (soc [[i]] * social_index)
+        x <- soc [[i]] * social_index
+        soc [[nm]] <- sign (x) * sqrt (abs (x))
     }
 
     soc <- soc [which (!is.na (soc [[uta_vars_rel [1]]])), ]
