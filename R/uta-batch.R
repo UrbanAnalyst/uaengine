@@ -280,5 +280,7 @@ uta_export <- function (city, soc, results_path) {
         soc [[nm]] <- sqrt (soc [[i]] * social_index)
     }
 
+    soc <- soc [which (!is.na (soc [[uta_vars_rel [1]]])), ]
+
     return (soc)
 }
