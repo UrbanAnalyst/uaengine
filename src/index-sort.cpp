@@ -18,8 +18,8 @@ writable::integers cpp_index_sort(integers index0)
 {
     const R_xlen_t n = index0.size ();
 
-    // Get number of bins, for which have to copy to std::vector to call
-    // max_elemnt:
+    // Get number of bins, which requires copying std::vector to call
+    // max_element:
     std::vector <int> index_in (n);
     std::copy (index0.begin (), index0.end (), index_in.begin ());
     const int n_bins = *std::max_element (index_in.begin (), index_in.end ());
