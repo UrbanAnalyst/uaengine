@@ -235,6 +235,10 @@ batch_collate_results <- function (results_path, city) {
 
 uta_export <- function (city, soc, results_path) {
 
+    if (!"social_index" %in% names (soc)) {
+        stop ("'soc' must include a 'social_index' column", call. = FALSE)
+    }
+
     res <- batch_collate_results (results_path, city)
 
     vars_rel <- grep ("^int_d[0-9]+\\_pop\\_adj$", names (res), value = TRUE)
