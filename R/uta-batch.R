@@ -186,7 +186,11 @@ get_batch_filename <- function (results_path, city, index) {
 
     ival <- max (index)
     f <- paste0 (city, "-", sprintf ("%06i", ival), ".Rds")
-    f <- fs::path_abs (fs::path (results_path, f))
+    city_dir <- fs::path_abs (fs::path (results_path, city))
+    if (!fs::dir_exists (city_dir)) {
+        fs::dir_create (city_dir)
+    }
+    f <- fs::path_abs (fs::path (city_dir, f))
 
     return (f)
 }
