@@ -217,7 +217,7 @@ batch_progress_message <- function (i, vsp, pt0, t_start) {
 
 batch_collate_results <- function (results_path, city) {
 
-    results_path <- fs::path_abs (results_path)
+    results_path <- fs::path_abs (fs::path (results_path, city))
 
     flist <- fs::dir_ls (results_path, regexp = city, fixed = TRUE)
 
