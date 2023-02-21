@@ -225,9 +225,16 @@ uta_plot_legend <- function (soc, col_var,
 #' @noRd
 fit_palette_to_var <- function (x, ncols = 100L) {
 
+    x <- trim_var_ranges (x, ncols = 100)
+
+    return (cut (x, breaks = ncols))
+}
+
+# Adjust values until each group has multiple members:
+trim_var_ranges <- function (x, ncols = 100L) {
+
     ix <- cut (x, breaks = ncols)
 
-    # Adjust values until each group has multiple members:
     tb <- table (ix)
     tb_i <- as.integer (tb)
     # Are there zeros in lower or upper halves of table?
@@ -263,5 +270,5 @@ fit_palette_to_var <- function (x, ncols = 100L) {
         }
     }
 
-    return (cut (x, breaks = ncols))
+    return (x)
 }
