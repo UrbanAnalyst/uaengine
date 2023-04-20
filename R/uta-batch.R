@@ -269,6 +269,7 @@ uta_export <- function (city, soc, results_path, popdens_geotif) {
     for (i in c (trans_vars_rel, trans_vars_abs)) {
         soc [[i]] <- NA
     }
+    soc$popdens <- NA
 
     for (i in unique (pt_index)) {
         index <- which (pt_index == i)
@@ -280,6 +281,7 @@ uta_export <- function (city, soc, results_path, popdens_geotif) {
             soc [[grep (d, trans_vars_rel, value = TRUE)]] [i] <-
                 mean (res [[var_rel]] [index], na.rm = TRUE)
         }
+        soc$popdens [i] <- mean (res$popdens [index], na.rm = TRUE)
     }
     soc <- soc [which (!is.na (soc$social_index)), ]
 
