@@ -237,13 +237,23 @@ batch_collate_results <- function (results_path, city) {
 #' front-end.
 #' @export
 
-uta_export <- function (city, soc, results_path) {
+uta_export <- function (city, soc, results_path, popdens_geotif) {
 
     if (!"social_index" %in% names (soc)) {
         stop ("'soc' must include a 'social_index' column", call. = FALSE)
     }
+    checkmate::assert_file_exists (popdens_geotif)
 
     res <- batch_collate_results (results_path, city)
+
+    # add popdens:
+    ras <- raster::raster (popdens_geotif)
+    xy <- sf::st_coordinates (res) [, 1:2]
+    bb <- t (apply (xy, 2, range))
+    ras <- raster::crop (ras, raster::extent (bb))
+    ras_pts <- raster::rasterToPoints (ras)
+    ras_match <- geodist::geodist_min (xy, ras_pts, measure = "cheap")
+    res$popdens <- ras_pts [ras_match, 3]
 
     vars_rel <- grep ("^int_d[0-9]+\\_pop\\_adj$", names (res), value = TRUE)
     vars_abs <- grep ("^times\\_limit", names (res), value = TRUE)
