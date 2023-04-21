@@ -4,7 +4,7 @@
 \alias{uta_export}
 \title{Export results to the form required for the front-end app}
 \usage{
-uta_export(city, soc, results_path)
+uta_export(city, soc, results_path, popdens_geotif)
 }
 \arguments{
 \item{city}{Name of city, used to name and define local path to
@@ -15,6 +15,10 @@ which socio-demographic variables were collated, and a column called
 "social_index" containing the socio-demographic variable of interest.}
 
 \item{results_path}{Local path to directory where results are to be written.}
+
+\item{popdens_geotif}{Optional path to local 'geotiff' file with population
+density estimates. If provided, all transport indices are adjusted to account
+for effects of local population density.}
 }
 \value{
 The input table, \code{soc}, with additional columns of UTA index values
