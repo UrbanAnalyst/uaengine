@@ -19,6 +19,10 @@
 #' @param dlims Vector of distance limits in kilometres over which average
 #' values of transport index should be calculated. One value of "uta_index" is
 #' then derived for each value of `dlims`.
+#' @param duration_max Parameter to control maximal duration examined in
+#' multi-modal routing queries, specified in minutes. This value must be
+#' strictly greater than the maximal value of `dlims`, and is used to speed up
+#' multi-modal queries.
 #' @param quiet If `FALSE`, display progress information on screen.
 #'
 #' @return An \pkg{sf} `data.frame`, with geometries of points defined by
@@ -37,6 +41,7 @@ uta_index <- function (city,
                        soc = NULL,
                        soc_var = NULL,
                        dlims = c (5, 10),
+                       duration_max = 15,
                        quiet = FALSE) {
 
     checkmate::assert_character (city, len = 1L)
@@ -59,6 +64,8 @@ uta_index <- function (city,
     }
     checkmate::assert_character (soc_var, min.len = 1L, max.len = 1L)
     checkmate::assert_numeric (dlims, lower = 0, min.len = 1L)
+    checkmate::assert_numeric (duration_max, lower = 0, len = 1L)
+    checkmate::assert_true (duration_max > max (dlims))
 
     if (!quiet) {
         cli::cli_alert_info (cli::col_blue ("Caclulating multi-modal times"))
@@ -71,6 +78,7 @@ uta_index <- function (city,
         from = from,
         initial_mode = initial_mode,
         final_mode = final_mode,
+        duration_max = duration_max * 60,
         quiet = quiet
     )
 

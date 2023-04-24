@@ -14,6 +14,7 @@ uta_index(
   soc = NULL,
   soc_var = NULL,
   dlims = c(5, 10),
+  duration_max = 15,
   quiet = FALSE
 )
 }
@@ -45,6 +46,11 @@ for each observed value of target variable.}
 \item{dlims}{Vector of distance limits in kilometres over which average
 values of transport index should be calculated. One value of "uta_index" is
 then derived for each value of \code{dlims}.}
+
+\item{duration_max}{Parameter to control maximal duration examined in
+multi-modal routing queries, specified in minutes. This value must be
+strictly greater than the maximal value of \code{dlims}, and is used to speed up
+multi-modal queries.}
 
 \item{quiet}{If \code{FALSE}, display progress information on screen.}
 }
