@@ -80,7 +80,8 @@ test_that ("uta calculations", {
         initial_mode = "foot",
         final_mode = "foot",
         soc = a,
-        soc_var = "var"
+        soc_var = "var",
+        duration_max = NULL
     )
 
     expect_s3_class (res, c ("sf", "data.frame"))
