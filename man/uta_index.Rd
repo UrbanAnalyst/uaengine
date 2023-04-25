@@ -50,7 +50,8 @@ then derived for each value of \code{dlims}.}
 \item{duration_max}{Parameter to control maximal duration examined in
 multi-modal routing queries, specified in minutes. This value must be
 strictly greater than the maximal value of \code{dlims}, and is used to speed up
-multi-modal queries.}
+multi-modal queries. May be set to \code{NULL} to return full results from all
+possible durations / distances.}
 
 \item{quiet}{If \code{FALSE}, display progress information on screen.}
 }

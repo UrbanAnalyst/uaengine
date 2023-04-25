@@ -22,7 +22,8 @@
 #' @param duration_max Parameter to control maximal duration examined in
 #' multi-modal routing queries, specified in minutes. This value must be
 #' strictly greater than the maximal value of `dlims`, and is used to speed up
-#' multi-modal queries.
+#' multi-modal queries. May be set to `NULL` to return full results from all
+#' possible durations / distances.
 #' @param quiet If `FALSE`, display progress information on screen.
 #'
 #' @return An \pkg{sf} `data.frame`, with geometries of points defined by
@@ -64,8 +65,11 @@ uta_index <- function (city,
     }
     checkmate::assert_character (soc_var, min.len = 1L, max.len = 1L)
     checkmate::assert_numeric (dlims, lower = 0, min.len = 1L)
-    checkmate::assert_numeric (duration_max, lower = 0, len = 1L)
-    checkmate::assert_true (duration_max > max (dlims))
+    if (!is.null (duration_max)) {
+        checkmate::assert_numeric (duration_max, lower = 0, len = 1L)
+        checkmate::assert_true (duration_max > max (dlims))
+        duration_max <- duration_max * 60
+    }
 
     if (!quiet) {
         cli::cli_alert_info (cli::col_blue ("Caclulating multi-modal times"))
@@ -78,7 +82,7 @@ uta_index <- function (city,
         from = from,
         initial_mode = initial_mode,
         final_mode = final_mode,
-        duration_max = duration_max * 60,
+        duration_max = duration_max,
         quiet = quiet
     )
 
