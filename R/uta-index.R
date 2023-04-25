@@ -113,7 +113,9 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         df <- data.frame (
             d = dat$dist [i, ],
             ratio = dat$ratio [i, ],
-            mm_times = dat$mm_times [i, ]
+            mm_times = dat$mm_times [i, ],
+            mm_transfers = dat$mm_transfers [i, ],
+            mm_intervals = dat$mm_intervals [i, ]
         )
         df <- df [which (
             !is.na (df$ratio) & !is.nan (df$ratio) & is.finite (df$ratio)
@@ -137,15 +139,19 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
             stats::predict (mod3, newdata = data.frame (d = dlims))
         )
 
+        dlim_p <- sprintf ("%02d", dlims)
+        names (res) <- c (
+            "intercept_all", "slope_all",
+            "intercept_d10", "slope_d10",
+            paste0 ("times_d", dlim_p),
+            paste0 ("times_limit_d", dlim_p)
+        )
+
         return (res)
     })
 
     stats <- data.frame (do.call (rbind, stats))
-    dlim_p <- sprintf ("%02d", dlims)
-    pred_nms <- c (paste0 ("times_d", dlim_p), paste0 ("times_limit_d", dlim_p))
-    names (stats) <- c (
-        "intercept_all", "slope_all", "intercept_d10", "slope_d10", pred_nms
-    )
+
     stats$x <- dat$v_from$x
     stats$y <- dat$v_from$y
     # stats <- stats [which (!is.na (stats$intercept_all)), ]
