@@ -113,9 +113,9 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         df <- data.frame (
             d = dat$dist [i, ],
             ratio = dat$ratio [i, ],
-            mm_times = dat$mm_times [i, ],
+            mm_times = dat$mm_times [i, ] / 60, # minutes
             mm_transfers = dat$mm_transfers [i, ],
-            mm_intervals = dat$mm_intervals [i, ]
+            mm_intervals = dat$mm_intervals [i, ] / 60 # minutes
         )
         df <- df [which (
             !is.na (df$ratio) & !is.nan (df$ratio) & is.finite (df$ratio)
@@ -123,28 +123,28 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         if (nrow (df) < (ncol (dat$ratio) / 2)) {
             return (c (NA, NA))
         }
-        mod0 <- stats::lm (ratio ~ d, data = df)
-        mod1 <- stats::lm (ratio ~ d, data = df [df$d <= 10.0, ])
-        res <- c (
-            summary (mod0)$coefficients [1:2],
-            summary (mod1)$coefficients [1:2]
-        )
+
+        index <- which (df$d <= max (dlims))
+        mod0 <- stats::lm (ratio ~ d, data = df [index, ])
+        res <- summary (mod0)$coefficients [1:2]
 
         # Then mm_times vs dist
-        mod2 <- stats::lm (mm_times ~ d, data = df)
-        mod3 <- stats::lm (mm_times ~ d, data = df [df$d <= 10.0, ])
+        mod_times <- stats::lm (mm_times ~ d, data = df [index, ])
+        mod_transfers <- stats::lm (mm_transfers ~ d, data = df [index, ])
+        mod_intervals <- stats::lm (mm_intervals ~ d, data = df [index, ])
         res <- c (
             res,
-            stats::predict (mod2, newdata = data.frame (d = dlims)),
-            stats::predict (mod3, newdata = data.frame (d = dlims))
+            stats::predict (mod_times, newdata = data.frame (d = dlims)),
+            stats::predict (mod_transfers, newdata = data.frame (d = dlims)),
+            stats::predict (mod_intervals, newdata = data.frame (d = dlims))
         )
 
         dlim_p <- sprintf ("%02d", dlims)
         names (res) <- c (
-            "intercept_all", "slope_all",
-            "intercept_d10", "slope_d10",
+            "intercept", "slope",
             paste0 ("times_d", dlim_p),
-            paste0 ("times_limit_d", dlim_p)
+            paste0 ("transfers_d", dlim_p),
+            paste0 ("intervals_d", dlim_p)
         )
 
         return (res)
@@ -160,7 +160,7 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
 
     for (d in dlims) {
         par_name <- paste0 ("integral_d", sprintf ("%02d", d))
-        stats [[par_name]] <- stats$intercept_d10 + stats$slope_d10 * d
+        stats [[par_name]] <- stats$intercept + stats$slope * d
     }
 
     if (!quiet) {
@@ -174,10 +174,13 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
 
 add_popdens_to_stats <- function (s, popdens_geotif) {
 
+    nms <- names (s)
     s <- pop2point (s, popdens_geotif, normalise = FALSE)
+    names (s) [which (!names (s) %in% nms)] <- "popdens"
+
     dlims <- grep ("^integral\\_d", names (s), value = TRUE)
     for (d in dlims) {
-        mod <- stats::lm (stats::as.formula (paste0 (d, " ~ layer")), data = s)
+        mod <- stats::lm (stats::as.formula (paste0 (d, " ~ popdens")), data = s)
         par_name <- paste0 ("int", gsub ("^integral", "", d), "_pop_adj")
         # 'mod' will exclude any NA values of 'par_name', so need to index back
         # into 's':
@@ -196,9 +199,12 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
 
     vars <- c (
         "osm_id",
+        "popdens",
         paste0 ("integral_", dlims),
         paste0 ("int_", dlims, "_pop_adj"),
-        paste0 ("times_limit_", dlims)
+        paste0 ("times_", dlims),
+        paste0 ("transfers_", dlims),
+        paste0 ("intervals_", dlims)
     )
     vars <- vars [which (vars %in% names (s))]
 
@@ -227,7 +233,7 @@ add_uta_index <- function (s, dlims) {
         s [[par_name]] <- s$soc_var * s [[tr_index]]
 
         # Index from absolute multi-modal journey times:
-        tt_index <- paste0 ("times_limit_d", d_fmt)
+        tt_index <- paste0 ("times_d", d_fmt)
         par_name <- paste0 ("uta_index_abs_d", d_fmt)
         s [[par_name]] <- s$soc_var * s [[tt_index]]
     }
