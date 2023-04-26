@@ -99,6 +99,7 @@ uta_index <- function (city,
     }
     s <- add_socio_var_to_stats (s, soc, soc_var)
     s <- add_uta_index (s, dlims)
+    s <- add_dist_to_schools (s, city, gtfs_path)
 
     return (s)
 }
