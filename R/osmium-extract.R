@@ -210,12 +210,21 @@ extract_osm_keys <- function (path) {
 
     tags <- c (
         "highway", "restriction", "access", "bicycle", "foot",
-        "motorcar", "motor_vehicle", "vehicle", "toll"
+        "motorcar", "motor_vehicle", "vehicle", "toll",
+        "bicycle:left", "bicycle:right", "bicycle:lanes",
+        "cycleway", "cycleway:both", "cycleway:both:lane", "cycleway:lane",
+        "cycleway:left", "cycleway:left:lane", "cycleway:left:segregated",
+        "cycleway:right", "cycleway:right:lane", "cycleway:right:segregated",
+        "cycleway:track"
     )
 
     for (tg in tags) {
 
-        ft <- paste0 (gsub ("\\.osm\\.pbf$", "", f), "-", tg, ".osm")
+        ptn <- "\\.osm\\.(pbf|bz2)$"
+        if (grepl ("\\-latest", f)) {
+            ptn <- paste0 ("\\-latest", ptn)
+        }
+        ft <- paste0 (gsub (ptn, "", f), "-", tg, ".osm")
         ft_full <- fs::path (path_dir, ft)
         if (fs::file_exists (ft_full)) {
             cli::cli_alert_info (cli::col_blue (
