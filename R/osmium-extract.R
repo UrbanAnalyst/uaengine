@@ -206,39 +206,24 @@ extract_osm_keys <- function (path) {
     path_dir <- fs::path_dir (path)
     f <- fs::path_file (path)
 
+    ptn <- "\\.osm\\.(pbf|bz2)$"
+    if (grepl ("\\-latest", f)) {
+        ptn <- paste0 ("\\-latest", ptn)
+    }
+    ft <- paste0 (gsub (ptn, "", f), "-network.osm")
+    ft_full <- fs::path (path_dir, ft)
+
     cli::cli_h3 (cli::col_green ("Extracting OSM tags:"))
 
     tags <- c (
-        "highway", "restriction", "access", "bicycle", "foot",
+        "highway", "restriction", "access", "foot",
         "motorcar", "motor_vehicle", "vehicle", "toll",
-        "bicycle:left", "bicycle:right", "bicycle:lanes",
-        "cycleway", "cycleway:both", "cycleway:both:lane", "cycleway:lane",
-        "cycleway:left", "cycleway:left:lane", "cycleway:left:segregated",
-        "cycleway:right", "cycleway:right:lane", "cycleway:right:segregated",
-        "cycleway:track"
+        "bicycle*", "cycleway*"
     )
+    tags <- paste0 (paste0 ("wr/", tags), collapse = " ")
 
-    for (tg in tags) {
-
-        ptn <- "\\.osm\\.(pbf|bz2)$"
-        if (grepl ("\\-latest", f)) {
-            ptn <- paste0 ("\\-latest", ptn)
-        }
-        ft <- paste0 (gsub (ptn, "", f), "-", tg, ".osm")
-        ft_full <- fs::path (path_dir, ft)
-        if (fs::file_exists (ft_full)) {
-            cli::cli_alert_info (cli::col_blue (
-                "File '",
-                ft_full,
-                "' already exists."
-            ))
-            next
-        }
-
-        cli::cli_h1 (tg)
-        cmd <- paste ("osmium tags-filter", f, paste0 ("w/", tg), "-o", ft)
-        withr::with_dir (path_dir, system (cmd))
-    }
+    cmd <- paste ("osmium tags-filter", f, tags, "-o", ft)
+    withr::with_dir (path_dir, system (cmd))
 }
 
 #' Modified version of \pkg{m4ra} functions to extract OSM data used for parking
