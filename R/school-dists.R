@@ -3,10 +3,14 @@ add_dist_to_schools <- function (s, city, gtfs_path) {
     files <- m4ra::m4ra_prepare_data (
         gtfs = gtfs_path,
         city_name = city,
-        final_mode = "bicycle"
+        final_mode = "bicycle",
+        quiet = TRUE
     )
 
-    path <- fs::path (fs::path_dir (files [1]), paste0 ("m4ra-", city, "-schools.Rds"))
+    path <- fs::path (
+        fs::path_dir (files [1]),
+        paste0 ("m4ra-", city, "-schools.Rds")
+    )
     if (!file.exists (path)) {
         stop ("No schools file found at [", path, "]", call. = FALSE)
     }
@@ -23,7 +27,7 @@ add_dist_to_schools <- function (s, city, gtfs_path) {
 
     pts <- dodgr::match_points_to_verts (v, schools_xy, connected = TRUE)
     to <- v$id [pts]
-    d <- dodgr::dodgr_dists_nearest (graph, from = from, to = to)
+    d <- dodgr::dodgr_dists_nearest (graph, from = s$osm_id, to = to)
 
     s$school_dist <- d$d
 
