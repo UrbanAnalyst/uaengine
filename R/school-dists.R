@@ -12,7 +12,11 @@ add_dist_to_schools <- function (s, city, gtfs_path) {
         paste0 ("m4ra-", city, "-schools.Rds")
     )
     if (!file.exists (path)) {
-        stop ("No schools file found at [", path, "]", call. = FALSE)
+        message (
+            "No schools file found at [", path,
+            "]. Distances to schools can not be calculated."
+        )
+        return (s)
     }
 
     schools <- readRDS (path)
