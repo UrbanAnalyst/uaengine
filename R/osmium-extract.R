@@ -50,6 +50,7 @@ uta_extract_osm <- function (city, path, bbox = NULL, bbox_expand = 0.05,
 
     extract_osm_keys (path_to_pbf)
     uta_m4ra_parking_extraction (path_to_pbf)
+    uta_osm_schools (path_to_pbf)
 }
 
 #' Trim OSM file to an 'osm_id' and return converted 'pbf' output.
@@ -215,15 +216,26 @@ extract_osm_keys <- function (path) {
 
     cli::cli_h3 (cli::col_green ("Extracting OSM tags:"))
 
-    tags <- c (
-        "highway", "restriction", "access", "foot",
-        "motorcar", "motor_vehicle", "vehicle", "toll",
-        "bicycle*", "cycleway*"
-    )
-    tags <- paste0 (paste0 ("wr/", tags), collapse = " ")
+    if (fs::file_exists (ft_full)) {
 
-    cmd <- paste ("osmium tags-filter", f, tags, "-o", ft)
-    withr::with_dir (path_dir, system (cmd))
+        cli::cli_alert_info (cli::col_blue (
+            "File '",
+            ft_full,
+            "' already exists."
+        ))
+
+    } else {
+
+        tags <- c (
+            "highway", "restriction", "access", "foot",
+            "motorcar", "motor_vehicle", "vehicle", "toll",
+            "bicycle*", "cycleway*"
+        )
+        tags <- paste0 (paste0 ("wr/", tags), collapse = " ")
+
+        cmd <- paste ("osmium tags-filter", f, tags, "-o", ft)
+        withr::with_dir (path_dir, system (cmd))
+    }
 }
 
 #' Modified version of \pkg{m4ra} functions to extract OSM data used for parking
@@ -256,9 +268,13 @@ uta_m4ra_parking_extraction <- function (path) {
     path_dir <- fs::path_dir (path)
     f <- fs::path_file (path)
 
-    cli::cli_h3 (cli::col_green ("Extracting OSM tags for 'm4ra' routines:"))
+    cli::cli_h3 (cli::col_green ("Extracting parking data:"))
 
-    ft <- paste0 (gsub ("\\.osm\\.pbf$", "", f), "-parking.osm")
+    ptn <- "\\.osm\\.(pbf|bz2)$"
+    if (grepl ("\\-latest", f)) {
+        ptn <- paste0 ("\\-latest", ptn)
+    }
+    ft <- paste0 (gsub (ptn, "", f), "-parking.osm")
     ft_full <- fs::path (path_dir, ft)
     if (fs::file_exists (ft_full)) {
         cli::cli_alert_info (cli::col_blue (
@@ -267,7 +283,48 @@ uta_m4ra_parking_extraction <- function (path) {
             "' already exists."
         ))
     } else {
-        cli::cli_h1 ("parking:")
+        cmd <- paste ("osmium tags-filter", f, paste0 (tags, collapse = " "), "-o", ft)
+        withr::with_dir (path_dir, system (cmd))
+    }
+
+    return (ft_full)
+}
+
+#' Extract data on schools using osmium
+#'
+#' @param path The `path_to_pbf` parameter generated in \link{uta_extract_osm}.
+#' @return Path of a '.osm' file containing information needed for \pkg{m4ra}
+#' parking analyses.
+#' @noRd
+uta_osm_schools <- function (path) {
+
+    tags <- c (
+        "nwr/amenity=school",
+        "nwr/school=elementary,primary,secondary"
+    )
+
+    path_dir <- fs::path_dir (path)
+    f <- fs::path_file (path)
+
+    cli::cli_h3 (cli::col_green ("Extracting school data:"))
+
+    ptn <- "\\.osm\\.(pbf|bz2)$"
+    if (grepl ("\\-latest", f)) {
+        ptn <- paste0 ("\\-latest", ptn)
+    }
+    ft <- paste0 (gsub (ptn, "", f), "-schools.osm")
+    ft_full <- fs::path (path_dir, ft)
+
+    if (fs::file_exists (ft_full)) {
+
+        cli::cli_alert_info (cli::col_blue (
+            "File '",
+            ft_full,
+            "' already exists."
+        ))
+
+    } else {
+
         cmd <- paste ("osmium tags-filter", f, paste0 (tags, collapse = " "), "-o", ft)
         withr::with_dir (path_dir, system (cmd))
     }
