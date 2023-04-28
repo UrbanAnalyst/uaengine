@@ -5,16 +5,13 @@
 \title{Convert a series of '.osm' files to \pkg{silicate} format, and combine all
 into a single object.}
 \usage{
-uta_osm_to_sc(path, city, remove_osm_files = TRUE)
+uta_osm_to_sc(path, city)
 }
 \arguments{
 \item{path}{Path to the directory containing various '.osm' files produced by
 \link{uta_extract_osm}.}
 
 \item{city}{Name of city (used to name resultant files).}
-
-\item{remove_osm_files}{If \code{TRUE} (default), remove the individual '.osm'
-files for each key after conversion to \pkg{silicate} format.}
 }
 \value{
 A single \pkg{silicate} 'SC' object containing combined data from all
