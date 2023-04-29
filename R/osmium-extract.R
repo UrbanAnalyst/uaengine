@@ -227,9 +227,9 @@ extract_osm_keys <- function (path) {
     } else {
 
         tags <- c (
-            "highway", "restriction", "access", "foot",
-            "motorcar", "motor_vehicle", "vehicle", "toll",
-            "bicycle*", "cycleway*"
+            "highway", "restriction", "access", "foot", "motorcar",
+            "motor_vehicle", "vehicle", "toll", "bicycle",
+            "cycleway", "cycleway:left", "cycleway:right"
         )
         tags <- paste0 (paste0 ("wr/", tags), collapse = " ")
 
