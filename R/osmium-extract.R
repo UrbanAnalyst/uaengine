@@ -341,10 +341,10 @@ uta_osm_schools <- function (path) {
 uta_osm_nature <- function (path) {
 
     tags <- c (
-        "nwr/leisure=garden,park,nature_reserve,playground",
-        "nwr/surface=grass",
-        "nwr/landuse=forest,meadow,recreation_ground,village_green",
-        "nwr/!natural!=tree,tree_row,tree_stump"
+        "w/leisure=garden,park,nature_reserve,playground",
+        "w/surface=grass",
+        "w/landuse=forest,meadow,recreation_ground,village_green",
+        "w/!natural!=tree,tree_row,tree_stump"
     )
 
     path_dir <- fs::path_dir (path)
