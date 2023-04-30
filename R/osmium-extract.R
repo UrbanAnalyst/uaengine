@@ -331,3 +331,47 @@ uta_osm_schools <- function (path) {
 
     return (ft_full)
 }
+
+#' Extract data on natural spaces using osmium
+#'
+#' @param path The `path_to_pbf` parameter generated in \link{uta_extract_osm}.
+#' @return Path of a '.osm' file containing information needed for \pkg{m4ra}
+#' parking analyses.
+#' @noRd
+uta_osm_nature <- function (path) {
+
+    tags <- c (
+        "nwr/leisure=garden,park,nature_reserve,playground",
+        "nwr/surface=grass",
+        "nwr/landuse=forest,meadow,recreation_ground,village_green",
+        "nwr/!natural!=tree,tree_row,tree_stump"
+    )
+
+    path_dir <- fs::path_dir (path)
+    f <- fs::path_file (path)
+
+    cli::cli_h3 (cli::col_green ("Extracting natural spaces data:"))
+
+    ptn <- "\\.osm\\.(pbf|bz2)$"
+    if (grepl ("\\-latest", f)) {
+        ptn <- paste0 ("\\-latest", ptn)
+    }
+    ft <- paste0 (gsub (ptn, "", f), "-natural.osm")
+    ft_full <- fs::path (path_dir, ft)
+
+    if (fs::file_exists (ft_full)) {
+
+        cli::cli_alert_info (cli::col_blue (
+            "File '",
+            ft_full,
+            "' already exists."
+        ))
+
+    } else {
+
+        cmd <- paste ("osmium tags-filter", f, paste0 (tags, collapse = " "), "-o", ft)
+        withr::with_dir (path_dir, system (cmd))
+    }
+
+    return (ft_full)
+}
