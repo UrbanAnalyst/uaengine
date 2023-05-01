@@ -68,10 +68,12 @@ test_that ("uta calculations", {
     a <- sf::st_sf (var = runif (length (p)), geometry = p)
 
     # Get origin vertices
-    v <- uta_vertices (a, city = "hampi", mode = "foot")
+    # v <- uta_vertices (a, city = "hampi", mode = "foot")
+    # from <- sample (v$id, npts)
+    net <- m4ra::m4ra_load_cached_network (city = "hampi", mode = "foot")
     set.seed (1L)
     npts <- 10L
-    from <- sample (v$id, npts)
+    from <- sample (net$.vx0, size = npts)
 
     res <- uta_index (
         city = "hampi",
