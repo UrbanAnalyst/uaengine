@@ -26,9 +26,15 @@ add_bike_infrastructure <- function (s, city, dlimit = 5000) {
         "track",
         "yes"
     )
-    net$edge_type [net$cycleway %in% cycleway_types] <- "full"
-    net$edge_type [net$`cycleway:left` %in% cycleway_types] <- "full"
-    net$edge_type [net$`cycleway:right` %in% cycleway_types] <- "full"
+    if ("cycleway" %in% names (net)) {
+        net$edge_type [net$cycleway %in% cycleway_types] <- "full"
+    }
+    if ("cycleway:left" %in% names (net)) {
+        net$edge_type [net$`cycleway:left` %in% cycleway_types] <- "full"
+    }
+    if ("cycleway:right" %in% names (net)) {
+        net$edge_type [net$`cycleway:right` %in% cycleway_types] <- "full"
+    }
     bicycle_types <- c (
         "designated",
         "sidepath",
@@ -48,7 +54,9 @@ add_bike_infrastructure <- function (s, city, dlimit = 5000) {
         "share_busway",
         "sidewalk"
     )
-    net$edge_type [net$cycleway %in% cycleway_types] <- "half"
+    if ("cycleway" %in% names (net)) {
+        net$edge_type [net$cycleway %in% cycleway_types] <- "half"
+    }
 
     # ----- weighting = 0.25
     highway_types <- c (
@@ -64,14 +72,34 @@ add_bike_infrastructure <- function (s, city, dlimit = 5000) {
     )
     net$edge_type [net$bicycle %in% bicycle_types] <- "quarter"
 
+    from <- s$osm_id
+    index <- which (!from %in% net$.vx0)
+    if (length (index) > 0L) {
+        # Not a bicycle network, so match points to nearest bike points:
+        v <- m4ra::m4ra_vertices (net, city)
+        from_xy <- sf::st_coordinates (s)
+        s_xy <- sf::st_coordinates (s) [index, ]
+        vert_index <- dodgr::match_pts_to_verts (v, s_xy)
+        from [index] <- v$id [vert_index]
+    }
+
     d <- dodgr::dodgr_dists_categorical (
         net,
-        from = s$osm_id,
+        from = from,
         proportions_only = TRUE,
         dlimit = dlimit
     )
 
-    s$bike_index <- (d$full + 0.5 * d$half + 0.25 * d$quarter) / d$distance
+    nms <- c ("full", "half", "quarter")
+    wts <- c (1, 0.5, 0.25)
+    index <- which (nms %in% names (d))
+    nms <- nms [index]
+    wts <- wts [index]
+    sums <- rep (0, nrow (s))
+    for (n in seq_along (nms)) {
+        sums <- sums + d [[n]] * wts [n]
+    }
+    s$bike_index <- sums / d$distance
 
     return (s)
 }
