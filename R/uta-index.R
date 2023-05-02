@@ -116,7 +116,7 @@ uta_index <- function (city,
     s <- add_dist_to_schools (s, city, gtfs_path)
     s <- add_bike_infrastructure (s, city, dlimit = 5000)
     if (!is.null (f_natural)) {
-        s <- add_natural_space_distances (s, city, f_natural, dlimit = 2000)
+        s <- add_natural_space_index (s, city, f_natural, dlimit = 2000)
     }
 
     return (s)

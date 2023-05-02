@@ -1,3 +1,13 @@
+#' Bike infrastructure index is the proportional distance of all ways from each
+#' point which travel along dedicated bicycle infrastructure.
+#'
+#' The distances are weighted according to three categories, as specified in the
+#' code below. Full weight is given to "proper" bicycle ways which are entirely
+#' separate from automboile transport. Ways which are adjacent to yet distinctly
+#' separated from automobile transport are given half weights, and ways which
+#' are otherwise okay, such as along pedestrian streets, or where cyclists may
+#' optionally use footpaths, are given quarter weights.
+#' @noRd
 add_bike_infrastructure <- function (s, city, dlimit = 5000) {
 
     mode <- "bicycle"

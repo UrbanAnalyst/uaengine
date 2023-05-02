@@ -1,4 +1,7 @@
-add_natural_space_distances <- function (s, city, f, dlimit = 2000) {
+#' Natural space index is proportion of local foot ways which pass through green
+#' space, or next to water.
+#' @noRd
+add_natural_space_index <- function (s, city, f, dlimit = 2000) {
 
     mode <- "foot"
     net <- m4ra::m4ra_load_cached_network (city = city, mode = mode)
