@@ -3,6 +3,8 @@
 #' @param city Name of city, used to name and define local path to
 #' pre-calculated street networks and transport times with \pkg{m4ra} package.
 #' @param gtfs_path Path to `.Rds` version of GTFS feed for specified city.
+#' @param osm_path Path to OSM data processed by \link{uta_extract_osm} function
+#' (only needed first time to call internal `uta_prepare_data()` function).
 #' @param popdens_geotif Optional path to local 'geotiff' file with population
 #' density estimates. If provided, all transport indices are adjusted to account
 #' for effects of local population density.
@@ -35,6 +37,7 @@
 
 uta_index <- function (city,
                        gtfs_path,
+                       osm_path = NULL,
                        popdens_geotif = NULL,
                        from = NULL,
                        initial_mode = "foot",
@@ -69,6 +72,19 @@ uta_index <- function (city,
         checkmate::assert_numeric (duration_max, lower = 0, len = 1L)
         checkmate::assert_true (duration_max > max (dlims))
         duration_max <- duration_max * 60
+    }
+
+    cache_dir <- fs::path (m4ra_cache_dir (), city)
+    f_natural <- fs::dir_ls (cache_dir, regex = "\\-natural\\-")
+    if (length (f_natural) != 1L) {
+        if (is.null (osm_path)) {
+            stop (
+                "'osm_path' must be provided the first ",
+                "time this function is called for a city",
+                call. = FALSE
+            )
+        }
+        f_natural <- uta_prepare_data (osm_path, water_dist = 20)
     }
 
     if (!quiet) {
