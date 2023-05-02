@@ -201,17 +201,6 @@ add_popdens_to_stats <- function (s, popdens_geotif) {
     s <- pop2point (s, popdens_geotif, normalise = FALSE)
     names (s) [which (!names (s) %in% nms)] <- "popdens"
 
-    dlims <- grep ("^integral\\_d", names (s), value = TRUE)
-    for (d in dlims) {
-        mod <- stats::lm (stats::as.formula (paste0 (d, " ~ popdens")), data = s)
-        par_name <- paste0 ("int", gsub ("^integral", "", d), "_pop_adj")
-        # 'mod' will exclude any NA values of 'par_name', so need to index back
-        # into 's':
-        index <- match (mod$model [[d]], s [[d]])
-        s [[par_name]] <- NA
-        s [[par_name]] [index] <- mean (s [[d]], na.rm = TRUE) + mod$residuals
-    }
-
     return (s)
 }
 
