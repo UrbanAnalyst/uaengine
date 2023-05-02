@@ -78,7 +78,7 @@ uta_index <- function (city,
     f_extra <- NULL
     if (fs::dir_exists (cache_dir)) {
         f_extra <- fs::dir_ls (cache_dir, regex = "\\-(natural|school)\\-")
-        if (length (f_natural) != 2L) {
+        if (length (f_extra) != 2L) {
             if (!is.null (osm_path)) {
                 f_extra <- uta_prepare_data (osm_path, water_dist = 20)
             }
