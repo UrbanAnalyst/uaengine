@@ -113,7 +113,6 @@ uta_index <- function (city,
         s <- add_popdens_to_stats (s, popdens_geotif)
     }
     s <- add_socio_var_to_stats (s, soc, soc_var)
-    s <- add_uta_index (s, dlims)
     s <- add_dist_to_schools (s, city, gtfs_path)
     s <- add_bike_infrastructure (s, city, dlimit = 5000)
     if (!is.null (f_natural)) {
@@ -239,28 +238,6 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
     index <- unlist (sf::st_within (s, soc))
     s$soc_var <- soc [[soc_var]] [index]
     s$soc_var <- s$soc_var / mean (s$soc_var, na.rm = TRUE)
-
-    return (s)
-}
-
-add_uta_index <- function (s, dlims) {
-
-    for (d in dlims) {
-
-        # Index from ratios relative to car times:
-        d_fmt <- sprintf ("%02d", d)
-        tr_index <- paste0 ("int_d", d_fmt, "_pop_adj")
-        if (!tr_index %in% names (s)) { # no population density data
-            tr_index <- paste0 ("integral_d", d_fmt)
-        }
-        par_name <- paste0 ("uta_index_rel_d", d_fmt)
-        s [[par_name]] <- s$soc_var * s [[tr_index]]
-
-        # Index from absolute multi-modal journey times:
-        tt_index <- paste0 ("times_d", d_fmt)
-        par_name <- paste0 ("uta_index_abs_d", d_fmt)
-        s [[par_name]] <- s$soc_var * s [[tt_index]]
-    }
 
     return (s)
 }
