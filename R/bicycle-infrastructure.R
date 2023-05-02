@@ -90,15 +90,14 @@ add_bike_infrastructure <- function (s, city, dlimit = 5000) {
         dlimit = dlimit
     )
 
-    nms <- c ("full", "half", "quarter")
+    cols <- c ("full", "half", "quarter")
     wts <- c (1, 0.5, 0.25)
-    index <- which (nms %in% names (d))
-    nms <- nms [index]
+    index <- which (cols %in% names (d))
+    cols <- cols [index]
     wts <- wts [index]
-    sums <- rep (0, nrow (s))
-    for (n in seq_along (nms)) {
-        sums <- sums + d [[n]] * wts [n]
-    }
+    wts_mat <- matrix (rep (wts, each = nrow (d)), ncol = length (wts))
+    sums <- rowSums (d [, cols] * wts_mat)
+
     s$bike_index <- sums / d$distance
 
     return (s)
