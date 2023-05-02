@@ -22,7 +22,10 @@ uta_prepare_data <- function (osm_path, water_dist = 20) {
 
     f_natural <- prepare_natural (f_natural, city, water_dist = water_dist)
 
-    return (f_natural)
+    f_schools <- grep ("schools", files, value = TRUE)
+    f_schools <- prepare_schools (f_schools, city)
+
+    return (c (f_natural, f_schools))
 }
 
 prepare_natural <- function (f, city, water_dist = 20) {
@@ -57,4 +60,31 @@ prepare_natural <- function (f, city, water_dist = 20) {
     saveRDS (index, f_natural)
 
     return (f_natural)
+}
+
+prepare_schools <- function (f, city) {
+
+    cache_dir <- fs::path (m4ra_cache_dir (), city)
+    f_schools <- fs::path (cache_dir, paste0 ("uta-", city, "-school-verts.Rds"))
+
+    if (fs::file_exists (f_schools)) {
+        return (f_schools)
+    }
+
+    dat <- osmdata::osmdata_sc (doc = f)
+
+    index1 <- which (dat$object$key == "amenity" & dat$object$value == "school")
+    index2 <- which (
+        dat$object$key == "school" &
+            dat$object$value %in% c ("elementary", "primary", "secondary")
+    )
+    ids <- dat$object$object_ [sort (unique (c (index1, index2)))]
+    edges <- dat$object_link_edge$edge_ [dat$object_link_edge$object_ %in% ids]
+    index <- which (dat$edge$edge_ %in% edges)
+    verts <- unique (c (dat$edge$.vx0 [index], dat$edge$.vx1 [index]))
+    verts <- dat$vertex [which (dat$vertex$vertex_ %in% verts), ]
+
+    saveRDS (verts, f_schools)
+
+    return (f_schools)
 }

@@ -75,14 +75,15 @@ uta_index <- function (city,
     }
 
     cache_dir <- fs::path (m4ra_cache_dir (), city)
-    f_natural <- NULL
+    f_extra <- NULL
     if (fs::dir_exists (cache_dir)) {
-        f_natural <- fs::dir_ls (cache_dir, regex = "\\-natural\\-")
-        if (length (f_natural) != 1L) {
+        f_extra <- fs::dir_ls (cache_dir, regex = "\\-(natural|school)\\-")
+        if (length (f_natural) != 2L) {
             if (!is.null (osm_path)) {
-                f_natural <- uta_prepare_data (osm_path, water_dist = 20)
+                f_extra <- uta_prepare_data (osm_path, water_dist = 20)
             }
         }
+        f_natural <- grep ("natural", f_extra, value = TRUE)
     }
 
     if (!quiet) {
