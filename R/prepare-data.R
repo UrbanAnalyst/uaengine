@@ -18,7 +18,7 @@ uta_prepare_data <- function (osm_path, water_dist = 20) {
 
     f_natural <- grep ("natural", files, value = TRUE)
     city <- strsplit (f_natural, split = "\\/") [[1]]
-    city <- tail (city, 2L) [1]
+    city <- utils::tail (city, 2L) [1]
 
     f_natural <- prepare_natural (f_natural, city, water_dist = water_dist)
 
