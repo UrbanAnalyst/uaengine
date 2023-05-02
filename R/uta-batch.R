@@ -246,7 +246,7 @@ uta_export <- function (city, soc, results_path) {
     res <- batch_collate_results (results_path, city)
 
     vars_rel <- grep ("^int_d[0-9]+\\_pop\\_adj$", names (res), value = TRUE)
-    vars_abs <- grep ("^times\\_limit", names (res), value = TRUE)
+    vars_abs <- grep ("^times\\_d", names (res), value = TRUE)
 
     pt_index <- unlist (sf::st_within (res, soc))
 
