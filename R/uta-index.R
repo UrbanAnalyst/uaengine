@@ -148,15 +148,12 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         }
 
         index <- which (df$d <= max (dlims))
-        mod0 <- stats::lm (ratio ~ d, data = df [index, ])
-        res <- summary (mod0)$coefficients [1:2]
-
-        # Then mm_times vs dist
+        mod_ratio <- stats::lm (ratio ~ d, data = df [index, ])
         mod_times <- stats::lm (mm_times ~ d, data = df [index, ])
         mod_transfers <- stats::lm (mm_transfers ~ d, data = df [index, ])
         mod_intervals <- stats::lm (mm_intervals ~ d, data = df [index, ])
         res <- c (
-            res,
+            stats::predict (mod_ratio, newdata = data.frame (d = dlims)),
             stats::predict (mod_times, newdata = data.frame (d = dlims)),
             stats::predict (mod_transfers, newdata = data.frame (d = dlims)),
             stats::predict (mod_intervals, newdata = data.frame (d = dlims))
@@ -164,8 +161,8 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
 
         dlim_p <- sprintf ("%02d", dlims)
         names (res) <- c (
-            "intercept", "slope",
-            paste0 ("times_d", dlim_p),
+            paste0 ("times_rel_d", dlim_p),
+            paste0 ("times_abs_d", dlim_p),
             paste0 ("transfers_d", dlim_p),
             paste0 ("intervals_d", dlim_p)
         )
@@ -180,11 +177,6 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
     # stats <- stats [which (!is.na (stats$intercept_all)), ]
 
     stats <- cbind ("osm_id" = rownames (dat$dist), stats)
-
-    for (d in dlims) {
-        par_name <- paste0 ("integral_d", sprintf ("%02d", d))
-        stats [[par_name]] <- stats$intercept + stats$slope * d
-    }
 
     if (!quiet) {
         st <- hms::hms (round ((proc.time () - st0) [3]))
@@ -206,27 +198,12 @@ add_popdens_to_stats <- function (s, popdens_geotif) {
 
 add_socio_var_to_stats <- function (s, soc, soc_var) {
 
-    dlims <- grep ("^integral\\_d", names (s), value = TRUE)
-    dlims <- gsub ("^integral\\_", "", dlims)
+    sxy <- sfheaders::sf_point (s [, c ("x", "y")])
+    sxy <- sf::st_sf (sxy)
+    sf::st_crs (sxy) <- 4326
 
-    vars <- c (
-        "osm_id",
-        "popdens",
-        paste0 ("integral_", dlims),
-        paste0 ("int_", dlims, "_pop_adj"),
-        paste0 ("times_", dlims),
-        paste0 ("transfers_", dlims),
-        paste0 ("intervals_", dlims)
-    )
-    vars <- vars [which (vars %in% names (s))]
-
-    s <- cbind (s [vars], sfheaders::sf_point (s [, c ("x", "y")]))
-    s <- sf::st_sf (s)
-    sf::st_crs (s) <- 4326
-
-    index <- unlist (sf::st_within (s, soc))
+    index <- unlist (sf::st_within (sxy, soc))
     s$soc_var <- soc [[soc_var]] [index]
-    s$soc_var <- s$soc_var / mean (s$soc_var, na.rm = TRUE)
 
     return (s)
 }
