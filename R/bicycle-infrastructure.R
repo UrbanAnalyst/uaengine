@@ -87,8 +87,7 @@ add_bike_infrastructure <- function (s, city, dlimit = 5000) {
     if (length (index) > 0L) {
         # Not a bicycle network, so match points to nearest bike points:
         v <- m4ra::m4ra_vertices (net, city)
-        from_xy <- sf::st_coordinates (s)
-        s_xy <- sf::st_coordinates (s) [index, ]
+        s_xy <- s [index, c ("x", "y")]
         vert_index <- dodgr::match_pts_to_verts (v, s_xy)
         from [index] <- v$id [vert_index]
     }
