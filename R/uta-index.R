@@ -150,14 +150,36 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         index <- which (df$d <= max (dlims))
         mod_ratio <- stats::lm (ratio ~ d, data = df [index, ])
         mod_times <- stats::lm (mm_times ~ d, data = df [index, ])
-        mod_transfers <- stats::lm (mm_transfers ~ d, data = df [index, ])
-        mod_intervals <- stats::lm (mm_intervals ~ d, data = df [index, ])
+
+        # Transfers and intervals can fail if there are none
+        mod_transfers <- tryCatch (
+            stats::lm (mm_transfers ~ d, data = df [index, ]),
+            error = function (e) NULL
+        )
+        mod_intervals <- tryCatch (
+            stats::lm (mm_intervals ~ d, data = df [index, ]),
+            error = function (e) NULL
+        )
         res <- c (
             stats::predict (mod_ratio, newdata = data.frame (d = dlims)),
-            stats::predict (mod_times, newdata = data.frame (d = dlims)),
-            stats::predict (mod_transfers, newdata = data.frame (d = dlims)),
-            stats::predict (mod_intervals, newdata = data.frame (d = dlims))
+            stats::predict (mod_times, newdata = data.frame (d = dlims))
         )
+        if (is.null (mod_transfers)) {
+            res <- c (res, rep (NA, length (dlims)))
+        } else {
+            res <- c (
+                res,
+                stats::predict (mod_transfers, newdata = data.frame (d = dlims))
+            )
+        }
+        if (is.null (mod_intervals)) {
+            res <- c (res, rep (NA, length (dlims)))
+        } else {
+            res <- c (
+                res,
+                stats::predict (mod_intervals, newdata = data.frame (d = dlims))
+            )
+        }
 
         dlim_p <- sprintf ("%02d", dlims)
         names (res) <- c (
