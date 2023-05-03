@@ -245,53 +245,33 @@ uta_export <- function (city, soc, results_path) {
 
     res <- batch_collate_results (results_path, city)
 
-    vars_rel <- grep ("^int_d[0-9]+\\_pop\\_adj$", names (res), value = TRUE)
-    vars_abs <- grep ("^times\\_d", names (res), value = TRUE)
+    res_xy <- sfheaders::sf_point (res [, c ("x", "y")])
+    sf::st_crs (res_xy) <- 4326
+    pt_index <- unlist (sf::st_within (res_xy, soc))
 
-    pt_index <- unlist (sf::st_within (res, soc))
+    vars <- c (
+        grep ("^times\\_rel\\_d", names (res), value = TRUE),
+        grep ("^times\\_abs\\_d", names (res), value = TRUE),
+        grep ("^transfers\\_d", names (res), value = TRUE),
+        grep ("^intervals\\_d", names (res), value = TRUE)
+    )
 
-    dlims <- vapply (vars_abs, function (i) {
-        regmatches (i, gregexpr ("[0-9]+$", i)) [[1]]
-    }, character (1L), USE.NAMES = FALSE)
-
-    trans_vars_rel <- paste0 ("trans_rel_d", dlims)
-    trans_vars_abs <- paste0 ("trans_abs_d", dlims)
-    for (i in c (trans_vars_rel, trans_vars_abs)) {
-        soc [[i]] <- NA
+    extra_vars <- names (res) [which (!names (res) %in% c (vars, "osm_id", "x", "y", "soc_var"))]
+    # Generally "popdens", "school_dist", "bike_index", "natural"
+    for (v in c (vars, extra_vars)) {
+        soc [[v]] <- NA
     }
-    soc$popdens <- NA
 
     for (i in unique (pt_index)) {
         index <- which (pt_index == i)
-        for (d in dlims) {
-            var_abs <- grep (d, vars_abs, value = TRUE)
-            soc [[grep (d, trans_vars_abs, value = TRUE)]] [i] <-
-                mean (res [[var_abs]] [index], na.rm = TRUE) / 60
-            var_rel <- grep (d, vars_rel, value = TRUE)
-            soc [[grep (d, trans_vars_rel, value = TRUE)]] [i] <-
-                mean (res [[var_rel]] [index], na.rm = TRUE)
+        for (v in c (vars, extra_vars)) {
+            soc [[v]] [i] <- mean (res [[v]] [index], na.rm = TRUE)
         }
-        soc$popdens [i] <- mean (res$popdens [index], na.rm = TRUE)
     }
+
     soc <- soc [which (!is.na (soc$social_index)), ]
-
-    uta_vars_rel <- paste0 ("uta_index_rel_d", dlims)
-    uta_vars_abs <- paste0 ("uta_index_abs_d", dlims)
-    for (i in c (uta_vars_rel, uta_vars_abs)) {
-        soc [[i]] <- NA
-    }
-
-    for (i in c (trans_vars_rel, trans_vars_abs)) {
-
-        transport_sd <- stats::sd (soc [[i]], na.rm = TRUE)
-        transport_mn <- mean (soc [[i]], na.rm = TRUE)
-        social_index <- transport_mn +
-            (soc$social_index - mean (soc$social_index, na.rm = TRUE)) *
-                transport_sd
-        nm <- gsub ("^trans", "uta_index", i)
-        x <- soc [[i]] * social_index
-        soc [[nm]] <- sign (x) * sqrt (abs (x))
-    }
+    vars2keep <- c (vars, extra_vars, "social_index", grep ("^geom", names (soc), value = TRUE))
+    soc <- soc [, which (names (soc) %in% vars2keep)]
 
     return (soc)
 }
