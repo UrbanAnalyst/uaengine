@@ -1,4 +1,4 @@
-add_dist_to_schools <- function (s, city, gtfs_path) {
+add_dist_to_schools <- function (s, city) {
 
     cache_dir <- fs::path (m4ra_cache_dir (), city)
     f <- fs::dir_ls (cache_dir, regexp = "school")
@@ -10,7 +10,7 @@ add_dist_to_schools <- function (s, city, gtfs_path) {
         return (s)
     }
 
-    schools <- readRDS (f) [, c ("x_", "y_")]
+    schools <- readRDS (f)
 
     graph <- m4ra::m4ra_load_cached_network (
         city = city,
@@ -19,8 +19,15 @@ add_dist_to_schools <- function (s, city, gtfs_path) {
     )
     v <- m4ra::m4ra_vertices (graph, city)
 
-    pts <- dodgr::match_points_to_verts (v, schools, connected = TRUE)
-    to <- v$id [pts]
+    if (!"vert_index" %in% names (schools)) {
+
+        schools_xy <- schools [, c ("x_", "y_")]
+        pts <- dodgr::match_points_to_verts (v, schools_xy, connected = TRUE)
+        schools$vert_index <- pts
+        saveRDS (schools, f)
+    }
+
+    to <- v$id [schools$vert_index]
     d <- dodgr::dodgr_dists_nearest (graph, from = s$osm_id, to = to)
 
     s$school_dist <- d$d

@@ -113,7 +113,7 @@ uta_index <- function (city,
         s <- add_popdens_to_stats (s, popdens_geotif)
     }
     s <- add_socio_var_to_stats (s, soc, soc_var)
-    s <- add_dist_to_schools (s, city, gtfs_path)
+    s <- add_dist_to_schools (s, city)
     s <- add_bike_infrastructure (s, city, dlimit = 5000)
     if (!is.null (f_natural)) {
         s <- add_natural_space_index (s, city, f_natural, dlimit = 2000)
