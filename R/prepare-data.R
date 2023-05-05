@@ -4,11 +4,12 @@
 #' \link{uta_extract_osm} function for desired city.
 #' @param water_dist Distance below which any edges are considerd adjance to
 #' water, and thus categorised as "blue space" edges.
+#' @param quiet If `FALSE`, display progress information on screen.
 #' @return Name of file holding integer index for nominated city identifying
 #' which vertices of the foot-weighted network are within or adjacent to natural
 #' spaces.
 #' @noRd
-uta_prepare_data <- function (osm_path, water_dist = 20) {
+uta_prepare_data <- function (osm_path, water_dist = 20, quiet = FALSE) {
 
     checkmate::assert_character (osm_path, len = 1L)
     if (!fs::dir_exists (osm_path)) {
@@ -20,10 +21,22 @@ uta_prepare_data <- function (osm_path, water_dist = 20) {
     city <- strsplit (f_natural, split = "\\/") [[1]]
     city <- utils::tail (city, 2L) [1]
 
+    if (!quiet) {
+        message ("Preparing data on natural spaces")
+    }
     f_natural <- prepare_natural (f_natural, city, water_dist = water_dist)
+    if (!quiet) {
+        message ("Prepared data on natural spaces")
+    }
 
     f_schools <- grep ("schools", files, value = TRUE)
+    if (!quiet) {
+        message ("Preparing data on school")
+    }
     f_schools <- prepare_schools (f_schools, city)
+    if (!quiet) {
+        message ("Prepared data on school")
+    }
 
     return (c (f_natural, f_schools))
 }
@@ -58,10 +71,13 @@ prepare_natural <- function (f, city, water_dist = 20) {
     water <- natural$geometry [which (natural$natural == "water")]
     water <- do.call (rbind, lapply (water, function (i) i [[1]] [[1]]))
     colnames (water) <- c ("x", "y")
-    system.time ( # around 1.5 minutes
-        index_min <- geodist::geodist_min (v [, c ("x", "y")], water)
+
+    index_min <- geodist::geodist_min (v [, c ("x", "y")], water)
+    dmin <- geodist::geodist (
+        v [, c ("x", "y")],
+        water [index_min, ],
+        paired = TRUE
     )
-    dmin <- geodist::geodist (v [, c ("x", "y")], water [index_min, ], paired = TRUE)
     index [which (dmin <= 20.0)] <- -1L
 
     saveRDS (index, f_natural)
@@ -92,7 +108,10 @@ reproj_equal_area <- function (x) {
 prepare_schools <- function (f, city) {
 
     cache_dir <- fs::path (m4ra_cache_dir (), city)
-    f_schools <- fs::path (cache_dir, paste0 ("uta-", city, "-school-verts.Rds"))
+    f_schools <- fs::path (
+        cache_dir,
+        paste0 ("uta-", city, "-school-verts.Rds")
+    )
 
     if (fs::file_exists (f_schools)) {
         return (f_schools)
