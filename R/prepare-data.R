@@ -31,11 +31,11 @@ uta_prepare_data <- function (osm_path, water_dist = 20, quiet = FALSE) {
 
     f_schools <- grep ("schools", files, value = TRUE)
     if (!quiet) {
-        message ("Preparing data on school")
+        message ("Preparing data on schools")
     }
     f_schools <- prepare_schools (f_schools, city)
     if (!quiet) {
-        message ("Prepared data on school")
+        message ("Prepared data on schools")
     }
 
     return (c (f_natural, f_schools))
