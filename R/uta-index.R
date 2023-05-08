@@ -140,7 +140,9 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         st0 <- proc.time ()
     }
 
-    stats <- lapply (seq_len (nrow (dat$dist)), function (i) {
+    num_cores <- get_num_cores () # m4ra internal fn
+
+    stats <- parallel::mclapply (seq_len (nrow (dat$dist)), function (i) {
         df <- data.frame (
             d = dat$dist [i, ],
             ratio = dat$ratio [i, ],
@@ -188,7 +190,7 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         )
 
         return (res)
-    })
+    }, mc.cores = num_cores)
 
     stats <- data.frame (do.call (rbind, stats))
 
