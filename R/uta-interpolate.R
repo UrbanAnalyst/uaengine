@@ -48,7 +48,7 @@ uta_interpolate <- function (city,
     index <- which (vapply (index, length, integer (1L)) > 0L)
     v_in <- v [index, ]
 
-    index <- dodgr::match_points_to_verts (v_in, sf::st_coordinates (uta_dat))
+    index <- dodgr::match_points_to_verts (v_in, uta_dat [, c ("x", "y")])
     uta_vars <- grep (
         "(\\_pop\\_adj$|^uta\\_index\\_)",
         names (uta_dat),
