@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>> // std::cout
+#include <iostream> // std::cout
 
 #include "clipper.h"
 #include "cpp11.hpp"
