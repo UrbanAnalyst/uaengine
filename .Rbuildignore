@@ -6,6 +6,7 @@
 ^CONDUCT\.md$
 ^CONTRIBUTING\.md$
 ^cran-comments.md$
+^cronscript.bash$
 ^vignettes/makefile$
 docs/
 data-raw/
