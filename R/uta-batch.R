@@ -265,7 +265,13 @@ uta_export <- function (city, soc, results_path) {
     for (i in unique (pt_index)) {
         index <- which (pt_index == i)
         for (v in c (vars, extra_vars)) {
-            soc [[v]] [i] <- mean (res [[v]] [index], na.rm = TRUE)
+            if (v == "parking") {
+                p <- res$parking [index]
+                p <- p [which (p > 0 & !is.nan (p))]
+                soc [[v]] [i] <- 10^mean (log10 (p), na.rm = TRUE)
+            } else {
+                soc [[v]] [i] <- mean (res [[v]] [index], na.rm = TRUE)
+            }
         }
     }
 
