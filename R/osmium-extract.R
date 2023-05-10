@@ -51,6 +51,7 @@ uta_extract_osm <- function (city, path, bbox = NULL, bbox_expand = 0.05,
     extract_osm_keys (path_to_pbf)
     uta_m4ra_parking_extraction (path_to_pbf)
     uta_osm_schools (path_to_pbf)
+    uta_osm_nature (path_to_pbf)
 }
 
 #' Trim OSM file to an 'osm_id' and return converted 'pbf' output.
