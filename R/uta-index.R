@@ -126,6 +126,7 @@ uta_index <- function (city,
     if (length (f_natural) > 0L) {
         s <- add_natural_space_index (s, city, f_natural, dlimit = 2000)
     }
+    s <- add_parking (s, city, initial_mode)
 
     return (s)
 }
