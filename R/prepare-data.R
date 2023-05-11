@@ -2,13 +2,13 @@
 #'
 #' @param osm_path Path to directory containing data processed by the
 #' \link{uta_extract_osm} function for desired city.
-#' @param water_dist Distance below which any edges are considerd adjance to
+#' @param water_dist Distance below which any edges are considered adjacent to
 #' water, and thus categorised as "blue space" edges.
 #' @param quiet If `FALSE`, display progress information on screen.
 #' @return Name of file holding integer index for nominated city identifying
 #' which vertices of the foot-weighted network are within or adjacent to natural
 #' spaces.
-#' @noRd
+#' @export
 uta_prepare_data <- function (osm_path, water_dist = 20, quiet = FALSE) {
 
     checkmate::assert_character (osm_path, len = 1L)
