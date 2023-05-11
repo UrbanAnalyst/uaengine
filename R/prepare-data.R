@@ -55,7 +55,7 @@ prepare_natural <- function (f, city, water_dist = 20) {
         return (f_natural)
     }
 
-    natural <- sf::st_read (f, layer = "multipolygons")
+    natural <- sf::st_read (f, layer = "multipolygons", quiet = TRUE)
     natural <- reproj_equal_area (natural)
     polys <- lapply (natural$geometry, function (i) i [[1]] [[1]])
 
