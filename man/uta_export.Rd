@@ -4,17 +4,19 @@
 \alias{uta_export}
 \title{Export results to the form required for the front-end app}
 \usage{
-uta_export(city, soc, results_path, dlim = 10)
+uta_export(city, results_path, soc = NULL, dlim = 10)
 }
 \arguments{
 \item{city}{Name of city, used to name and define local path to
 pre-calculated street networks and transport times with \pkg{m4ra} package.}
 
+\item{results_path}{Local path to directory where results are to be written.}
+
 \item{soc}{An \pkg{sf} \code{data.frame} object with polygons defining areas in
 which socio-demographic variables were collated, and a column called
-"social_index" containing the socio-demographic variable of interest.}
-
-\item{results_path}{Local path to directory where results are to be written.}
+"social_index" containing the socio-demographic variable of interest. If not
+provided, results are not aggregated and simply returned for each original
+point.}
 
 \item{dlim}{Return results for specified value(s) of dlim only. If only one
 value specified, names of results will not be labelled with actual value.}
@@ -26,4 +28,14 @@ front-end.
 }
 \description{
 Export results to the form required for the front-end app
+}
+\note{
+All exported variables are transformed such that lower/negative values
+are good, while higher/positive values are bad. This requires inverting these
+variables:
+\itemize{
+\item bike_index
+\item natural
+}
+Those are both on unit scales, so require simple '1 - x' transforms.
 }

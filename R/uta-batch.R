@@ -202,7 +202,6 @@ batch_progress_message <- function (i, vsp, pt0, t_start) {
         round (100 * i / length (vsp), digits = 2), "%"
     )))
 
-    pt1 <- proc.time () - pt0
     dur1 <- hms::hms (as.integer ((proc.time () - pt0) [3]))
     dur_tot <- hms::hms (as.integer ((proc.time () - t_start) [3]))
     tremaining <- (length (vsp) - i) * dur_tot / i
@@ -235,12 +234,14 @@ batch_collate_results <- function (results_path, city) {
 #' \item bike_index
 #' \item natural
 #' }
-#' Those are both on unit scales, so require simple '1 - x' tranforms.
+#' Those are both on unit scales, so require simple '1 - x' transforms.
 #'
 #' @inheritParams uta_index_batch
 #' @param soc An \pkg{sf} `data.frame` object with polygons defining areas in
 #' which socio-demographic variables were collated, and a column called
-#' "social_index" containing the socio-demographic variable of interest.
+#' "social_index" containing the socio-demographic variable of interest. If not
+#' provided, results are not aggregated and simply returned for each original
+#' point.
 #' @param dlim Return results for specified value(s) of dlim only. If only one
 #' value specified, names of results will not be labelled with actual value.
 #' @return The input table, `soc`, with additional columns of UTA index values
@@ -248,10 +249,12 @@ batch_collate_results <- function (results_path, city) {
 #' front-end.
 #' @export
 
-uta_export <- function (city, soc, results_path, dlim = 10) {
+uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
 
-    if (!"social_index" %in% names (soc)) {
-        stop ("'soc' must include a 'social_index' column", call. = FALSE)
+    if (!is.null (soc)) {
+        if (!"social_index" %in% names (soc)) {
+            stop ("'soc' must include a 'social_index' column", call. = FALSE)
+        }
     }
 
     res <- batch_collate_results (results_path, city)
@@ -282,37 +285,51 @@ uta_export <- function (city, soc, results_path, dlim = 10) {
         dlim_grep <- "\\_d"
     }
 
-    res_xy <- sfheaders::sf_point (res [, c ("x", "y")])
-    sf::st_crs (res_xy) <- 4326
-    pt_index <- unlist (sf::st_within (res_xy, soc))
-
     vars <- c ("times_rel", "times_abs", "transfers", "intervals")
     vars <- lapply (vars, function (v) {
         grep (paste0 (v, dlim_grep, "$"), names (res), value = TRUE)
     })
     vars <- unique (unlist (vars))
 
-    extra_vars <- names (res) [which (!names (res) %in% c (vars, "osm_id", "x", "y", "soc_var"))]
+    index <- which (!names (res) %in% c (vars, "osm_id", "x", "y", "soc_var"))
+    extra_vars <- names (res) [index]
     # Generally "popdens", "school_dist", "bike_index", "natural"
-    for (v in c (vars, extra_vars)) {
-        soc [[v]] <- NA
-    }
 
-    for (i in unique (pt_index)) {
-        index <- which (pt_index == i)
+    if (!is.null (soc)) {
+
+        res_xy <- sfheaders::sf_point (res [, c ("x", "y")])
+        sf::st_crs (res_xy) <- 4326
+        pt_index <- unlist (sf::st_within (res_xy, soc))
+
         for (v in c (vars, extra_vars)) {
-            if (v == "parking") {
-                p <- res$parking [index]
-                p <- p [which (p > 0 & !is.nan (p))]
-                soc [[v]] [i] <- 10^mean (log10 (p), na.rm = TRUE)
-            } else {
-                soc [[v]] [i] <- mean (res [[v]] [index], na.rm = TRUE)
+            soc [[v]] <- NA
+        }
+
+        for (i in unique (pt_index)) {
+            index <- which (pt_index == i)
+            for (v in c (vars, extra_vars)) {
+                if (v == "parking") {
+                    p <- res$parking [index]
+                    p <- p [which (p > 0 & !is.nan (p))]
+                    soc [[v]] [i] <- 10^mean (log10 (p), na.rm = TRUE)
+                } else {
+                    soc [[v]] [i] <- mean (res [[v]] [index], na.rm = TRUE)
+                }
             }
         }
+
+        soc <- soc [which (!is.na (soc$social_index)), ]
+
+    } else {
+        soc <- res
     }
 
-    soc <- soc [which (!is.na (soc$social_index)), ]
-    vars2keep <- c (vars, extra_vars, "social_index", grep ("^geom", names (soc), value = TRUE))
+    vars2keep <- c (
+        vars,
+        extra_vars,
+        "social_index",
+        grep ("^geom", names (soc), value = TRUE)
+    )
     soc <- soc [, which (names (soc) %in% vars2keep)]
 
     # Finally, transform bike_index, natural by inverting
