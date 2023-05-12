@@ -100,7 +100,7 @@ add_bike_infrastructure <- function (s, city, dlimit = 5000) {
     )
 
     cols <- c ("full", "half", "quarter")
-    wts <- c (1, 0.5, 0.25)
+    wts <- c (1, 0.5, 0.25) / 1.75 # wts must be normalised!
     index <- which (cols %in% names (d))
     cols <- cols [index]
     wts <- wts [index]
