@@ -228,6 +228,15 @@ batch_collate_results <- function (results_path, city) {
 
 #' Export results to the form required for the front-end app
 #'
+#' @note All exported variables are transformed such that lower/negative values
+#' are good, while higher/positive values are bad. This requires inverting these
+#' variables:
+#' \itemize{
+#' \item bike_index
+#' \item natural
+#' }
+#' Those are both on unit scales, so require simple '1 - x' tranforms.
+#'
 #' @inheritParams uta_index_batch
 #' @param soc An \pkg{sf} `data.frame` object with polygons defining areas in
 #' which socio-demographic variables were collated, and a column called
@@ -305,6 +314,13 @@ uta_export <- function (city, soc, results_path, dlim = 10) {
     soc <- soc [which (!is.na (soc$social_index)), ]
     vars2keep <- c (vars, extra_vars, "social_index", grep ("^geom", names (soc), value = TRUE))
     soc <- soc [, which (names (soc) %in% vars2keep)]
+
+    # Finally, transform bike_index, natural by inverting
+    soc$bike_index <- 1 - soc$bike_index
+    soc$natural <- 1 - soc$natural
+
+    names (soc) [which (names (soc) == "bike_index")] <- "anti_bike"
+    names (soc) [which (names (soc) == "natural")] <- "anti_nature"
 
     return (soc)
 }
