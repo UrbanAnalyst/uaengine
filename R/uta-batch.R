@@ -232,12 +232,14 @@ batch_collate_results <- function (results_path, city) {
 #' @param soc An \pkg{sf} `data.frame` object with polygons defining areas in
 #' which socio-demographic variables were collated, and a column called
 #' "social_index" containing the socio-demographic variable of interest.
+#' @param dlim Return results for specified value(s) of dlim only. If only one
+#' value specified, names of results will not be labelled with actual value.
 #' @return The input table, `soc`, with additional columns of UTA index values
 #' attached. This table can then be saved and used directly in the UTA
 #' front-end.
 #' @export
 
-uta_export <- function (city, soc, results_path) {
+uta_export <- function (city, soc, results_path, dlim = 10) {
 
     if (!"social_index" %in% names (soc)) {
         stop ("'soc' must include a 'social_index' column", call. = FALSE)
@@ -245,16 +247,41 @@ uta_export <- function (city, soc, results_path) {
 
     res <- batch_collate_results (results_path, city)
 
+    dlim_fmt <- paste0 ("\\_d", sprintf ("%02i", dlim), "$")
+    check <- vapply (dlim_fmt, function (i) {
+        any (grepl (i, names (res)))
+    }, logical (1L))
+    if (any (!check)) {
+        stop (
+            "dlim value of [",
+            paste0 (dlim [which (!check)], collapse = ", "),
+            "] is not included in data.",
+            call. = FALSE
+        )
+    }
+    index_all <- grep ("\\_d[0-9]+$", names (res))
+    index_dlim <- lapply (dlim_fmt, function (i) grep (i, names (res)))
+    index_dlim <- sort (unique (unlist (index_dlim)))
+    index_not <- index_all [which (!index_all %in% index_dlim)]
+    if (length (index_not) > 0L) {
+        res <- res [, -index_not]
+    }
+    if (length (dlim) == 1L) {
+        names (res) <- gsub (dlim_fmt, "", names (res))
+        dlim_grep <- ""
+    } else {
+        dlim_grep <- "\\_d"
+    }
+
     res_xy <- sfheaders::sf_point (res [, c ("x", "y")])
     sf::st_crs (res_xy) <- 4326
     pt_index <- unlist (sf::st_within (res_xy, soc))
 
-    vars <- c (
-        grep ("^times\\_rel\\_d", names (res), value = TRUE),
-        grep ("^times\\_abs\\_d", names (res), value = TRUE),
-        grep ("^transfers\\_d", names (res), value = TRUE),
-        grep ("^intervals\\_d", names (res), value = TRUE)
-    )
+    vars <- c ("times_rel", "times_abs", "transfers", "intervals")
+    vars <- lapply (vars, function (v) {
+        grep (paste0 (v, dlim_grep, "$"), names (res), value = TRUE)
+    })
+    vars <- unique (unlist (vars))
 
     extra_vars <- names (res) [which (!names (res) %in% c (vars, "osm_id", "x", "y", "soc_var"))]
     # Generally "popdens", "school_dist", "bike_index", "natural"
