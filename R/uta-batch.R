@@ -322,6 +322,7 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
 
     } else {
         soc <- res
+        extra_vars <- c (extra_vars, c ("osm_id", "x", "y"))
     }
 
     vars2keep <- c (
