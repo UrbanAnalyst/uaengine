@@ -329,6 +329,7 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
         vars,
         extra_vars,
         "social_index",
+        "soc_var",
         grep ("^geom", names (soc), value = TRUE)
     )
     soc <- soc [, which (names (soc) %in% vars2keep)]
@@ -339,6 +340,10 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
 
     names (soc) [which (names (soc) == "bike_index")] <- "anti_bike"
     names (soc) [which (names (soc) == "natural")] <- "anti_nature"
+
+    if ("soc_var" %in% names (soc)) {
+        names (soc) [which (names (soc) == "soc_var")] <- "social_index"
+    }
 
     return (soc)
 }
