@@ -342,10 +342,6 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
     # names (soc) [which (names (soc) == "bike_index")] <- "anti_bike"
     # names (soc) [which (names (soc) == "natural")] <- "anti_nature"
 
-    # Log-transform school distances:
-    soc$school_dist [soc$school_dist < 1] <- 1 # 1 metre!
-    soc$school_dist <- log10 (soc$school_dist)
-
     if ("soc_var" %in% names (soc)) {
         names (soc) [which (names (soc) == "soc_var")] <- "social_index"
     }
