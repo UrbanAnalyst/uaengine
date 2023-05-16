@@ -308,8 +308,8 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
         for (i in unique (pt_index)) {
             index <- which (pt_index == i)
             for (v in c (vars, extra_vars)) {
-                if (v == "parking") {
-                    p <- res$parking [index]
+                if (v %in% c ("parking", "school_dist")) {
+                    p <- res [[v]] [index]
                     p <- p [which (p > 0 & !is.nan (p))]
                     soc [[v]] [i] <- 10^mean (log10 (p), na.rm = TRUE)
                 } else {
@@ -341,6 +341,10 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
     #
     # names (soc) [which (names (soc) == "bike_index")] <- "anti_bike"
     # names (soc) [which (names (soc) == "natural")] <- "anti_nature"
+
+    # Log-transform school distances:
+    soc$school_dist [soc$school_dist < 1] <- 1 # 1 metre!
+    soc$school_dist <- log10 (soc$school_dist)
 
     if ("soc_var" %in% names (soc)) {
         names (soc) [which (names (soc) == "soc_var")] <- "social_index"
