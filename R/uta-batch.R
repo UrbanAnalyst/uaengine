@@ -320,6 +320,11 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
 
         soc <- soc [which (!is.na (soc$social_index)), ]
 
+        # Log-transform school distances, but only in aggregated results;
+        # non-aggregated results are retained in original scale
+        soc$school_dist [soc$school_dist < 1] <- 1 # 1 metre!
+        soc$school_dist <- log10 (soc$school_dist)
+
     } else {
         soc <- res
         extra_vars <- c (extra_vars, c ("osm_id", "x", "y"))
