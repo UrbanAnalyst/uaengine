@@ -62,7 +62,17 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
     vars <- lapply (vars, function (v) {
         grep (paste0 (v, dlim_grep, "$"), names (res), value = TRUE)
     })
-    vars <- unique (unlist (vars))
+    vars <- c (unique (unlist (vars)), "transport")
+
+    # Add compound "transport" variable:
+    suppressWarnings (
+        res$transport <- res$times_abs * res$transfers * log10 (res$intervals)
+    )
+
+    # And re-order columns:
+    index <- match (c ("osm_id", vars), names (res))
+    index2 <- seq_len (ncol (res)) [-index]
+    res <- res [, c (index, index2)]
 
     index <- which (!names (res) %in% c (vars, "osm_id", "x", "y", "soc_var"))
     extra_vars <- names (res) [index]
@@ -81,7 +91,7 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
         for (i in unique (pt_index)) {
             index <- which (pt_index == i)
             for (v in c (vars, extra_vars)) {
-                if (v %in% c ("parking", "school_dist")) {
+                if (v %in% c ("parking", "school_dist", "intervals")) {
                     p <- res [[v]] [index]
                     p <- p [which (p > 0 & !is.nan (p))]
                     soc [[v]] [i] <- 10^mean (log10 (p), na.rm = TRUE)
@@ -93,10 +103,13 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
 
         soc <- soc [which (!is.na (soc$social_index)), ]
 
-        # Log-transform school distances, but only in aggregated results;
+        # Log-transform these variables only in aggregated results;
         # non-aggregated results are retained in original scale
-        soc$school_dist [soc$school_dist < 1] <- 1 # 1 metre!
-        soc$school_dist <- log10 (soc$school_dist)
+        lt_vars <- c ("school_dist", "intervals")
+        for (lt in lt_vars) {
+            soc [[lt]] [soc [[lt]] < 1] <- 1 # 1 metre!
+            soc [[lt]] <- log10 (soc [[lt]])
+        }
 
     } else {
         soc <- res
