@@ -17,12 +17,18 @@
 #' point.
 #' @param dlim Return results for specified value(s) of dlim only. If only one
 #' value specified, names of results will not be labelled with actual value.
+#' @param pairwise If `TRUE`, results are aggregated for each pair of variables
+#' instead of individually.
 #' @return The input table, `soc`, with additional columns of UTA index values
 #' attached. This table can then be saved and used directly in the UTA
 #' front-end.
 #' @export
 
-uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
+uta_export <- function (city,
+                        results_path,
+                        soc = NULL,
+                        dlim = 10,
+                        pairwise = FALSE) {
 
     if (!is.null (soc)) {
         if (!"social_index" %in% names (soc)) {
@@ -78,6 +84,31 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
     extra_vars <- names (res) [index]
     # Generally "popdens", "school_dist", "bike_index", "natural"
 
+    log_vars <- c ("parking", "school_dist", "intervals")
+
+    if (pairwise) {
+
+        index <- match (c (vars, extra_vars, "soc_var"), names (res))
+        res0 <- res [, -index]
+        res_v <- res [, index]
+        # scale parking to avoid negative log-values:
+        res_v$parking <- res_v$parking * 10000
+        for (v in log_vars) {
+            res_v [[v]] <- log10 (res_v [[v]])
+            res_v [[v]] [!is.finite (res_v [[v]])] <- NA
+        }
+        var_pairs <- t (combn (names (res_v), 2))
+        res <- data.frame (apply (var_pairs, 1, function (i) {
+            res_v [[i [1]]] * res_v [[i [2]]]
+        }))
+        names (res) <-
+            apply (gsub ("\\_", "", var_pairs), 1, paste, collapse = "_")
+        vars <- names (res)
+        extra_vars <- NULL
+
+        res <- cbind (res0, res)
+    }
+
     if (!is.null (soc)) {
 
         res_xy <- sfheaders::sf_point (res [, c ("x", "y")])
@@ -91,12 +122,18 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
         for (i in unique (pt_index)) {
             index <- which (pt_index == i)
             for (v in c (vars, extra_vars)) {
-                if (v %in% c ("parking", "school_dist", "intervals")) {
+
+                if (!pairwise &&
+
+                    v %in% c ("parking", "school_dist", "intervals")) {
                     p <- res [[v]] [index]
                     p <- p [which (p > 0 & !is.nan (p))]
                     soc [[v]] [i] <- 10^mean (log10 (p), na.rm = TRUE)
+
                 } else {
+
                     soc [[v]] [i] <- mean (res [[v]] [index], na.rm = TRUE)
+                    soc [[v]] [is.nan (soc [[v]])] <- NA
                 }
             }
         }
@@ -105,10 +142,12 @@ uta_export <- function (city, results_path, soc = NULL, dlim = 10) {
 
         # Log-transform these variables only in aggregated results;
         # non-aggregated results are retained in original scale
-        lt_vars <- c ("school_dist", "intervals")
-        for (lt in lt_vars) {
-            soc [[lt]] [soc [[lt]] < 1] <- 1 # 1 metre!
-            soc [[lt]] <- log10 (soc [[lt]])
+        if (!pairwise) {
+            lt_vars <- c ("school_dist", "intervals")
+            for (lt in lt_vars) {
+                soc [[lt]] [soc [[lt]] < 1] <- 1 # 1 metre!
+                soc [[lt]] <- log10 (soc [[lt]])
+            }
         }
 
     } else {

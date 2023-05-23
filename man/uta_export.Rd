@@ -4,7 +4,7 @@
 \alias{uta_export}
 \title{Export results to the form required for the front-end app}
 \usage{
-uta_export(city, results_path, soc = NULL, dlim = 10)
+uta_export(city, results_path, soc = NULL, dlim = 10, pairwise = FALSE)
 }
 \arguments{
 \item{city}{Name of city, used to name and define local path to
@@ -20,6 +20,9 @@ point.}
 
 \item{dlim}{Return results for specified value(s) of dlim only. If only one
 value specified, names of results will not be labelled with actual value.}
+
+\item{pairwise}{If \code{TRUE}, results are aggregated for each pair of variables
+instead of individually.}
 }
 \value{
 The input table, \code{soc}, with additional columns of UTA index values
