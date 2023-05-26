@@ -37,6 +37,9 @@ uta_export <- function (city,
     }
 
     res <- batch_collate_results (results_path, city)
+    # Transform popdens at the start to yield sensible scales for pairwise
+    # combinations of variables:
+    res$popdens <- res$popdens / 1000
 
     dlim_fmt <- paste0 ("\\_d", sprintf ("%02i", dlim), "$")
     check <- vapply (dlim_fmt, function (i) {
