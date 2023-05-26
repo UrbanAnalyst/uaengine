@@ -254,7 +254,8 @@ trim_var_ranges <- function (x, ncols = 100L) {
         # same for upper part of distribution
         if (tb_i [length (tb_i)] <= 1 || upper_zeros) {
             upr <- sub ("[^,]*,([^]]*)\\]", "\\1", names (tb) [length (tb) - 1])
-            x [x > upr] <- as.numeric (upr)
+            upr <- as.numeric (upr)
+            x [x > upr] <- upr
         }
 
         ix <- cut (x, breaks = ncols)
