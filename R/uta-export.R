@@ -104,9 +104,10 @@ uta_export <- function (city,
         res <- data.frame (apply (var_pairs, 1, function (i) {
             res_v [[i [1]]] * res_v [[i [2]]]
         }))
-        names (res) <-
-            apply (gsub ("\\_", "", var_pairs), 1, paste, collapse = "_")
-        vars <- names (res)
+        vars <- apply (gsub ("\\_", "", var_pairs), 1, paste, collapse = "_")
+        vars <- gsub ("bikeindex", "bike", vars)
+        vars <- gsub ("socvar", "social", vars)
+        names (res) <- vars
         extra_vars <- NULL
 
         res <- cbind (res0, res)
@@ -158,13 +159,11 @@ uta_export <- function (city,
         extra_vars <- c (extra_vars, c ("osm_id", "x", "y"))
     }
 
-    vars2keep <- c (
-        vars,
-        extra_vars,
-        "social_index",
-        "soc_var",
-        grep ("^geom", names (soc), value = TRUE)
-    )
+    vars2keep <- c (vars, extra_vars)
+    if (!pairwise) {
+        vars2keep <- c (vars2keep, "social_index", "soc_var")
+    }
+    vars2keep <- c (vars2keep, grep ("^geom", names (soc), value = TRUE))
     soc <- soc [, which (names (soc) %in% vars2keep)]
 
     # Code to transform bike_index, natural by inverting, but this is no longer
