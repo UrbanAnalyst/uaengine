@@ -40,6 +40,9 @@ uta_export <- function (city,
     # Transform popdens at the start to yield sensible scales for pairwise
     # combinations of variables:
     res$popdens <- res$popdens / 1000
+    # And transform bike_index, natural by inverting
+    res$bike_index <- 1 - res$bike_index
+    res$natural <- 1 - res$natural
 
     dlim_fmt <- paste0 ("\\_d", sprintf ("%02i", dlim), "$")
     check <- vapply (dlim_fmt, function (i) {
@@ -165,14 +168,6 @@ uta_export <- function (city,
     }
     vars2keep <- c (vars2keep, grep ("^geom", names (soc), value = TRUE))
     soc <- soc [, which (names (soc) %in% vars2keep)]
-
-    # Code to transform bike_index, natural by inverting, but this is no longer
-    # done.
-    # soc$bike_index <- 1 - soc$bike_index
-    # soc$natural <- 1 - soc$natural
-    #
-    # names (soc) [which (names (soc) == "bike_index")] <- "anti_bike"
-    # names (soc) [which (names (soc) == "natural")] <- "anti_nature"
 
     if ("soc_var" %in% names (soc)) {
         names (soc) [which (names (soc) == "soc_var")] <- "social_index"
