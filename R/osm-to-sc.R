@@ -31,6 +31,7 @@ uta_osm_to_sc <- function (path, city) {
 
     f <- fs::dir_ls (path, regexp = paste0 (city, ".*\\.osm$"))
     f <- f [which (!grepl ("\\-(parking|schools)\\.", f))]
+    f <- grep ("network", f, value = TRUE)
     if (length (f) == 0L) {
         cli::cli_alert_warning (cli::col_red (
             "No '.osm' files found; did you run 'uta_extract_osm'?"
