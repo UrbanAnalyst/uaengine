@@ -172,7 +172,7 @@ get_vertex_indices <- function (v, batch_size, coverage, city, results_path) {
 
 batch_start_message <- function () {
 
-    msg <- paste0 ("Staring processing at ", Sys.time ())
+    msg <- paste0 ("Staring processing at ", round (Sys.time ()))
     cli::cli_h1 (cli::col_green (msg))
     cat ("\n")
 
