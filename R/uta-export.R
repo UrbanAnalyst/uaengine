@@ -103,7 +103,7 @@ uta_export <- function (city,
             res_v [[v]] <- log10 (res_v [[v]])
             res_v [[v]] [!is.finite (res_v [[v]])] <- NA
         }
-        var_pairs <- t (stats::combn (names (res_v), 2))
+        var_pairs <- t (utils::combn (names (res_v), 2))
         res <- data.frame (apply (var_pairs, 1, function (i) {
             res_v [[i [1]]] * res_v [[i [2]]]
         }))
