@@ -4,20 +4,21 @@ status](https://github.com/UrbanAnalyst/uta-engine/workflows/R-CMD-check/badge.s
 [![Project Status:
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 
-# UTA Engine
+# UA Engine
 
-Routing and aggregation engine for ‘Urban Transport Analyst’
+Routing and aggregation engine for [‘Urban
+Analyst’](https://www.urbananalyst.city/).
 
 ## Why?
 
-Urban Transport Analyst aims to be the fastest and most scalable open
+Urban Analyst Engine aims to be the fastest and most scalable open
 source multi-modal routing engine. Other notable options include:
 
 1.  [“valhalla”, for single-mode
     routing](https://github.com/valhalla/valhalla)
 2.  [“r5” for multi-modal routing](https://github.com/conveyal/r5)
 
-In comparison, the `uta-engine`:
+In comparison, the `ua-engine`:
 
 - Is considerably faster than either of these (see the “benchmarks”
   vignette);
@@ -31,6 +32,11 @@ In comparison, the `uta-engine`:
 - Includes estimates of travel times with private automobile that are
   empirically calibrated to extensive data, and are generally more
   accurate than equivalent times from `valhalla` or `r5`.
-- Unlike all other routing engines, UTA includes locality-specific
+- Unlike all other routing engines, UA includes locality-specific
   estimates of additional times required to park automobiles at starts
   and ends of journeys.
+
+## How?
+
+Usage of this engine is not yet documented. Feel free to open an issue
+if you’re interested in learning how to use this engine.

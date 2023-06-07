@@ -1,9 +1,9 @@
-.PHONY: all build check document test
+.PHONY: all build check doc test
 
 RFILE = README
 VFILE = benchmarks
 
-all: document build check
+all: doc build check
 
 build: doc
 	R CMD build .
@@ -21,6 +21,9 @@ doc: clean
 
 knith:
 	Rscript -e 'rmarkdown::render("$(RFILE).Rmd",output_file="$(RFILE).html")'
+
+readme:
+	Rscript -e 'rmarkdown::render("$(RFILE).Rmd",rmarkdown::md_document(variant="gfm"))'
 
 test:
 	Rscript -e 'devtools::test()'
