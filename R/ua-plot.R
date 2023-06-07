@@ -1,15 +1,15 @@
-#' Generate an interactive plot of results from 'uta_interpolate' projected on
+#' Generate an interactive plot of results from 'ua_interpolate' projected on
 #' to street network.
 #'
-#' @param graph A street network with values of UTA index calculated from
-#' \link{uta_index} and interpolated back onto network with
-#' \link{uta_interpolate}.
+#' @param graph A street network with values of UA index calculated from
+#' \link{ua_index} and interpolated back onto network with
+#' \link{ua_interpolate}.
 #' @param var Which variable to plot.
 #' @return Nothing; function called for its side-effect of opening an
 #' interactive visualisation in local default browser.
 #' @export
 
-uta_plot_network <- function (graph, var = "uta_index_d10") {
+ua_plot_network <- function (graph, var = "ua_index_d10") {
 
     if (!var %in% names (graph)) {
         stop ("graph contains no variable named '", var, "'", call. = FALSE)
@@ -54,14 +54,14 @@ uta_plot_network <- function (graph, var = "uta_index_d10") {
 #' Generate an interactive plot of results in same polygons as original
 #' socio-demographic data.
 #'
-#' @inheritParams uta_index_batch
-#' @param d One value of 'dlim' parameters used in \link{uta_index} or
-#' \link{uta_index_batch} call to generate UTA data. Resultant plot will be
+#' @inheritParams ua_index_batch
+#' @param d One value of 'dlim' parameters used in \link{ua_index} or
+#' \link{ua_index_batch} call to generate UA data. Resultant plot will be
 #' based on data for this value.
 #' @param what The value which is to be plotted, one of "transport", "social",
-#' "uta_rel" or "uta_abs". The relative UTA index ("uta_rel") combines
+#' "ua_rel" or "ua_abs". The relative UA index ("ua_rel") combines
 #' socio-demographic variable, "soc", with the transport index relative to
-#' equivalent automobile travel times. The absolute UTA index ("uta_abs")
+#' equivalent automobile travel times. The absolute UA index ("ua_abs")
 #' combines uses as a transport index the absolute multi-modal travel times for
 #' all modes excluding private automobile.
 #' @param zoom Initial zoom level to use in resultant map.
@@ -70,17 +70,17 @@ uta_plot_network <- function (graph, var = "uta_index_d10") {
 #' interactive visualisation in local default browser.
 #' @export
 
-uta_plot_polygons <- function (city,
-                               results_path, soc, d = 10,
-                               what = c (
-                                   "transport_rel",
-                                   "transport_abs",
-                                   "social",
-                                   "uta_rel",
-                                   "uta_abs"
-                               ),
-                               zoom = 10,
-                               alpha = 0.5) {
+ua_plot_polygons <- function (city,
+                              results_path, soc, d = 10,
+                              what = c (
+                                  "transport_rel",
+                                  "transport_abs",
+                                  "social",
+                                  "ua_rel",
+                                  "ua_abs"
+                              ),
+                              zoom = 10,
+                              alpha = 0.5) {
 
     requireNamespace ("mapdeck")
     requireNamespace ("colourvalues")
@@ -95,38 +95,38 @@ uta_plot_polygons <- function (city,
         sprintf ("times_limit_d%02d", d),
         sprintf ("int_d%2d_pop_adj", d)
     )
-    var_uta <- sprintf (paste0 (gsub ("uta_", "uta_index_", what), "_d%02d"), d)
+    var_ua <- sprintf (paste0 (gsub ("ua_", "ua_index_", what), "_d%02d"), d)
 
-    soc$uta_index <- soc$transport <- NA
+    soc$ua_index <- soc$transport <- NA
 
     pt_index <- unlist (sf::st_within (res, soc))
 
     for (i in unique (pt_index)) {
         index <- which (pt_index == i)
         soc$transport [i] <- mean (res [[var_transport]] [index], na.rm = TRUE)
-        soc$uta_index [i] <- mean (res [[var_uta]] [index], na.rm = TRUE)
+        soc$ua_index [i] <- mean (res [[var_ua]] [index], na.rm = TRUE)
     }
     soc <- soc [which (!is.na (soc$social_index)), ]
 
     if (is_abs) {
         # convert scales from seconds to minutes:
         soc$transport <- soc$transport / 60
-        soc$uta_index <- soc$uta_index / 60
+        soc$ua_index <- soc$ua_index / 60
     }
 
-    # UTA index is too heavily influenced by the greater scale (= SD) of the
+    # UA index is too heavily influenced by the greater scale (= SD) of the
     # social index. These lines re-scale so that transport has equal influence
     # on result as the social index.
-    if (grepl ("^uta", what)) {
+    if (grepl ("^ua", what)) {
         transport_sd <- stats::sd (soc$transport, na.rm = TRUE)
         transport_mn <- mean (soc$transport, na.rm = TRUE)
         social_index <- transport_mn +
             (soc$social_index - mean (soc$social_index, na.rm = TRUE)) *
                 transport_sd
-        soc$uta_index <- sqrt (soc$transport * social_index)
+        soc$ua_index <- sqrt (soc$transport * social_index)
     }
 
-    # Replace "uta_rel" or "uta_abs" with "uta_index":
+    # Replace "ua_rel" or "ua_abs" with "ua_index":
     col_var <- ifelse (
         grepl ("^transport", what),
         "transport",
@@ -134,7 +134,7 @@ uta_plot_polygons <- function (city,
     )
 
     xy0 <- sf::st_coordinates (sf::st_centroid (sf::st_union (soc)))
-    tmp <- uta_plot_legend (
+    tmp <- ua_plot_legend (
         soc,
         col_var,
         alpha = alpha,
@@ -153,9 +153,9 @@ uta_plot_polygons <- function (city,
     print (m)
 }
 
-uta_plot_legend <- function (soc, col_var,
-                             alpha = 0.5, ncols = 100L, nvals = 5L,
-                             rel = TRUE) {
+ua_plot_legend <- function (soc, col_var,
+                            alpha = 0.5, ncols = 100L, nvals = 5L,
+                            rel = TRUE) {
 
     soc <- soc [which (!is.na (soc [[col_var]])), ]
 
@@ -193,7 +193,7 @@ uta_plot_legend <- function (soc, col_var,
     ))
 
     leg_title <- col_var
-    if (grepl ("^(uta|transport)", leg_title)) {
+    if (grepl ("^(ua|transport)", leg_title)) {
         leg_title <- paste0 (
             leg_title,
             ifelse (rel, " relative", " absolute")

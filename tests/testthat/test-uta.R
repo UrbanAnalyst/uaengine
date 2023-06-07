@@ -40,24 +40,24 @@ files <- m4ra::m4ra_prepare_data (
     final_mode = "foot"
 )
 
-test_that ("uta errors", {
+test_that ("ua errors", {
 
     expect_error (
-        uta_index (city = NULL, gtfs = gtfs_path, from = NULL),
+        ua_index (city = NULL, gtfs = gtfs_path, from = NULL),
         "Assertion on 'city' failed: Must be of type 'character'"
     )
     expect_error (
-        uta_index (city = "hampi", gtfs = gtfs_path, from = NULL),
+        ua_index (city = "hampi", gtfs = gtfs_path, from = NULL),
         "Assertion on 'from' failed: Must be of type 'character'"
     )
     from <- paste0 (1:10)
     expect_error (
-        uta_index (city = "hampi", gtfs = gtfs_path, from = from),
+        ua_index (city = "hampi", gtfs = gtfs_path, from = from),
         "'soc' must be provided"
     )
 })
 
-test_that ("uta calculations", {
+test_that ("ua calculations", {
 
     # make polygons for socio-economic variable:
     hull <- chull (net$vertex [, c ("x_", "y_")])
@@ -68,14 +68,14 @@ test_that ("uta calculations", {
     a <- sf::st_sf (var = runif (length (p)), geometry = p)
 
     # Get origin vertices
-    # v <- uta_vertices (a, city = "hampi", mode = "foot")
+    # v <- ua_vertices (a, city = "hampi", mode = "foot")
     # from <- sample (v$id, npts)
     net <- m4ra::m4ra_load_cached_network (city = "hampi", mode = "foot")
     set.seed (1L)
     npts <- 10L
     from <- sample (net$.vx0, size = npts)
 
-    res <- uta_index (
+    res <- ua_index (
         city = "hampi",
         gtfs = gtfs_path,
         from = from,
@@ -89,13 +89,13 @@ test_that ("uta calculations", {
     expect_s3_class (res, c ("sf", "data.frame"))
     expect_equal (nrow (res), npts)
 
-    # Then 'uta_interpolate':
+    # Then 'ua_interpolate':
     requireNamespace ("rappdirs") # otherwise 'Loading' message is issued
     expect_silent (
-        graph <- uta_interpolate (
+        graph <- ua_interpolate (
             city = "hampi",
             initial_mode = "foot",
-            uta_dat = res,
+            ua_dat = res,
             soc = a
         )
     )
@@ -111,10 +111,10 @@ test_that ("uta calculations", {
     expect_equal (ncol (graph_full), ncol (graph))
     expect_equal (names (graph_full), names (graph))
 
-    # uta_to_geojson:
+    # ua_to_geojson:
     f <- fs::path (fs::path_temp (), "xy.json")
     expect_false (fs::file_exists (f))
-    f <- uta_to_geojson (graph, filename = f)
+    f <- ua_to_geojson (graph, filename = f)
     expect_s3_class (f, "geojson_file")
     expect_true (fs::file_exists (f$path))
     fs::file_delete (f$path)

@@ -4,7 +4,7 @@
 #' This function saves a new '.Rds' file in the 'path' directory.
 #'
 #' @param path Path to the directory containing various '.osm' files produced by
-#' \link{uta_extract_osm}.
+#' \link{ua_extract_osm}.
 #' @param city Name of city (used to name resultant files).
 #' @return A single \pkg{silicate} 'SC' object containing combined data from all
 #' individual '.osm' files. This file is also saved as a '.Rds' object in the
@@ -12,7 +12,7 @@
 #'
 #' @export
 
-uta_osm_to_sc <- function (path, city) {
+ua_osm_to_sc <- function (path, city) {
 
     requireNamespace ("fs")
 
@@ -34,7 +34,7 @@ uta_osm_to_sc <- function (path, city) {
     f <- grep ("network", f, value = TRUE)
     if (length (f) == 0L) {
         cli::cli_alert_warning (cli::col_red (
-            "No '.osm' files found; did you run 'uta_extract_osm'?"
+            "No '.osm' files found; did you run 'ua_extract_osm'?"
         ))
         return ()
     }

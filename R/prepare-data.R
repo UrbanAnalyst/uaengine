@@ -1,7 +1,7 @@
 #' Additional data preparation beyond standard `m4ra` routines
 #'
 #' @param osm_path Path to directory containing data processed by the
-#' \link{uta_extract_osm} function for desired city.
+#' \link{ua_extract_osm} function for desired city.
 #' @param water_dist Distance below which any edges are considered adjacent to
 #' water, and thus categorised as "blue space" edges.
 #' @param quiet If `FALSE`, display progress information on screen.
@@ -9,7 +9,7 @@
 #' which vertices of the foot-weighted network are within or adjacent to natural
 #' spaces.
 #' @export
-uta_prepare_data <- function (osm_path, water_dist = 20, quiet = FALSE) {
+ua_prepare_data <- function (osm_path, water_dist = 20, quiet = FALSE) {
 
     checkmate::assert_character (osm_path, len = 1L)
     if (!fs::dir_exists (osm_path)) {
@@ -48,7 +48,7 @@ prepare_natural <- function (f, city, water_dist = 20) {
 
     cache_dir <- fs::path (m4ra_cache_dir (), city)
     hash <- substring (attr (net, "hash"), 1L, 6L)
-    f_natural <- paste0 ("uta-", city, "-natural-index-foot-", hash, ".Rds")
+    f_natural <- paste0 ("ua-", city, "-natural-index-foot-", hash, ".Rds")
     f_natural <- fs::path (cache_dir, f_natural)
 
     if (file.exists (f_natural)) {
@@ -110,7 +110,7 @@ prepare_schools <- function (f, city) {
     cache_dir <- fs::path (m4ra_cache_dir (), city)
     f_schools <- fs::path (
         cache_dir,
-        paste0 ("uta-", city, "-school-verts.Rds")
+        paste0 ("ua-", city, "-school-verts.Rds")
     )
 
     if (fs::file_exists (f_schools)) {

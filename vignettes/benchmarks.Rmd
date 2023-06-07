@@ -15,7 +15,7 @@ knitr::opts_chunk$set (
 ```
 
 ```{r setup}
-library (utaengine)
+library (uaengine)
 ```
 
 Urban Transport Analyst aims to be the fastest and most scalable open source

@@ -1,9 +1,9 @@
-#' @title Batch calculation of 'uta_index' for a single city
+#' @title Batch calculation of 'ua_index' for a single city
 #'
-#' @description Repeatedly calculates values from the \link{uta_index} function
+#' @description Repeatedly calculates values from the \link{ua_index} function
 #' for a sub-set of all origin vertices within nominated city, and saves results
 #' to a local file. Finally results can generally be reliably interpolated, and
-#' it is thus generally not necessarily to calculate \link{uta_index} for every
+#' it is thus generally not necessarily to calculate \link{ua_index} for every
 #' origin point. Instead, it is recommended to only calculate values for a fixed
 #' proportion specified by the parameter, `coverage`.
 #'
@@ -26,7 +26,7 @@
 #' for each observed value of target variable.
 #' @param soc_var Name of target variable in `soc` data set.
 #' @param dlims Vector of distance limits in kilometres over which average
-#' values of transport index should be calculated. One value of "uta_index" is
+#' values of transport index should be calculated. One value of "ua_index" is
 #' then derived for each value of `dlims`.
 #' @param batch_size Number of vertices to calculate in each batch before saving
 #' to local file. Increases in this parameter can greatly increase the sizes of
@@ -38,27 +38,27 @@
 #' @param coverage Proportion of all points for which values are to be
 #' calculated. As described above, coverage can generally safely be set to
 #' values less than 1, with complete coverage then generated through the more
-#' computationally efficient \link{uta_interpolate} function.
+#' computationally efficient \link{ua_interpolate} function.
 #' @param nthreads Optional parameter to specify number of threads to be used in
 #' multi-threaded calculations. Default is maximum number of available threads
 #' (from `RcppParallel::defaultNumThreads()`).
 #'
 #' @export
 
-uta_index_batch <- function (city,
-                             gtfs_path,
-                             popdens_geotif = NULL,
-                             results_path = NULL,
-                             initial_mode = "foot",
-                             final_mode = "foot",
-                             soc = NULL,
-                             soc_var = NULL,
-                             dlims = c (5, 10),
-                             batch_size = 1000,
-                             coverage = 1 / 4,
-                             nthreads = NULL) {
+ua_index_batch <- function (city,
+                            gtfs_path,
+                            popdens_geotif = NULL,
+                            results_path = NULL,
+                            initial_mode = "foot",
+                            final_mode = "foot",
+                            soc = NULL,
+                            soc_var = NULL,
+                            dlims = c (5, 10),
+                            batch_size = 1000,
+                            coverage = 1 / 4,
+                            nthreads = NULL) {
 
-    # most parameters are asserted in 'uta_index' function
+    # most parameters are asserted in 'ua_index' function
     if (!is.null (nthreads)) {
         checkmate::assert_integer (nthreads, lower = 1L, len = 1L)
         requireNamespace ("RcppParallel")
@@ -68,7 +68,7 @@ uta_index_batch <- function (city,
     checkmate::assert_numeric (coverage, lower = 0.01, upper = 1, len = 1L)
     checkmate::assert_numeric (coverage, lower = 0.01, upper = 1, len = 1L)
 
-    # Parameters used before passing to 'uta_index':
+    # Parameters used before passing to 'ua_index':
     checkmate::assert_character (city, len = 1L)
     city <- tolower (gsub ("\\s+", "-", city))
     checkmate::assert_character (initial_mode, len = 1L)
@@ -91,7 +91,7 @@ uta_index_batch <- function (city,
         from <- vsp [[i]]$id
         pt0 <- proc.time ()
 
-        s <- uta_index (
+        s <- ua_index (
             city = city,
             gtfs_path = gtfs_path,
             popdens_geotif = popdens_geotif,
@@ -122,7 +122,7 @@ uta_index_batch <- function (city,
 #' @noRd
 get_batch_vertices <- function (soc, city, mode, seed = 1L) {
 
-    v <- uta_vertices (soc, city, mode)
+    v <- ua_vertices (soc, city, mode)
 
     # order vertices to reguarly sample all polygons in 'soc':
     vxy <- sfheaders::sf_point (v [, c ("x", "y")])

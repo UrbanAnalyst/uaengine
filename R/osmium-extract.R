@@ -20,8 +20,8 @@
 #' file.
 #' @export
 
-uta_extract_osm <- function (city, path, bbox = NULL, bbox_expand = 0.05,
-                             osm_id = NULL) {
+ua_extract_osm <- function (city, path, bbox = NULL, bbox_expand = 0.05,
+                            osm_id = NULL) {
 
     requireNamespace ("fs")
     requireNamespace ("withr")
@@ -49,16 +49,16 @@ uta_extract_osm <- function (city, path, bbox = NULL, bbox_expand = 0.05,
     }
 
     extract_osm_keys (path_to_pbf)
-    uta_m4ra_parking_extraction (path_to_pbf)
-    uta_osm_schools (path_to_pbf)
-    uta_osm_nature (path_to_pbf)
+    ua_m4ra_parking_extraction (path_to_pbf)
+    ua_osm_schools (path_to_pbf)
+    ua_osm_nature (path_to_pbf)
 }
 
 #' Trim OSM file to an 'osm_id' and return converted 'pbf' output.
 #'
-#' @param city Directly from 'uta_extract_osm'
-#' @param path The 'path' param from 'uta_extract_osm'
-#' @param osm_id Directly from 'uta_extract_osm'
+#' @param city Directly from 'ua_extract_osm'
+#' @param path The 'path' param from 'ua_extract_osm'
+#' @param osm_id Directly from 'ua_extract_osm'
 #' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
 trim_to_osm_id <- function (city, path, osm_id) {
@@ -83,15 +83,15 @@ trim_to_osm_id <- function (city, path, osm_id) {
 
 #' Trim OSM file to 'bbox' and return converted 'pbf' output.
 #'
-#' @param city Directly from 'uta_extract_osm'
-#' @param path The 'path' param from 'uta_extract_osm'
-#' @param bbox Directly from 'uta_extract_osm'
-#' @param bbox_expand Directly from 'uta_extract_osm'
+#' @param city Directly from 'ua_extract_osm'
+#' @param path The 'path' param from 'ua_extract_osm'
+#' @param bbox Directly from 'ua_extract_osm'
+#' @param bbox_expand Directly from 'ua_extract_osm'
 #' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
 trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
 
-    bbox <- get_uta_bbox (bbox, bbox_expand = bbox_expand)
+    bbox <- get_ua_bbox (bbox, bbox_expand = bbox_expand)
     pars <- get_osmium_convert_args (city, path)
     if (pars$f_exists) {
         return (fs::path (pars$osm_dir, pars$f))
@@ -116,11 +116,11 @@ trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
 
 #' Convert various form of 'bbox' parameter to an actual 2-by-2 matrix.
 #'
-#' @param bbox Directly from 'uta_extract_osm'
-#' @param bbox_expand Directly from 'uta_extract_osm'
+#' @param bbox Directly from 'ua_extract_osm'
+#' @param bbox_expand Directly from 'ua_extract_osm'
 #' @return bbox as 2-by-2 matrix.
 #' @noRd
-get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
+get_ua_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
 
     if (methods::is (bbox, "character")) {
         checkmate::assert_character (bbox, len = 1L)
@@ -159,10 +159,10 @@ get_uta_bbox <- function (bbox = NULL, bbox_expand = 0.05) {
 #' Convert '.bz2' directly to 'pbf' without trimming.
 #'
 #' This function is called when no `bbox` parameter is passed to main
-#' 'uta_extract_osm()` function.
+#' 'ua_extract_osm()` function.
 #'
-#' @param city Directly from 'uta_extract_osm'
-#' @param path The 'path' param from 'uta_extract_osm'
+#' @param city Directly from 'ua_extract_osm'
+#' @param path The 'path' param from 'ua_extract_osm'
 #' @return Full path and file name of newly created '.pbf' file.
 #' @noRd
 convert_bz2_to_pbf <- function (city, path) {
@@ -244,11 +244,11 @@ extract_osm_keys <- function (path) {
 #'
 #' This version uses 'osmium' instead of \pkg{osmdata} used there.
 #'
-#' @param path The `path_to_pbf` parameter generated in \link{uta_extract_osm}.
+#' @param path The `path_to_pbf` parameter generated in \link{ua_extract_osm}.
 #' @return Path of a '.osm' file containing information needed for \pkg{m4ra}
 #' parking analyses.
 #' @noRd
-uta_m4ra_parking_extraction <- function (path) {
+ua_m4ra_parking_extraction <- function (path) {
 
     tags <- c (
         "nwr/parking",
@@ -293,11 +293,11 @@ uta_m4ra_parking_extraction <- function (path) {
 
 #' Extract data on schools using osmium
 #'
-#' @param path The `path_to_pbf` parameter generated in \link{uta_extract_osm}.
+#' @param path The `path_to_pbf` parameter generated in \link{ua_extract_osm}.
 #' @return Path of a '.osm' file containing information needed for \pkg{m4ra}
 #' parking analyses.
 #' @noRd
-uta_osm_schools <- function (path) {
+ua_osm_schools <- function (path) {
 
     tags <- c (
         "nwr/amenity=school",
@@ -335,11 +335,11 @@ uta_osm_schools <- function (path) {
 
 #' Extract data on natural spaces using osmium
 #'
-#' @param path The `path_to_pbf` parameter generated in \link{uta_extract_osm}.
+#' @param path The `path_to_pbf` parameter generated in \link{ua_extract_osm}.
 #' @return Path of a '.osm' file containing information needed for \pkg{m4ra}
 #' parking analyses.
 #' @noRd
-uta_osm_nature <- function (path) {
+ua_osm_nature <- function (path) {
 
     tags <- c (
         "w/leisure=garden,park,nature_reserve,playground",

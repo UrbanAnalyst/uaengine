@@ -12,7 +12,7 @@
 #' @return A vertex table of only those vertices within the bounding polygon
 #' defined by `x`.
 #' @export
-uta_vertices <- function (x, city, mode) {
+ua_vertices <- function (x, city, mode) {
 
     graph_c <- m4ra::m4ra_load_cached_network (
         city = city,

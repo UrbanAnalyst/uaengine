@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library (testthat)
-library (utaengine)
+library (uaengine)
 
-test_check ("utaengine")
+test_check ("uaengine")

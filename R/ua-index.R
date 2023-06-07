@@ -1,10 +1,10 @@
-#' Calculate "UTA_index" for a specified set of origin locations.
+#' Calculate "UA_index" for a specified set of origin locations.
 #'
 #' @param city Name of city, used to name and define local path to
 #' pre-calculated street networks and transport times with \pkg{m4ra} package.
 #' @param gtfs_path Path to `.Rds` version of GTFS feed for specified city.
-#' @param osm_path Path to OSM data processed by \link{uta_extract_osm} function
-#' (only needed first time to call internal `uta_prepare_data()` function).
+#' @param osm_path Path to OSM data processed by \link{ua_extract_osm} function
+#' (only needed first time to call internal `ua_prepare_data()` function).
 #' @param popdens_geotif Optional path to local 'geotiff' file with population
 #' density estimates. If provided, all transport indices are adjusted to account
 #' for effects of local population density.
@@ -19,7 +19,7 @@
 #' for each observed value of target variable.
 #' @param soc_var Name of target variable in `soc` data set.
 #' @param dlims Vector of distance limits in kilometres over which average
-#' values of transport index should be calculated. One value of "uta_index" is
+#' values of transport index should be calculated. One value of "ua_index" is
 #' then derived for each value of `dlims`.
 #' @param duration_max Parameter to control maximal duration examined in
 #' multi-modal routing queries, specified in minutes. This value must be
@@ -31,22 +31,22 @@
 #' @return An \pkg{sf} `data.frame`, with geometries of points defined by
 #' `from`, and values for transport indices at specified distances, both raw
 #' values and values adjusted for local population densities, along with
-#' corresponding values of the UTA index at each value of 'dlim'.
+#' corresponding values of the UA index at each value of 'dlim'.
 #'
 #' @export
 
-uta_index <- function (city,
-                       gtfs_path,
-                       osm_path = NULL,
-                       popdens_geotif = NULL,
-                       from = NULL,
-                       initial_mode = "foot",
-                       final_mode = "foot",
-                       soc = NULL,
-                       soc_var = NULL,
-                       dlims = c (5, 10),
-                       duration_max = 15,
-                       quiet = FALSE) {
+ua_index <- function (city,
+                      gtfs_path,
+                      osm_path = NULL,
+                      popdens_geotif = NULL,
+                      from = NULL,
+                      initial_mode = "foot",
+                      final_mode = "foot",
+                      soc = NULL,
+                      soc_var = NULL,
+                      dlims = c (5, 10),
+                      duration_max = 15,
+                      quiet = FALSE) {
 
     checkmate::assert_character (city, len = 1L)
     city <- tolower (gsub ("\\s+", "-", city))
@@ -83,7 +83,7 @@ uta_index <- function (city,
 
             if (!is.null (osm_path)) {
 
-                f_extra <- uta_prepare_data (
+                f_extra <- ua_prepare_data (
                     osm_path,
                     water_dist = 20,
                     quiet = quiet

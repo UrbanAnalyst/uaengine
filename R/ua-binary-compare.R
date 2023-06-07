@@ -1,28 +1,28 @@
-#' Statistically compare UTA values between two spatial groups
+#' Statistically compare UA values between two spatial groups
 #'
 #' Spatial groups must be distinguished by a named variable in the "soc"
 #' data.table.
 #'
-#' @inheritParams uta_index_batch
+#' @inheritParams ua_index_batch
 #' @param bin_var The same of the variable in "soc" used to distinguish binary
 #' groups. This must be a logical variable (values as `TRUE` or `FALSE` only).
-#' @param d One value of 'dlim' parameters used in \link{uta_index} or
-#' \link{uta_index_batch} call to generate UTA data. Resultant plot will be
+#' @param d One value of 'dlim' parameters used in \link{ua_index} or
+#' \link{ua_index_batch} call to generate UA data. Resultant plot will be
 #' based on data for this value.
 #' @export
 
-uta_binary_compare <- function (city, results_path, soc, bin_var, d = 10) {
+ua_binary_compare <- function (city, results_path, soc, bin_var, d = 10) {
 
     checkmate::assert_character (bin_var, len = 1L)
     checkmate::assert_logical (soc [[bin_var]])
 
-    comp_vars <- c ("transport", "social", "uta_rel", "uta_abs")
+    comp_vars <- c ("transport", "social", "ua_rel", "ua_abs")
 
     res <- batch_collate_results (results_path, city)
 
     var_abs <- sprintf ("times_limit_d%02d", d)
     var_rel <- sprintf ("int_d%2d_pop_adj", d)
-    vars_uta <- paste0 (gsub ("uta_", "uta_index_", comp_vars))
+    vars_ua <- paste0 (gsub ("ua_", "ua_index_", comp_vars))
 
     pt_index <- unlist (sf::st_within (res, soc))
 
@@ -35,10 +35,10 @@ uta_binary_compare <- function (city, results_path, soc, bin_var, d = 10) {
     }
     soc <- soc [which (!is.na (soc$social_index)), ]
 
-    # UTA index is too heavily influenced by the greater scale (= SD) of the
+    # UA index is too heavily influenced by the greater scale (= SD) of the
     # social index. These lines re-scale so that transport has equal influence
     # on result as the social index.
-    soc$uta_index_abs <- soc$uta_index_rel <- NA
+    soc$ua_index_abs <- soc$ua_index_rel <- NA
     for (i in c ("trans_abs", "trans_rel")) {
 
         transport_sd <- stats::sd (soc [[i]], na.rm = TRUE)
@@ -46,13 +46,13 @@ uta_binary_compare <- function (city, results_path, soc, bin_var, d = 10) {
         social_index <- transport_mn +
             (soc$social_index - mean (soc$social_index, na.rm = TRUE)) *
                 transport_sd
-        nm <- gsub ("^trans", "uta_index", i)
+        nm <- gsub ("^trans", "ua_index", i)
         soc [[nm]] <- sqrt (soc [[i]] * social_index)
     }
 
     comp_vars <- c (
         "social_index", "trans_abs", "trans_rel",
-        "uta_index_abs", "uta_index_rel"
+        "ua_index_abs", "ua_index_rel"
     )
 
     for (v in comp_vars) {

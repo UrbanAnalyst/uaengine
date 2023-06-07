@@ -9,7 +9,7 @@
 #' }
 #' Those are both on unit scales, so require simple '1 - x' transforms.
 #'
-#' @inheritParams uta_index_batch
+#' @inheritParams ua_index_batch
 #' @param soc An \pkg{sf} `data.frame` object with polygons defining areas in
 #' which socio-demographic variables were collated, and a column called
 #' "social_index" containing the socio-demographic variable of interest. If not
@@ -19,16 +19,16 @@
 #' value specified, names of results will not be labelled with actual value.
 #' @param pairwise If `TRUE`, results are aggregated for each pair of variables
 #' instead of individually.
-#' @return The input table, `soc`, with additional columns of UTA index values
-#' attached. This table can then be saved and used directly in the UTA
+#' @return The input table, `soc`, with additional columns of UA index values
+#' attached. This table can then be saved and used directly in the UA
 #' front-end.
 #' @export
 
-uta_export <- function (city,
-                        results_path,
-                        soc = NULL,
-                        dlim = 10,
-                        pairwise = FALSE) {
+ua_export <- function (city,
+                       results_path,
+                       soc = NULL,
+                       dlim = 10,
+                       pairwise = FALSE) {
 
     if (!is.null (soc)) {
         if (!"social_index" %in% names (soc)) {
