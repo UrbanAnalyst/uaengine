@@ -1,5 +1,5 @@
-[![R build status](https://github.com/UrbanAnalyst/uta-engine/workflows/R-CMD-check/badge.svg)](https://github.com/UrbanAnalyst/uta-engine/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/UrbanAnalyst/uta-engine/branch/main/graph/badge.svg)](https://app.codecov.io/gh/UrbanAnalyst/uta-engine)
+[![R build status](https://github.com/UrbanAnalyst/ua-engine/workflows/R-CMD-check/badge.svg)](https://github.com/UrbanAnalyst/ua-engine/actions?query=workflow%3AR-CMD-check)
+[![codecov](https://codecov.io/gh/UrbanAnalyst/ua-engine/branch/main/graph/badge.svg)](https://app.codecov.io/gh/UrbanAnalyst/ua-engine)
 [![Project Status: Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 
 # UA Engine
@@ -18,7 +18,7 @@ In comparison, the `ua-engine`:
 
 - Is considerably faster than either of these (see the "benchmarks" vignette);
 - Permits far larger queries (`valhalla`, for example, is restricted to maximal
-  queries of 2,000 pairwise comparisons, `uta-engine` easily extends to
+  queries of 2,000 pairwise comparisons, `ua-engine` easily extends to
   millions of comparisons);
 - Allows true multi-modal travel times to be calculated, with specified, and
   potentially different, initial and final modes of transport.

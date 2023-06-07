@@ -11,8 +11,8 @@ Routing and aggregation engine for 'Urban Transport Analyst'.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/UrbanAnalyst/uta-engine}
-  \item Report bugs at \url{https://github.com/UrbanAnalyst/uta-engine/issues}
+  \item \url{https://github.com/UrbanAnalyst/ua-engine}
+  \item Report bugs at \url{https://github.com/UrbanAnalyst/ua-engine/issues}
 }
 
 }

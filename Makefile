@@ -9,8 +9,8 @@ build: doc
 	R CMD build .
 
 clean:
-	-rm -f utaengine*tar.gz
-	-rm -fr utaengine.Rcheck
+	-rm -f uaengine*tar.gz
+	-rm -fr uaengine.Rcheck
 	#-rm -fr src/*.{o,so}
 
 doc: clean
