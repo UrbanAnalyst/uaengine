@@ -17,18 +17,20 @@ using namespace cpp11;
 writable::integers cpp_index_sort(integers index0)
 {
     const R_xlen_t n = index0.size ();
+    const size_t n_s = static_cast <size_t> (n);
 
     // Get number of bins, which requires copying std::vector to call
     // max_element:
-    std::vector <int> index_in (n);
+    std::vector <int> index_in (n_s);
     std::copy (index0.begin (), index0.end (), index_in.begin ());
-    const int n_bins = *std::max_element (index_in.begin (), index_in.end ());
+    const int n_bins_int = *std::max_element (index_in.begin (), index_in.end ());
+    const size_t n_bins = static_cast <size_t> (n_bins_int);
 
     writable::integers res (n);
     std::fill (res.begin (), res.end (), -1L);
 
     std::vector <std::vector <int> > index_array (n_bins);
-    for (int i = 0; i < n_bins; i++)
+    for (size_t i = 0; i < n_bins; i++)
     {
         index_array [i] = std::vector <int> (0L);
     }
@@ -40,10 +42,12 @@ writable::integers cpp_index_sort(integers index0)
     {
         check_user_interrupt ();
 
-        std::vector <int> vec_i = index_array [index0 [i] - 1];
+        const size_t index_i = static_cast <size_t> (index0 [i] - 1L);
 
-        vec_i.push_back (i);
-        index_array [index0 [i] - 1] = vec_i;
+        std::vector <int> vec_i = index_array [index_i];
+
+        vec_i.push_back (static_cast <int> (i));
+        index_array [index_i] = vec_i;
     }
 
     // Use that to successfully fill the final index by successively looping
@@ -53,7 +57,7 @@ writable::integers cpp_index_sort(integers index0)
     while (pos < n)
     {
         check_user_interrupt ();
-        for (R_xlen_t i = 0; i < n_bins; i++)
+        for (size_t i = 0; i < n_bins; i++)
         {
             std::vector <int> vec_i = index_array [i];
             if (vec_i.size () == 0L)
