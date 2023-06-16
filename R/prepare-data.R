@@ -84,7 +84,7 @@ prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
         water [index_min, ],
         paired = TRUE
     )
-    index [which (dmin <= 20.0)] <- -1L
+    index [which (dmin <= water_dist)] <- -1L
 
     saveRDS (index, f_natural)
 
