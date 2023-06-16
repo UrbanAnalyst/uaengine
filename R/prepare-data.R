@@ -41,7 +41,9 @@ ua_prepare_data <- function (osm_path, water_dist = 20, quiet = FALSE) {
     return (c (f_natural, f_schools))
 }
 
-prepare_natural <- function (f, city, water_dist = 20) {
+# reproj is not yet sufficiently globally reliable here, so switched off for the
+# moment.
+prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
 
     mode <- "foot" # hard-code distances to nature to 'foot' distances
     net <- m4ra::m4ra_load_cached_network (city = city, mode = mode)
@@ -56,13 +58,17 @@ prepare_natural <- function (f, city, water_dist = 20) {
     }
 
     natural <- sf::st_read (f, layer = "multipolygons", quiet = TRUE)
-    natural <- reproj_equal_area (natural)
+    if (reproj) {
+        natural <- reproj_equal_area (natural)
+    }
     polys <- lapply (natural$geometry, function (i) i [[1]] [[1]])
 
     v <- m4ra::m4ra_vertices (net, city) [, c ("x", "y")]
     v <- sfheaders::sf_point (v)
     sf::st_crs (v) <- 4326
-    v <- reproj_equal_area (v)
+    if (reproj) {
+        v <- reproj_equal_area (v)
+    }
     v <- data.frame (sf::st_coordinates (v))
     names (v) <- c ("x", "y")
 
