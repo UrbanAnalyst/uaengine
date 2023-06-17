@@ -91,18 +91,23 @@ ua_index_batch <- function (city,
         from <- vsp [[i]]$id
         pt0 <- proc.time ()
 
-        s <- ua_index (
-            city = city,
-            gtfs_path = gtfs_path,
-            popdens_geotif = popdens_geotif,
-            from = from,
-            initial_mode = initial_mode,
-            final_mode = final_mode,
-            soc = soc,
-            soc_var = soc_var,
-            quiet = TRUE
+        s <- tryCatch (
+            ua_index (
+                city = city,
+                gtfs_path = gtfs_path,
+                popdens_geotif = popdens_geotif,
+                from = from,
+                initial_mode = initial_mode,
+                final_mode = final_mode,
+                soc = soc,
+                soc_var = soc_var,
+                quiet = TRUE
+            ),
+            error = function (e) NULL
         )
-        saveRDS (s, f)
+        if (!is.null (s)) {
+            saveRDS (s, f)
+        }
 
         batch_progress_message (i, vsp, pt0, t_start)
     }
