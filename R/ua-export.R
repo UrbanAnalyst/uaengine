@@ -131,8 +131,8 @@ ua_export <- function (city,
             for (v in c (vars, extra_vars)) {
 
                 if (!pairwise &&
-
                     v %in% c ("parking", "school_dist", "intervals")) {
+
                     p <- res [[v]] [index]
                     p <- p [which (p > 0 & !is.nan (p))]
                     soc [[v]] [i] <- 10^mean (log10 (p), na.rm = TRUE)
@@ -151,8 +151,8 @@ ua_export <- function (city,
         # non-aggregated results are retained in original scale
         if (!pairwise) {
             lt_vars <- c ("school_dist", "intervals")
+            soc$school_dist [soc$school_dist < 1] <- 1 # 1 metre!
             for (lt in lt_vars) {
-                soc [[lt]] [soc [[lt]] < 1] <- 1 # 1 metre!
                 soc [[lt]] <- log10 (soc [[lt]])
             }
         }
