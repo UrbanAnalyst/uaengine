@@ -78,7 +78,8 @@ ua_export <- function (city,
 
     # Add compound "transport" variable:
     suppressWarnings (
-        res$transport <- res$times_abs * res$transfers * log10 (res$intervals)
+        # res$transport <- res$times_abs * res$transfers * log10 (res$intervals)
+        res$transport <- res$times_abs * log10 (res$intervals)
     )
 
     # And re-order columns:
