@@ -199,6 +199,12 @@ get_osmium_convert_args <- function (city, path) {
     osm_dir <- fs::path_dir (path)
     f <- paste0 (city, ".osm.pbf")
     f_exists <- FALSE
+    if (!fs::file_exists (fs::path (osm_dir, f)) &&
+        fs::path_file (osm_dir) != "city") {
+        if (fs::dir_exists (fs::path (osm_dir, city))) {
+            osm_dir <- fs::path (osm_dir, city)
+        }
+    }
     if (fs::file_exists (fs::path (osm_dir, f))) {
         cli::cli_alert_info (cli::col_blue (
             "File '",
@@ -207,7 +213,8 @@ get_osmium_convert_args <- function (city, path) {
         ))
         f_exists <- TRUE
     }
-    f0 <- fs::path_file (path)
+    f0 <- f
+    f <- fs::path (osm_dir, f)
 
     list (osm_dir = osm_dir, f = f, f0 = f0, f_exists = f_exists)
 }
