@@ -94,7 +94,10 @@ trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
     bbox <- get_ua_bbox (bbox, bbox_expand = bbox_expand)
     pars <- get_osmium_convert_args (city, path)
     if (pars$f_exists) {
-        return (fs::path (pars$osm_dir, pars$f))
+        return (pars$f)
+    } else if (!fs::file_exists (pars$f)) {
+        # No city file yet; use country file
+        pars$f <- path
     }
 
     cli::cli_h3 (cli::col_green ("Reducing file to specified 'bbox':"))
@@ -105,28 +108,13 @@ trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
         "osmium extract",
         pb_arg,
         paste0 (bbox, collapse = ","),
-        pars$f0,
+        pars$f,
         "-o",
-        pars$f
+        pars$f0
     )
     withr::with_dir (pars$osm_dir, system (cmd))
 
-    # If osm_dir is country, create city-specific sub-dir, and move result
-    # there:
-    city_dir <- pars$osm_dir
-    if (fs::path_file (city_dir) != city) {
-        city_dir <- fs::path (city_dir, city)
-        if (!fs::dir_exists (city_dir)) {
-            fs::dir_create (city_dir, recurse = TRUE)
-        }
-
-        fs::file_move (
-            fs::path (pars$osm_dir, pars$f),
-            fs::path (city_dir, pars$f)
-        )
-    }
-
-    return (fs::path (city_dir, pars$f))
+    return (fs::path (pars$osm_dir, pars$f0))
 }
 
 #' Convert various form of 'bbox' parameter to an actual 2-by-2 matrix.
@@ -201,8 +189,9 @@ get_osmium_convert_args <- function (city, path) {
     f_exists <- FALSE
     if (!fs::file_exists (fs::path (osm_dir, f)) &&
         fs::path_file (osm_dir) != "city") {
-        if (fs::dir_exists (fs::path (osm_dir, city))) {
-            osm_dir <- fs::path (osm_dir, city)
+        osm_dir <- fs::path (osm_dir, city)
+        if (!fs::dir_exists (osm_dir)) {
+            fs::dir_create (osm_dir)
         }
     }
     if (fs::file_exists (fs::path (osm_dir, f))) {
