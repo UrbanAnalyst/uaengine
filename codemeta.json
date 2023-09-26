@@ -7,7 +7,7 @@
   "codeRepository": "https://github.com/UrbanAnalyst/ua-engine",
   "issueTracker": "https://github.com/UrbanAnalyst/ua-engine/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.1",
+  "version": "0.2.1.001",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -318,6 +318,9 @@
   },
   "fileSize": "3815.247KB",
   "readme": "https://github.com/UrbanAnalyst/ua-engine/blob/main/README.md",
-  "contIntegration": ["https://github.com/UrbanAnalyst/ua-engine/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/UrbanAnalyst/ua-engine"],
+  "contIntegration": [
+    "https://github.com/UrbanAnalyst/ua-engine/actions?query=workflow%3AR-CMD-check",
+    "https://app.codecov.io/gh/UrbanAnalyst/ua-engine"
+  ],
   "developmentStatus": "https://www.repostatus.org/#concept"
 }

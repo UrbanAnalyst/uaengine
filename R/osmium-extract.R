@@ -111,7 +111,22 @@ trim_osm_to_bbox <- function (city, path, bbox, bbox_expand) {
     )
     withr::with_dir (pars$osm_dir, system (cmd))
 
-    return (fs::path (pars$osm_dir, pars$f))
+    # If osm_dir is country, create city-specific sub-dir, and move result
+    # there:
+    city_dir <- pars$osm_dir
+    if (fs::path_file (city_dir) != city) {
+        city_dir <- fs::path (city_dir, city)
+        if (!fs::dir_exists (city_dir)) {
+            fs::dir_create (city_dir, recurse = TRUE)
+        }
+
+        fs::file_move (
+            fs::path (pars$osm_dir, pars$f),
+            fs::path (city_dir, pars$f)
+        )
+    }
+
+    return (fs::path (city_dir, pars$f))
 }
 
 #' Convert various form of 'bbox' parameter to an actual 2-by-2 matrix.
