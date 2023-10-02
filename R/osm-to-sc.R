@@ -24,7 +24,7 @@ ua_osm_to_sc <- function (path, city) {
         cli::cli_alert_info (cli::col_blue (
             "File '{f_sc}' already exists and will not be overwritten."
         ))
-        return ()
+        return (f_sc)
     }
 
     q <- osmdata::opq (get_pbf_bbox (path, city))
@@ -50,7 +50,7 @@ ua_osm_to_sc <- function (path, city) {
         "All OSM data collated and written to '{f_sc}'"
     ))
 
-    return (dat)
+    return (f_sc)
 }
 
 get_pbf_bbox <- function (path, city) {
