@@ -1,6 +1,6 @@
 Package: uaengine
 Title: Routing and aggregation engine for 'Urban Analyst'
-Version: 0.2.1.004
+Version: 0.2.1.005
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -8,8 +8,8 @@ Authors@R:
            email = "mark.padgham@email.com")
 Description: Routing and aggregation engine for 'Urban Transport Analyst'.
 License: GPL-3
-URL: https://github.com/UrbanAnalyst/ua-engine
-BugReports: https://github.com/UrbanAnalyst/ua-engine/issues
+URL: https://github.com/UrbanAnalyst/uaengine
+BugReports: https://github.com/UrbanAnalyst/uaengine/issues
 Imports:
     checkmate,
     cli,

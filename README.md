@@ -1,6 +1,6 @@
 [![R build
-status](https://github.com/UrbanAnalyst/ua-engine/workflows/R-CMD-check/badge.svg)](https://github.com/UrbanAnalyst/ua-engine/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/UrbanAnalyst/ua-engine/branch/main/graph/badge.svg)](https://app.codecov.io/gh/UrbanAnalyst/ua-engine)
+status](https://github.com/UrbanAnalyst/uaengine/workflows/R-CMD-check/badge.svg)](https://github.com/UrbanAnalyst/uaengine/actions?query=workflow%3AR-CMD-check)
+[![codecov](https://codecov.io/gh/UrbanAnalyst/uaengine/branch/main/graph/badge.svg)](https://app.codecov.io/gh/UrbanAnalyst/uaengine)
 [![Project Status:
 Concept](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 
@@ -18,12 +18,12 @@ source multi-modal routing engine. Other notable options include:
     routing](https://github.com/valhalla/valhalla)
 2.  [“r5” for multi-modal routing](https://github.com/conveyal/r5)
 
-In comparison, the `ua-engine`:
+In comparison, the `uaengine`:
 
 - Is considerably faster than either of these (see the “benchmarks”
   vignette);
 - Permits far larger queries (`valhalla`, for example, is restricted to
-  maximal queries of 2,000 pairwise comparisons, `ua-engine` easily
+  maximal queries of 2,000 pairwise comparisons, `uaengine` easily
   extends to millions of comparisons);
 - Allows true multi-modal travel times to be calculated, with specified,
   and potentially different, initial and final modes of transport.
