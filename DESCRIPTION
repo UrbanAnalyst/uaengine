@@ -1,6 +1,6 @@
 Package: uaengine
 Title: Routing and aggregation engine for 'Urban Analyst'
-Version: 0.2.1.008
+Version: 0.2.1.009
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -45,6 +45,6 @@ SystemRequirements: osmium-tool
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Config/testthat/edition: 3
 VignetteBuilder: knitr
