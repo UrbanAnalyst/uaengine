@@ -8,7 +8,7 @@ ua_to_geojson(ua_dat, ndigits = 2L, filename = NULL)
 }
 \arguments{
 \item{ua_dat}{Full network graph including UA data returned from
-\link{ua_index} and {ua_interpolate} functions.}
+\link{ua_index} and \link{ua_interpolate} functions.}
 
 \item{ndigits}{Number of digits for rounding UA data in 'geojson'
 representation.}

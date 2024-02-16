@@ -2,8 +2,8 @@
 % Please edit documentation in R/uaengine-package.R
 \docType{package}
 \name{uaengine-package}
+\alias{uaengine}
 \alias{uaengine-package}
-\alias{_PACKAGE}
 \title{uaengine: Routing and aggregation engine for 'Urban Analyst'}
 \description{
 Routing and aggregation engine for 'Urban Transport Analyst'.

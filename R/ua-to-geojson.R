@@ -4,7 +4,7 @@
 #' the order of minutes per 100,000 graph edges.
 #'
 #' @param ua_dat Full network graph including UA data returned from
-#' \link{ua_index} and {ua_interpolate} functions.
+#' \link{ua_index} and \link{ua_interpolate} functions.
 #' @param ndigits Number of digits for rounding UA data in 'geojson'
 #' representation.
 #' @param filename Name and/or full path to local file where 'geojson' data are
