@@ -225,8 +225,10 @@ add_socio_var_to_stats <- function (s, soc, soc_var) {
     sxy <- sf::st_sf (sxy)
     sf::st_crs (sxy) <- 4326
 
-    index <- unlist (sf::st_within (sxy, soc))
-    s$soc_var <- soc [[soc_var]] [index]
+    s$soc_var <- NA
+    index <- sf::st_within (sxy, soc)
+    index_in <- which (vapply (index, length, integer (1L)) > 0L)
+    s$soc_var [index_in] <- soc [[soc_var]] [unlist (index)]
 
     return (s)
 }
