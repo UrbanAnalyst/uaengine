@@ -154,6 +154,10 @@ travel_time_statistics <- function (dat, dlims = c (5, 10), quiet) {
         df <- df [which (
             !is.na (df$ratio) & !is.nan (df$ratio) & is.finite (df$ratio)
         ), ]
+        # Both times and transfers can still have -.Machine$max.int values which
+        # need to be removed:
+        df$mm_times [which (df$mm_times < 0)] <- NA
+        df$mm_transfers [which (df$mm_transfers < 0)] <- NA
         if (nrow (df) < (ncol (dat$ratio) / 2)) {
             return (c (NA, NA))
         }
