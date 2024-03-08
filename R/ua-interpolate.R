@@ -24,7 +24,6 @@ ua_interpolate <- function (city,
                             npts = 3L) {
 
     requireNamespace ("dodgr")
-    requireNamespace ("fst")
     requireNamespace ("rappdirs") # for imported m4ra:::m4ra_cache_dir fn
 
     city <- tolower (gsub ("\\s+", "-", city))
@@ -134,7 +133,7 @@ ua_uncontract_graph <- function (graph, city, initial_mode) {
     flist <- fs::dir_ls (fs::path (m4ra_cache_dir (), city), regexp = initial_mode)
     flist <- grep (substring (hash, 1, 6), flist, value = TRUE)
 
-    edge_map <- fst::read_fst (grep ("edgemap", flist, value = TRUE))
+    edge_map <- readRDS (grep ("edgemap", flist, value = TRUE))
     edge_map <- edge_map [which (edge_map$edge_new %in% graph$edge_), ]
 
     graph_full <- m4ra::m4ra_load_cached_network (

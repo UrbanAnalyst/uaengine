@@ -1,6 +1,6 @@
 Package: uaengine
 Title: Routing and aggregation engine for 'Urban Analyst'
-Version: 0.3.0.001
+Version: 0.3.0.002
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -26,7 +26,6 @@ Suggests:
     dodgr,
     dplyr,
     fs,
-    fst,
     geojsonio,
     gtfsrouter,
     knitr,
