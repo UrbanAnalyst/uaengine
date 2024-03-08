@@ -120,8 +120,19 @@ ua_export <- function (city,
     if (!is.null (soc)) {
 
         res_xy <- sfheaders::sf_point (res [, c ("x", "y")])
+        # See mapscanner/R/utils.R:
+        sph_merc <- paste0 (
+            "+proj=merc +a=6378137 +b=6378137 ",
+            "+lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 ",
+            "+units=m +nadgrids=@null +wktext +no_defs"
+        )
         sf::st_crs (res_xy) <- 4326
-        pt_index <- unlist (sf::st_within (res_xy, soc))
+        res_xy_reproj <- sf::st_transform (res_xy, sph_merc)
+        soc_reproj <- sf::st_transform (soc, sph_merc)
+        pt_index <- sf::st_within (res_xy_reproj, soc_reproj)
+        pt_index <- vapply (pt_index, function (i) {
+            ifelse (is.null (i), NA_integer_, i [1])
+        }, integer (1L))
 
         for (v in c (vars, extra_vars)) {
             soc [[v]] <- NA
