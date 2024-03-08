@@ -44,10 +44,10 @@ writable::integers cpp_pip(
 
         const double i_dbl = static_cast <double> (i);
         const double progress = 100.0 * i_dbl / np_dbl;
-        Rprintf ("\r%i / %i: %2.2f%", i, n_polys, progress);
+        Rprintf ("\r%i / %i: %2.2f%%", i, n_polys, progress);
         check_user_interrupt ();
     }
-    Rprintf ("\r%i / %i: 100.00%    \n", n_polys, n_polys);
+    Rprintf ("\r%i / %i: 100.00%%\n", n_polys, n_polys);
 
     return res;
 }
