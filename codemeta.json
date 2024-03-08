@@ -4,16 +4,16 @@
   "identifier": "uaengine",
   "description": "Routing and aggregation engine for 'Urban Transport Analyst'.",
   "name": "uaengine: Routing and aggregation engine for 'Urban Analyst'",
-  "codeRepository": "https://github.com/UrbanAnalyst/ua-engine",
-  "issueTracker": "https://github.com/UrbanAnalyst/ua-engine/issues",
+  "codeRepository": "https://github.com/UrbanAnalyst/uaengine",
+  "issueTracker": "https://github.com/UrbanAnalyst/uaengine/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.1.015",
+  "version": "0.3.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.1 (2023-06-16)",
+  "runtimePlatform": "R version 4.3.3 (2024-02-29)",
   "author": [
     {
       "@type": "Person",
@@ -316,11 +316,8 @@
     },
     "SystemRequirements": "osmium-tool"
   },
-  "fileSize": "3815.247KB",
-  "readme": "https://github.com/UrbanAnalyst/ua-engine/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/UrbanAnalyst/ua-engine/actions?query=workflow%3AR-CMD-check",
-    "https://app.codecov.io/gh/UrbanAnalyst/ua-engine"
-  ],
+  "fileSize": "3752.817KB",
+  "readme": "https://github.com/UrbanAnalyst/uaengine/blob/main/README.md",
+  "contIntegration": ["https://github.com/UrbanAnalyst/uaengine/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/UrbanAnalyst/uaengine"],
   "developmentStatus": "https://www.repostatus.org/#concept"
 }
