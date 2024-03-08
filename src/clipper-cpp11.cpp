@@ -16,11 +16,12 @@ writable::integers cpp_pip(
     const doubles y = xy ["y"];
     const int n = x.size ();
 
+    const int n_polys = static_cast <int> (polys.size ());
     const double np_dbl = static_cast <double> (polys.size ());
 
     writable::integers res (n);
     std::fill (res.begin (), res.end (), -1L);
-    for (int i = 0; i < polys.size (); i++)
+    for (int i = 0; i < n_polys; i++)
     {
         doubles pi = polys [i];
         const int nrow = pi.size () / 2;
@@ -43,10 +44,10 @@ writable::integers cpp_pip(
 
         const double i_dbl = static_cast <double> (i);
         const double progress = 100.0 * i_dbl / np_dbl;
-        Rprintf ("\r%i / %i: %2.2f%", i, polys.size (), progress);
+        Rprintf ("\r%i / %i: %2.2f%", i, n_polys, progress);
         check_user_interrupt ();
     }
-    Rprintf ("\r%i / %i: 100.00%    \n", polys.size (), polys.size ());
+    Rprintf ("\r%i / %i: 100.00%    \n", n_polys, n_polys);
 
     return res;
 }
