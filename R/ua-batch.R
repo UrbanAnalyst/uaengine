@@ -132,7 +132,23 @@ get_batch_vertices <- function (soc, city, mode, seed = 1L) {
     # order vertices to reguarly sample all polygons in 'soc':
     vxy <- sfheaders::sf_point (v [, c ("x", "y")])
     sf::st_crs (vxy) <- 4326
-    index0 <- unlist (sf::st_within (vxy, soc))
+    sph_merc <- paste0 (
+        "+proj=merc +a=6378137 +b=6378137 ",
+        "+lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 ",
+        "+units=m +nadgrids=@null +wktext +no_defs"
+    )
+    vxy_reproj <- sf::st_transform (vxy, sph_merc)
+    soc_reproj <- sf::st_transform (soc, sph_merc)
+    index0 <- sf::st_within (vxy_reproj, soc_reproj)
+    index0 <- vapply (index0, function (i) {
+        if (length (i) == 0) {
+            return (NA_integer_)
+        } else {
+            return (i [1L])
+        }}, integer (1L))
+    index_in <- which (!is.na (index0))
+    v <- v [index_in, ]
+    index0 <- index0 [index_in]
 
     # 'cpp_index_sort' returns the direct index back into original, rearranged
     # to evenly sample each polygon in succession.
