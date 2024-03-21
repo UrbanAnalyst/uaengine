@@ -24,9 +24,9 @@ ua_binary_compare <- function (city, results_path, soc, bin_var, d = 10) {
     var_rel <- sprintf ("int_d%2d_pop_adj", d)
     vars_ua <- paste0 (gsub ("ua_", "ua_index_", comp_vars))
 
-    pt_index <- unlist (sf::st_within (
-        reproj_sph_merc (res), reproj_sph_merc (soc)
-    ))
+    pt_index <- unlist (
+        sf::st_within (reproj_sph_merc (res), reproj_sph_merc (soc))
+    )
 
     soc$trans_rel <- soc$trans_abs <- NA
 

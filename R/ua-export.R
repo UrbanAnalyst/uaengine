@@ -127,9 +127,9 @@ ua_export <- function (city,
             "+units=m +nadgrids=@null +wktext +no_defs"
         )
         sf::st_crs (res_xy) <- 4326
-        pt_index <- sf::st_within (
-            reproj_sph_merc (res_xy), reproj_sph_merc (soc)
-        )
+        pt_index <-
+            sf::st_within (reproj_sph_merc (res_xy), reproj_sph_merc (soc))
+
         pt_index <- vapply (pt_index, function (i) {
             ifelse (is.null (i), NA_integer_, i [1])
         }, integer (1L))
