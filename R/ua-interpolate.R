@@ -43,7 +43,9 @@ ua_interpolate <- function (city,
     # reduce vertices to only those within polygon of 'ua_dat'
     v_sf <- sfheaders::sf_point (v [, c ("x", "y")])
     v_sf <- sf::st_sf (v_sf, crs = 4326)
-    index <- sf::st_within (v_sf, sf::st_union (soc))
+    index <- sf::st_within (
+        reproj_sph_merc (v_sf), reproj_sph_merc (sf::st_union (soc))
+    )
     index <- which (vapply (index, length, integer (1L)) > 0L)
     v_in <- v [index, ]
 

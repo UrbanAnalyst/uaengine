@@ -137,9 +137,7 @@ get_batch_vertices <- function (soc, city, mode, seed = 1L) {
         "+lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 ",
         "+units=m +nadgrids=@null +wktext +no_defs"
     )
-    vxy_reproj <- sf::st_transform (vxy, sph_merc)
-    soc_reproj <- sf::st_transform (soc, sph_merc)
-    index0 <- sf::st_within (vxy_reproj, soc_reproj)
+    index0 <- sf::st_within (reproj_sph_merc (vxy), reproj_sph_merc (soc))
     index0 <- vapply (index0, function (i) {
         if (length (i) == 0) {
             return (NA_integer_)

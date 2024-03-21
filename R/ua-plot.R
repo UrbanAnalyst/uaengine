@@ -99,7 +99,9 @@ ua_plot_polygons <- function (city,
 
     soc$ua_index <- soc$transport <- NA
 
-    pt_index <- unlist (sf::st_within (res, soc))
+    pt_index <- unlist (sf::st_within (
+        reproj_sph_merc (res), reproj_sph_merc (soc)
+    ))
 
     for (i in unique (pt_index)) {
         index <- which (pt_index == i)

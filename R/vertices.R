@@ -25,7 +25,7 @@ ua_vertices <- function (x, city, mode) {
     sf::st_crs (vsf) <- 4326
 
     perimeter <- sf::st_union (x)
-    index <- sf::st_within (vsf, perimeter)
+    index <- sf::st_within (reproj_sph_merc (vsf), reproj_sph_merc (perimeter))
     index <- vapply (index, function (i) length (i) > 0, logical (1L))
 
     return (v [which (index), ])
