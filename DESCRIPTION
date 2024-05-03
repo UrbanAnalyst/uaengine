@@ -1,6 +1,6 @@
 Package: uaengine
 Title: Routing and aggregation engine for 'Urban Analyst'
-Version: 0.3.1.004
+Version: 0.3.1.005
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -35,6 +35,7 @@ Suggests:
     RcppParallel,
     rmarkdown,
     testthat (>= 3.0.0),
+    tidycensus,
     withr
 LinkingTo: cpp11
 Remotes:

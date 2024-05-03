@@ -1,10 +1,16 @@
 #' Re-project on to Lambert Azimuthal equal-area projection, centred at center
 #' of actual objects.
 #' @noRd
-reproj_equal_area <- function (x) {
+reproj_equal_area <- function (x, lon = NULL, lat = NULL) {
 
-    xy <- sf::st_coordinates (x)
-    xy <- round (apply (xy, 2, mean))
+    if (is.null (lon) && is.null (lat)) {
+        xy <- sf::st_coordinates (x)
+        xy <- round (apply (xy, 2, mean))
+    } else if (!is.null (lon) && !is.null (lat)) {
+        checkmate::assert_numeric (lon, len = 1L)
+        checkmate::assert_numeric (lat, len = 1L)
+        xy <- round (c (lat, lon))
+    }
 
     crs <- sf::st_crs (paste0 (
         "+proj=laea +lat_0=",
