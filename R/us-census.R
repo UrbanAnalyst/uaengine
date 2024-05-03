@@ -96,8 +96,10 @@ get_census_variables <- function (state = NULL, census_year = 2020) {
     x [[codes [vars == "rooms_owner"]]] [index] <-
         x [[codes [vars == "rooms_renter"]]] [index]
 
-    x$rent <- x [[codes [vars == "rent"]]] / x [[codes [vars == "rooms_renter"]]]
-    x$value <- x [[codes [vars == "value"]]] / x [[codes [vars == "rooms_owner"]]]
+    x$rent <- x [[codes [vars == "rent"]]] /
+        x [[codes [vars == "rooms_renter"]]]
+    x$value <- x [[codes [vars == "value"]]] /
+        x [[codes [vars == "rooms_owner"]]]
 
     suppressWarnings (
         x <- sf::st_cast (x, "POLYGON")
