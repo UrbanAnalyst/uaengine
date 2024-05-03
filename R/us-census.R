@@ -6,7 +6,9 @@ add_us_census_vars <- function (s, city, census_year = 2020) {
         return (s)
     }
 
+    requireNamespace ("memoise")
     requireNamespace ("tidycensus")
+
     key <- Sys.getenv ("CENSUS_API_KEY")
     if (!nzchar (key)) {
         stop ("CENSUS_API_KEY not found.", call. = FALSE)
@@ -28,7 +30,7 @@ add_us_census_vars <- function (s, city, census_year = 2020) {
     s_g <- reproj_equal_area (s_g, lon = xy [1], lat = xy [2])
 
     # Then reproj census data to same focal lon/lat:
-    census_data <- get_census_variables (state, census_year) |>
+    census_data <- m_get_census_variables (state, census_year) |>
         reproj_equal_area (lon = xy [1], lat = xy [2])
 
     index <- vapply (sf::st_within (s_g, census_data), function (i) {
@@ -105,3 +107,5 @@ get_census_variables <- function (state = NULL, census_year = 2020) {
     cols <- c ("GEOID", "rent", "value", "geometry")
     x [, cols]
 }
+
+m_get_census_variables <- memoise::memoise (get_census_variables)
