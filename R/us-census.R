@@ -24,8 +24,7 @@ add_us_census_vars <- function (s, city, census_year = 2020) {
 
     s_g <- sfheaders::sf_point (s [, c ("x", "y")]) |>
         sf::st_sf (crs = 4326)
-    xy <- sf::st_coordinates (x)
-    xy <- round (apply (xy, 2, mean)) [1:2]
+    xy <- round (apply (s [, c ("x", "y")], 2, mean)) [1:2]
     s_g <- reproj_equal_area (s_g, lon = xy [1], lat = xy [2])
 
     # Then reproj census data to same focal lon/lat:

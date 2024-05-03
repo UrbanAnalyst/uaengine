@@ -1,6 +1,6 @@
 Package: uaengine
 Title: Routing and aggregation engine for 'Urban Analyst'
-Version: 0.3.1.005
+Version: 0.3.1.006
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
