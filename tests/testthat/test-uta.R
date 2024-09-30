@@ -107,9 +107,9 @@ test_that ("ua calculations", {
             contracted = FALSE
         )
     )
-    expect_equal (nrow (graph_full), nrow (graph))
-    expect_equal (ncol (graph_full), ncol (graph))
-    expect_equal (names (graph_full), names (graph))
+    # interpolate reduces to undirected graph, so:
+    expect_true (nrow (graph_full) > nrow (graph))
+    expect_true (ncol (graph_full) < ncol (graph))
 
     # ua_to_geojson:
     f <- fs::path (fs::path_temp (), "xy.json")
