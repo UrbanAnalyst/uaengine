@@ -49,11 +49,9 @@ ua_interpolate <- function (city,
     v_in <- v [index, ]
 
     index <- dodgr::match_points_to_verts (v_in, ua_dat [, c ("x", "y")])
-    ua_vars <- grep (
-        "(\\_pop\\_adj$|^ua\\_index\\_)",
-        names (ua_dat),
-        value = TRUE
-    )
+    var_starts <- c ("times", "trans", "interv", "popdens", "soc", "school", "natur", "park", "ua")
+    ptn <- paste0 ("^(", paste0 (var_starts, collapse = "|"), ")")
+    ua_vars <- grep (ptn, names (ua_dat), value = TRUE)
 
     for (u in ua_vars) {
         v [[u]] <- v_in [[u]] <- NA
