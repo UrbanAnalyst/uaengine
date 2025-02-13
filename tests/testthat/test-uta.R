@@ -1,6 +1,3 @@
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-    identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
-
 # Set up test files:
 z <- gtfsrouter::berlin_gtfs_to_zip ()
 gtfs <- gtfsrouter::extract_gtfs (z)
