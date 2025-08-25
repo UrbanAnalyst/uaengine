@@ -22,6 +22,7 @@ add_dist_to_schools <- function (s, city) {
     if (!"vert_index" %in% names (schools)) {
 
         schools_xy <- schools [, c ("x_", "y_")]
+        names (schools_xy) <- c ("x", "y")
         pts <- dodgr::match_points_to_verts (v, schools_xy, connected = TRUE)
         schools$vert_index <- pts
         saveRDS (schools, f)
