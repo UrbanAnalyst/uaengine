@@ -132,7 +132,7 @@ ua_interpolate <- function (city,
 ua_uncontract_graph <- function (graph, city, initial_mode) {
 
     hash <- attr (graph, "hash")
-    flist <- fs::dir_ls (fs::path (m4ra_cache_dir (), city), regexp = initial_mode)
+    flist <- fs::dir_ls (m4ra_cache_dir (city), regexp = initial_mode)
     flist <- grep (substring (hash, 1, 6), flist, value = TRUE)
 
     edge_map <- readRDS (grep ("edgemap", flist, value = TRUE))

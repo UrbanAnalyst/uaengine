@@ -1,6 +1,6 @@
 add_dist_to_schools <- function (s, city) {
 
-    cache_dir <- fs::path (m4ra_cache_dir (), city)
+    cache_dir <- m4ra_cache_dir (city)
     f <- fs::dir_ls (cache_dir, regexp = "school")
     if (length (f) != 1L) {
         message (

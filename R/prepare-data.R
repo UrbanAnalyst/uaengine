@@ -48,7 +48,7 @@ prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
     mode <- "foot" # hard-code distances to nature to 'foot' distances
     net <- m4ra::m4ra_load_cached_network (city = city, mode = mode)
 
-    cache_dir <- fs::path (m4ra_cache_dir (), city)
+    cache_dir <- m4ra_cache_dir (city)
     hash <- substring (attr (net, "hash"), 1L, 6L)
     f_natural <- paste0 ("ua-", city, "-natural-index-foot-", hash, ".Rds")
     f_natural <- fs::path (cache_dir, f_natural)
@@ -93,7 +93,7 @@ prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
 
 prepare_schools <- function (f, city) {
 
-    cache_dir <- fs::path (m4ra_cache_dir (), city)
+    cache_dir <- m4ra_cache_dir (city)
     f_schools <- fs::path (
         cache_dir,
         paste0 ("ua-", city, "-school-verts.Rds")

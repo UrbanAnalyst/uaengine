@@ -1,6 +1,6 @@
 add_parking <- function (s, city, initial_mode) {
 
-    cache_dir <- fs::path (m4ra_cache_dir (), city)
+    cache_dir <- m4ra_cache_dir (city)
     f <- fs::dir_ls (cache_dir, regexp = "parking")
     if (length (f) != 1L) {
         message (

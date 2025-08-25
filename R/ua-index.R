@@ -74,7 +74,8 @@ ua_index <- function (city,
         duration_max <- duration_max * 60
     }
 
-    cache_dir <- fs::path (m4ra_cache_dir (), city)
+    cache_dir <- m4ra_cache_dir (city)
+
     f_extra <- NULL
     if (fs::dir_exists (cache_dir)) {
 
