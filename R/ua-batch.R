@@ -107,6 +107,8 @@ ua_index_batch <- function (city,
         )
         if (!is.null (s)) {
             saveRDS (s, f)
+        } else {
+            cli::cli_alert_info ("'ua_index' calculations failed.")
         }
 
         batch_progress_message (i, vsp, pt0, t_start)
