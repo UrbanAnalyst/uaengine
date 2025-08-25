@@ -174,7 +174,7 @@ get_vertex_indices <- function (v, batch_size, coverage, city, results_path) {
     # Then remove any which have previously been done:
     ivals <- vapply (index, max, integer (1L))
     fnames <- paste0 (city, "-", sprintf ("%06i", ivals), ".Rds")
-    fnames <- fs::path_abs (fs::path (results_path, city, fnames))
+    fnames <- fs::path_abs (fs::path (results_path, fnames))
     index2 <- which (!fs::file_exists (fnames))
 
     cli::cli_alert_info (cli::col_cyan (paste0 (
