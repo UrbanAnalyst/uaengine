@@ -61,7 +61,6 @@ prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
     if (reproj) {
         natural <- reproj_equal_area (natural)
     }
-    polys <- lapply (natural$geometry, function (i) i [[1]] [[1]])
 
     v <- m4ra::m4ra_vertices (net, city) [, c ("x", "y")]
     v <- sfheaders::sf_point (v)
@@ -69,11 +68,12 @@ prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
     if (reproj) {
         v <- reproj_equal_area (v)
     }
-    v <- data.frame (sf::st_coordinates (v))
-    names (v) <- c ("x", "y")
+    index <- sf::st_intersects (v, natural)
+    # Then grab first member polygon:
+    index <- vapply (index, function (i) i [1], integer (1L))
 
-    index <- cpp_pip (polys, v) + 1L
-
+    # Then set any values <= water_dist to -1, to enable separate
+    # identification:
     water <- natural$geometry [which (natural$natural == "water")]
     water <- do.call (rbind, lapply (water, function (i) i [[1]] [[1]]))
     colnames (water) <- c ("x", "y")
