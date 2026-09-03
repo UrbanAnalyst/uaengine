@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/UrbanAnalyst/uaengine",
   "issueTracker": "https://github.com/UrbanAnalyst/uaengine/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.3.2.021",
+  "version": "0.3.2.022",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.3 (2024-02-29)",
+  "runtimePlatform": "R version 4.6.1 (2026-06-24)",
   "author": [
     {
       "@type": "Person",
@@ -81,18 +81,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "fst",
-      "name": "fst",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=fst"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "geojsonio",
       "name": "geojsonio",
       "provider": {
@@ -138,6 +126,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=mapdeck"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "memoise",
+      "name": "memoise",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
     {
       "@type": "SoftwareApplication",
@@ -202,6 +202,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "tidycensus",
+      "name": "tidycensus",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=tidycensus"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "withr",
       "name": "withr",
       "provider": {
@@ -248,7 +260,7 @@
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://github.com/hypertidy/geodist"
+      "sameAs": "https://CRAN.R-project.org/package=geodist"
     },
     "4": {
       "@type": "SoftwareApplication",
@@ -316,7 +328,7 @@
     },
     "SystemRequirements": "osmium-tool"
   },
-  "fileSize": "3752.817KB",
+  "fileSize": "1342.459KB",
   "readme": "https://github.com/UrbanAnalyst/uaengine/blob/main/README.md",
   "contIntegration": [
     "https://github.com/UrbanAnalyst/uaengine/actions?query=workflow%3AR-CMD-check",

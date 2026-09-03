@@ -1,6 +1,6 @@
 Package: uaengine
 Title: Routing and aggregation engine for 'Urban Analyst'
-Version: 0.3.2.021
+Version: 0.3.2.022
 Authors@R: 
     person(given = "Mark",
            family = "Padgham",
@@ -40,8 +40,7 @@ Suggests:
     withr
 LinkingTo: cpp11
 Remotes:
-    urbananalyst/m4ra,
-    hypertidy/geodist
+    urbananalyst/m4ra
 SystemRequirements: osmium-tool
 Encoding: UTF-8
 LazyData: true
