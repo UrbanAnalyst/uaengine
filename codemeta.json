@@ -7,7 +7,7 @@
   "codeRepository": "https://github.com/UrbanAnalyst/uaengine",
   "issueTracker": "https://github.com/UrbanAnalyst/uaengine/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.3.2.023",
+  "version": "0.3.3",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -228,6 +228,12 @@
   "softwareRequirements": {
     "1": {
       "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 4.1.0"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
       "identifier": "checkmate",
       "name": "checkmate",
       "provider": {
@@ -238,7 +244,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=checkmate"
     },
-    "2": {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "cli",
       "name": "cli",
@@ -250,7 +256,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=cli"
     },
-    "3": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "geodist",
       "name": "geodist",
@@ -262,7 +268,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=geodist"
     },
-    "4": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "hms",
       "name": "hms",
@@ -274,23 +280,23 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=hms"
     },
-    "5": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "m4ra",
       "name": "m4ra",
       "sameAs": "https://github.com/urbananalyst/m4ra"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "parallel",
       "name": "parallel"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "raster",
       "name": "raster",
@@ -302,7 +308,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=raster"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
@@ -314,7 +320,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sf"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "sfheaders",
       "name": "sfheaders",
@@ -328,11 +334,8 @@
     },
     "SystemRequirements": "osmium-tool"
   },
-  "fileSize": "1342.459KB",
+  "fileSize": "1342.477KB",
   "readme": "https://github.com/UrbanAnalyst/uaengine/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/UrbanAnalyst/uaengine/actions?query=workflow%3AR-CMD-check",
-    "https://app.codecov.io/gh/UrbanAnalyst/uaengine"
-  ],
+  "contIntegration": ["https://github.com/UrbanAnalyst/uaengine/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/UrbanAnalyst/uaengine"],
   "developmentStatus": "https://www.repostatus.org/#concept"
 }
