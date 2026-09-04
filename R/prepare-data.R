@@ -79,12 +79,9 @@ prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
     water <- do.call (rbind, lapply (water, function (i) i [[1]] [[1]]))
     colnames (water) <- c ("x", "y")
 
-    index_min <- geodist::geodist_min (v [, c ("x", "y")], water)
-    dmin <- geodist::geodist (
-        v [, c ("x", "y")],
-        water [index_min, ],
-        paired = TRUE
-    )
+    v_xy <- sf::st_coordinates (v)
+    index_min <- geodist::geodist_min (v_xy, water)
+    dmin <- geodist::geodist (v_xy, water [index_min, ], paired = TRUE)
     index [which (dmin <= water_dist)] <- -1L
 
     saveRDS (index, f_natural)
