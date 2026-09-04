@@ -57,7 +57,8 @@ prepare_natural <- function (f, city, water_dist = 20, reproj = FALSE) {
         return (f_natural)
     }
 
-    natural <- sf::st_read (f, layer = "multipolygons", quiet = TRUE)
+    natural <- sf::st_read (f, layer = "multipolygons", quiet = TRUE) |>
+        sf::st_make_valid ()
     if (reproj) {
         natural <- reproj_equal_area (natural)
     }
